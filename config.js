@@ -57,25 +57,25 @@ global.namechannel = '𝑩𝑳𝑨𝑪𝑲 𝑪𝑳𝑶𝑽𝑬𝑹 / 𝐓𝐇�
 global.moneda = 'monedas'
 
 //• ↳ ◜𝑳𝑰𝑵𝑲𝑺  𝐓𝐇𝐄 𝐋𝐄𝐆𝐄𝐍𝐃𝐒 ™◞ • 🌿
-global.gp4 = 'https://chat.whatsapp.com/GrcUknwrJbNIXIIrbsuXc0' //Grupo Oficial De black clover 
-global.gp1 = 'https://chat.whatsapp.com/FiBcPMYEO7mG4m16gBbwpP' //Grupo 2
-global.gp2 = 'https://chat.whatsapp.com/G9zQlCHDBrn99wcC2FyWgm'//
-global.comunidad1 = 'https://chat.whatsapp.com/JaGwnrKgL7w15uAFZmZBIw' //Comunidad THE LEGENDS 
-global.channel = 'https://whatsapp.com/channel/0029Vai28FR7dmea9gytQm3w' //Canal Oficial
-global.channel2 = 'https://whatsapp.com/channel/0029Vai28FR7dmea9gytQm3w' //Canal test 
-global.yt = 'https://www.youtube.com/@ElCarlos.87' //Canal De Youtube
-global.md = 'https://github.com/thecarlos19/black-clover-MD' //Github Oficial
+global.gp4 = '' //Grupo Oficial De black clover 
+global.gp1 = '' //Grupo 2
+global.gp2 = ''//
+global.comunidad1 = '' //Comunidad THE LEGENDS 
+global.channel = '' //Canal Oficial
+global.channel2 = '' //Canal test 
+global.yt = '' //Canal De Youtube
+global.md = '' //Github Oficial
 global.correo = ''
-global.cn ='https://whatsapp.com/channel/0029Vai28FR7dmea9gytQm3w';
+global.cn ='';
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
-
 global.catalogo = fs.readFileSync('./src/catalogo.jpg');
-global.estilo = { key: {  fromMe: false, participant: `0@s.whatsapp.net`, ...(false ? { remoteJid: "5219992095479-1625305606@g.us" } : {}) }, message: { orderMessage: { itemCount : -999999, status: 1, surface : 1, message: packname, orderTitle: 'Bang', thumbnail: catalogo, sellerJid: '0@s.whatsapp.net'}}}
+global.estilo = { key: {  fromMe: false, participant: `0@s.whatsapp.net`, ...(false ? { remoteJid: "" } : {}) }, message: { orderMessage: { itemCount : -999999, status: 1, surface : 1, message: packname, orderTitle: 'Bang', thumbnail: catalogo, sellerJid: '0@s.whatsapp.net'}}}
 global.ch = {
-ch1: '120363307694217288@newsletter',
+ch1: '',
 }
 global.multiplier = 70
+
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 
