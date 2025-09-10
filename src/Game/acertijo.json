@@ -1,0 +1,494 @@
+[
+    {
+        "question": "Blanca por dentro, verde por fuera, si quieres que te lo diga, espera.",
+        "response": "La pera"
+    },
+    {
+        "question": "Cien hermanos en fila van, cada uno con su caja detrás, ¿quiénes son?",
+        "response": "Los dientes"
+    },
+    {
+        "question": "Si me nombras desaparezco, ¿qué soy?",
+        "response": "El silencio"
+    },
+    {
+        "question": "No es un ser vivo, pero crece; no tiene boca, pero bebe; ¿qué es?",
+        "response": "El fuego"
+    },
+    {
+        "question": "Tiene agujas pero no pincha, da vueltas pero no camina, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Cuanto más quitas, más grande se vuelve, ¿qué es?",
+        "response": "Un agujero"
+    },
+    {
+        "question": "Me puedes atrapar pero no tocar, puedo ir rápido pero no correr, ¿qué soy?",
+        "response": "El aliento"
+    },
+    {
+        "question": "Entre más lavo, más sucio se vuelve, ¿qué es?",
+        "response": "El agua"
+    },
+    {
+        "question": "Tiene llaves pero no puede abrir puertas, ¿qué es?",
+        "response": "El piano"
+    },
+    {
+        "question": "Cuanto más me quitas, más crezco; cuanto más me pones, menos peso, ¿qué soy?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Vuelo sin alas, lloro sin ojos, ¿qué soy?",
+        "response": "La nube"
+    },
+    {
+        "question": "Si me guardas, me pierdes; si me pierdes, me tienes, ¿qué soy?",
+        "response": "El secreto"
+    },
+    {
+        "question": "No camino ni corro, pero siempre avanzo; todos me tienen pero nadie me ve, ¿qué soy?",
+        "response": "El tiempo"
+    },
+    {
+        "question": "Blanca por dentro, verde por fuera, si quieres que te lo diga, espera.",
+        "response": "La pera"
+    },
+    {
+        "question": "Cien hermanos en fila van, cada uno con su caja detrás, ¿quiénes son?",
+        "response": "Los dientes"
+    },
+    {
+        "question": "Si me nombras desaparezco, ¿qué soy?",
+        "response": "El silencio"
+    },
+    {
+        "question": "No es un ser vivo, pero crece; no tiene boca, pero bebe; ¿qué es?",
+        "response": "El fuego"
+    },
+    {
+        "question": "Tiene agujas pero no pincha, da vueltas pero no camina, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Cuanto más quitas, más grande se vuelve, ¿qué es?",
+        "response": "Un agujero"
+    },
+    {
+        "question": "Me puedes atrapar pero no tocar, puedo ir rápido pero no correr, ¿qué soy?",
+        "response": "El aliento"
+    },
+    {
+        "question": "Entre más lavo, más sucio se vuelve, ¿qué es?",
+        "response": "El agua"
+    },
+    {
+        "question": "Tiene llaves pero no puede abrir puertas, ¿qué es?",
+        "response": "El piano"
+    },
+    {
+        "question": "Cuanto más me quitas, más crezco; cuanto más me pones, menos peso, ¿qué soy?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Vuelo sin alas, lloro sin ojos, ¿qué soy?",
+        "response": "La nube"
+    },
+    {
+        "question": "Si me guardas, me pierdes; si me pierdes, me tienes, ¿qué soy?",
+        "response": "El secreto"
+    },
+    {
+        "question": "No camino ni corro, pero siempre avanzo; todos me tienen pero nadie me ve, ¿qué soy?",
+        "response": "El tiempo"
+    },
+    {
+        "question": "Lleno de agujeros pero puedo retener agua, ¿qué soy?",
+        "response": "La esponja"
+    },
+    {
+        "question": "Cuanto más me lavas, más pequeño me vuelvo, ¿qué soy?",
+        "response": "El jabón"
+    },
+    {
+        "question": "Siempre viene pero nunca llega, ¿qué es?",
+        "response": "El mañana"
+    },
+    {
+        "question": "Tiene ojos pero no ve, ¿qué es?",
+        "response": "La aguja"
+    },
+    {
+        "question": "Rompe pero no cae, ¿qué es?",
+        "response": "El amanecer"
+    },
+    {
+        "question": "Me ves una vez en un minuto, dos veces en un momento y nunca en mil años, ¿qué soy?",
+        "response": "La letra M"
+    },
+    {
+        "question": "Todos lo llevan al hombro, pero nadie lo puede cargar, ¿qué es?",
+        "response": "El nombre"
+    },
+    {
+        "question": "Blanca por dentro, verde por fuera, si quieres que te lo diga, espera.",
+        "response": "La pera"
+    },
+    {
+        "question": "Cien hermanos en fila van, cada uno con su caja detrás, ¿quiénes son?",
+        "response": "Los dientes"
+    },
+    {
+        "question": "Si me nombras desaparezco, ¿qué soy?",
+        "response": "El silencio"
+    },
+    {
+        "question": "No es un ser vivo, pero crece; no tiene boca, pero bebe; ¿qué es?",
+        "response": "El fuego"
+    },
+    {
+        "question": "Tiene agujas pero no pincha, da vueltas pero no camina, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Cuanto más quitas, más grande se vuelve, ¿qué es?",
+        "response": "Un agujero"
+    },
+    {
+        "question": "Me puedes atrapar pero no tocar, puedo ir rápido pero no correr, ¿qué soy?",
+        "response": "El aliento"
+    },
+    {
+        "question": "Entre más lavo, más sucio se vuelve, ¿qué es?",
+        "response": "El agua"
+    },
+    {
+        "question": "Tiene llaves pero no puede abrir puertas, ¿qué es?",
+        "response": "El piano"
+    },
+    {
+        "question": "Cuanto más me quitas, más crezco; cuanto más me pones, menos peso, ¿qué soy?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Vuelo sin alas, lloro sin ojos, ¿qué soy?",
+        "response": "La nube"
+    },
+    {
+        "question": "Si me guardas, me pierdes; si me pierdes, me tienes, ¿qué soy?",
+        "response": "El secreto"
+    },
+    {
+        "question": "No camino ni corro, pero siempre avanzo; todos me tienen pero nadie me ve, ¿qué soy?",
+        "response": "El tiempo"
+    },
+    {
+        "question": "Lleno de agujeros pero puedo retener agua, ¿qué soy?",
+        "response": "La esponja"
+    },
+    {
+        "question": "Cuanto más me lavas, más pequeño me vuelvo, ¿qué soy?",
+        "response": "El jabón"
+    },
+    {
+        "question": "Siempre viene pero nunca llega, ¿qué es?",
+        "response": "El mañana"
+    },
+    {
+        "question": "Tiene ojos pero no ve, ¿qué es?",
+        "response": "La aguja"
+    },
+    {
+        "question": "Rompe pero no cae, ¿qué es?",
+        "response": "El amanecer"
+    },
+    {
+        "question": "Me ves una vez en un minuto, dos veces en un momento y nunca en mil años, ¿qué soy?",
+        "response": "La letra M"
+    },
+    {
+        "question": "Todos lo llevan al hombro, pero nadie lo puede cargar, ¿qué es?",
+        "response": "El nombre"
+    },
+    {
+        "question": "Puede ser grande o pequeño, pero nunca se ve; atraviesa todo pero nadie lo toca, ¿qué es?",
+        "response": "El pensamiento"
+    },
+    {
+        "question": "Tiene cabeza y cola pero no cuerpo, ¿qué es?",
+        "response": "La moneda"
+    },
+    {
+        "question": "No habla, pero cuenta historias; no tiene boca, pero se escucha, ¿qué es?",
+        "response": "El libro"
+    },
+    {
+        "question": "Vuelo de noche, duermo en el día y nunca como, ¿qué soy?",
+        "response": "El murciélago"
+    },
+    {
+        "question": "Corre sin pies y llora sin ojos, ¿qué es?",
+        "response": "El río"
+    },
+    {
+        "question": "Nace en la tierra, vive en el aire y muere en el agua, ¿qué es?",
+        "response": "La nieve"
+    },
+    {
+        "question": "Cuanto más le quitas, más grande se hace, ¿qué es?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Tiene ramas pero no hojas, ¿qué es?",
+        "response": "El banco"
+    },
+    {
+        "question": "No se mueve pero hace que todo se mueva, ¿qué es?",
+        "response": "El motor"
+    },
+    {
+        "question": "Tiene un ojo pero no puede ver, ¿qué es?",
+        "response": "La aguja"
+    },
+    {
+        "question": "Tiene ciudad pero no casas, río pero no agua, ¿qué es?",
+        "response": "El mapa"
+    },
+    {
+        "question": "Sube y baja pero nunca se mueve, ¿qué es?",
+        "response": "La temperatura"
+    },
+    {
+        "question": "No tiene boca pero puede gritar, no tiene orejas pero escucha, ¿qué es?",
+        "response": "El altavoz"
+    },
+    {
+        "question": "Mientras más lo llenas, más ligero se vuelve, ¿qué es?",
+        "response": "El globo"
+    },
+    {
+        "question": "Me quiebran antes de usarme, ¿qué soy?",
+        "response": "El huevo"
+    },
+    {
+        "question": "Cuanto más seco, más moja, ¿qué es?",
+        "response": "La toalla"
+    },
+    {
+        "question": "Tiene agujero y no es colador, atraviesa todo y no es bala, ¿qué es?",
+        "response": "El rayo de luz"
+    },
+    {
+        "question": "Puede viajar por el mundo pero siempre se queda en un rincón, ¿qué es?",
+        "response": "El sello postal"
+    },
+    {
+        "question": "Me encuentras en la noche y desaparezco con la luz, ¿qué soy?",
+        "response": "La estrella"
+    },
+    {
+        "question": "Cuanto más lo quitas, más grande se vuelve, ¿qué es?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Siempre está frente a ti pero no lo puedes alcanzar, ¿qué es?",
+        "response": "El futuro"
+    },
+    {
+        "question": "No es humano pero puede pensar, no tiene ojos pero ve todo, ¿qué es?",
+        "response": "El ordenador"
+    },
+    {
+        "question": "Me puedes romper pero nunca tocar, ¿qué soy?",
+        "response": "La promesa"
+    },
+    {
+        "question": "Cuanto más rápido corres, más atrás te quedas, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Vuela sin alas, llora sin ojos, ¿qué es?",
+        "response": "La nube"
+    },
+    {
+        "question": "No tiene corazón pero late, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Siempre entra pero nunca sale, ¿qué es?",
+        "response": "La llave"
+    },
+    {
+        "question": "Mientras más lo quitas, más se hace, ¿qué es?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Puede ser invisible pero se siente, puede ser fuerte pero no se ve, ¿qué es?",
+        "response": "El viento"
+    },
+    {
+        "question": "Llega una vez en un minuto, dos veces en un momento y nunca en mil años, ¿qué es?",
+        "response": "La letra M"
+    },
+    {
+        "question": "Tiene dientes pero no come, ¿qué es?",
+        "response": "El peine"
+    },
+    {
+        "question": "Si me nombras desaparezco, ¿qué soy?",
+        "response": "El silencio"
+    },
+    {
+        "question": "Me puedes atrapar pero no tocar, ¿qué soy?",
+        "response": "El aliento"
+    },
+    {
+        "question": "Cuanto más me lavas, más pequeño me vuelvo, ¿qué soy?",
+        "response": "El jabón"
+    },
+    {
+        "question": "Siempre viene pero nunca llega, ¿qué es?",
+        "response": "El mañana"
+    },
+    {
+        "question": "Tiene ojos pero no ve, ¿qué es?",
+        "response": "La aguja"
+    },
+    {
+        "question": "No camina ni corre pero avanza siempre, ¿qué es?",
+        "response": "El tiempo"
+    },
+    {
+        "question": "Tiene ramas pero no hojas, ¿qué es?",
+        "response": "El banco"
+    },
+    {
+        "question": "Rompe pero no cae, ¿qué es?",
+        "response": "El amanecer"
+    },
+    {
+        "question": "Vuelo sin alas, lloro sin ojos, ¿qué soy?",
+        "response": "La nube"
+    },
+    {
+        "question": "Tiene llave pero no puerta, ¿qué es?",
+        "response": "El piano"
+    },
+    {
+        "question": "Me encuentras en todas partes, pero no me puedes ver, ¿qué soy?",
+        "response": "El aire"
+    },
+    {
+        "question": "Cuanto más me quitas, más grande me hago, ¿qué soy?",
+        "response": "Un agujero"
+    },
+    {
+        "question": "No se mueve pero hace mover a todos, ¿qué es?",
+        "response": "El motor"
+    },
+    {
+        "question": "Tiene ciudad pero no casas, río pero no agua, ¿qué es?",
+        "response": "El mapa"
+    },
+    {
+        "question": "Corre sin patas, llora sin ojos, ¿qué es?",
+        "response": "El río"
+    },
+    {
+        "question": "Puede ser grande o pequeño, pero nunca se ve; atraviesa todo pero nadie lo toca, ¿qué es?",
+        "response": "El pensamiento"
+    },
+    {
+        "question": "Cuanto más lo llenas, más ligero se vuelve, ¿qué es?",
+        "response": "El globo"
+    },
+    {
+        "question": "Me rompen antes de usarme, ¿qué soy?",
+        "response": "El huevo"
+    },
+    {
+        "question": "Siempre está frente a ti pero no lo puedes alcanzar, ¿qué es?",
+        "response": "El futuro"
+    },
+    {
+        "question": "No es humano pero puede pensar, no tiene ojos pero ve todo, ¿qué es?",
+        "response": "El ordenador"
+    },
+    {
+        "question": "Me puedes romper pero nunca tocar, ¿qué soy?",
+        "response": "La promesa"
+    },
+    {
+        "question": "Mientras más rápido corres, más atrás te quedas, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Vuela sin alas, llora sin ojos, ¿qué es?",
+        "response": "La nube"
+    },
+    {
+        "question": "No tiene corazón pero late, ¿qué es?",
+        "response": "El reloj"
+    },
+    {
+        "question": "Mientras más le quitas, más grande se hace, ¿qué es?",
+        "response": "El agujero"
+    },
+    {
+        "question": "Puede ser invisible pero se siente, puede ser fuerte pero no se ve, ¿qué es?",
+        "response": "El viento"
+    },
+    {
+        "question": "Llega una vez en un minuto, dos veces en un momento y nunca en mil años, ¿qué es?",
+        "response": "La letra M"
+    },
+    {
+        "question": "Tiene dientes pero no come, ¿qué es?",
+        "response": "El peine"
+    },
+    {
+        "question": "No camina ni corre pero avanza siempre, ¿qué es?",
+        "response": "El tiempo"
+    },
+    {
+        "question": "Rompe pero no cae, ¿qué es?",
+        "response": "El amanecer"
+    },
+    {
+        "question": "No tiene boca pero habla, no tiene orejas pero escucha, ¿qué es?",
+        "response": "El eco"
+    },
+    {
+        "question": "Me ves una vez en un minuto, dos veces en un momento, nunca en mil años, ¿qué soy?",
+        "response": "La letra M"
+    },
+    {
+        "question": "Si me nombras desaparezco, ¿qué soy?",
+        "response": "El silencio"
+    },
+    {
+        "question": "Nace en la tierra, vive en el aire y muere en el agua, ¿qué es?",
+        "response": "La nieve"
+    },
+    {
+        "question": "Tiene cabeza y cola pero no cuerpo, ¿qué es?",
+        "response": "La moneda"
+    },
+    {
+        "question": "No tiene alas pero puede volar, no tiene boca pero puede gritar, ¿qué es?",
+        "response": "El altavoz"
+    },
+    {
+        "question": "Mientras más lo lavas, más sucio se vuelve, ¿qué es?",
+        "response": "El agua"
+    },
+    {
+        "question": "Siempre viene pero nunca llega, ¿qué es?",
+        "response": "El mañana"
+    },
+    {
+        "question": "Me puedes atrapar pero no tocar, puedo ir rápido pero no correr, ¿qué soy?",
+        "response": "El aliento"
+    }
+]
