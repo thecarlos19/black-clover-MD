@@ -21,7 +21,6 @@ handler.tags = ['grupo']
 handler.command = ['add', 'agregar', 'añadir']
 handler.group = true
 handler.admin = true
-handler.botAdmin = true
 handler.fail = null
 
 export default handler
