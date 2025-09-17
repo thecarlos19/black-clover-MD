@@ -29,7 +29,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@whiskeysockets/baileys": "7.0.0-rc.3",
+    "@whiskeysockets/baileys": "github:GataNina-Li/Baileys",
     "@adiwajshing/keyed-db": "0.2.4",
     "@bochilteam/scraper": "5.0.1",
     "@bochilteam/scraper-sosmed": "1.0.5",
