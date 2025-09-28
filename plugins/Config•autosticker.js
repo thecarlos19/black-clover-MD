@@ -33,20 +33,20 @@ handler.all = async function (m) {
     }
 
     if (stiker) {
+      const contextInfo = {
+        externalAdReply: {
+          showAdAttribution: false,
+          title: `Auto estikers 😈`,
+          body: `✡︎ Black-clover-MD • The Carlos`,
+          mediaType: 2,
+          sourceUrl: global.redes || '',
+          thumbnail: global.icons || null
+        }
+      }
+
       await conn.sendMessage(m.chat, {
         sticker: stiker,
-        contextInfo: {
-          forwardingScore: 200,
-          isForwarded: false,
-          externalAdReply: {
-            showAdAttribution: false,
-            title: packname,
-            body: author,
-            mediaType: 2,
-            thumbnail: icons,
-            sourceUrl: redes
-          }
-        }
+        contextInfo
       }, { quoted: m })
     }
   }

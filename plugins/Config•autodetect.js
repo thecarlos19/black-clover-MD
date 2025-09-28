@@ -1,5 +1,3 @@
-import { WAMessageStubType } from '@whiskeysockets/baileys'
-
 export async function before(m, { conn }) {
   try {
     if (!m.messageStubType || !m.chat.endsWith('@g.us')) return
@@ -23,25 +21,37 @@ export async function before(m, { conn }) {
     const esNombreValido = (txt) => txt && !txt.includes('@') && txt.length > 2
 
     const mensajes = {
-      [WAMessageStubType.GROUP_CHANGE_SUBJECT]: esNombreValido(parametros[0])
+      21: esNombreValido(parametros[0])
         ? `*${usuario}*\n✨ Ha cambiado el nombre del grupo\n\n🌻 Ahora el grupo se llama:\n*${parametros[0]}*`
         : null,
-      [WAMessageStubType.GROUP_CHANGE_ICON]: `*${usuario}*\n🚩 Ha cambiado la imagen del grupo`,
-      [WAMessageStubType.GROUP_CHANGE_SETTINGS]: `*${usuario}*\n🌀 Ahora pueden configurar el grupo: ${parametros[0] === 'on' ? '*solo admins*' : '*todos*'}`,
-      [WAMessageStubType.GROUP_CHANGE_INVITE_LINK]: `🌀 El enlace del grupo ha sido restablecido por:\n*${usuario}*`,
-      [WAMessageStubType.GROUP_CHANGE_ANNOUNCE]: `El grupo ha sido ${parametros[0] === 'on' ? '*cerrado 🔒*' : '*abierto 🔓*'} por *${usuario}*\n\n💬 Ahora ${parametros[0] === 'on' ? '*solo admins*' : '*todos*'} pueden enviar mensajes`,
-      [WAMessageStubType.PARTICIPANT_PROMOTE]: `*@${parametros[0]?.split('@')[0] || 'alguien'}* ahora es admin del grupo 🥳\n\n💫 Acción hecha por:\n*» ${usuario}*`,
-      [WAMessageStubType.PARTICIPANT_DEMOTE]: `*@${parametros[0]?.split('@')[0] || 'alguien'}* deja de ser admin 😿\n\n💫 Acción hecha por:\n*» ${usuario}*`
+      22: `*${usuario}*\n🚩 Ha cambiado la imagen del grupo`,
+      23: `*${usuario}*\n🌀 Ahora pueden configurar el grupo: ${parametros[0] === 'on' ? '*solo admins*' : '*todos*'}`,
+      24: `🌀 El enlace del grupo ha sido restablecido por:\n*${usuario}*`,
+      25: `El grupo ha sido ${parametros[0] === 'on' ? '*cerrado 🔒*' : '*abierto 🔓*'} por *${usuario}*\n\n💬 Ahora ${parametros[0] === 'on' ? '*solo admins*' : '*todos*'} pueden enviar mensajes`,
+      29: `*@${parametros[0]?.split('@')[0] || 'alguien'}* ahora es admin del grupo 🥳\n\n💫 Acción hecha por:\n*» ${usuario}*`,
+      30: `*@${parametros[0]?.split('@')[0] || 'alguien'}* deja de ser admin 😿\n\n💫 Acción hecha por:\n*» ${usuario}*`
     }
 
     const mensaje = mensajes[m.messageStubType]
     if (!mensaje) return
 
-    if (m.messageStubType === WAMessageStubType.GROUP_CHANGE_ICON) {
+    const contextInfo = {
+      externalAdReply: {
+        showAdAttribution: false,
+        title: `⚙️ Configuración`,
+        body: `✡︎ Black-clover-MD • The Carlos`,
+        mediaType: 2,
+        sourceUrl: global.redes || '',
+        thumbnail: global.icons || null
+      }
+    }
+
+    if (m.messageStubType === 22) {
       await conn.sendMessage(m.chat, {
         image: { url: pp },
         caption: mensaje,
-        mentions: [m.sender]
+        mentions: [m.sender],
+        contextInfo
       }, { quoted: fkontak })
     } else {
       const mentions = [m.sender]
@@ -49,7 +59,8 @@ export async function before(m, { conn }) {
 
       await conn.sendMessage(m.chat, {
         text: mensaje,
-        mentions
+        mentions,
+        contextInfo
       }, { quoted: fkontak })
     }
   } catch (e) {

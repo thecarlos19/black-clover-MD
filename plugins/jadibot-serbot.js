@@ -1,16 +1,6 @@
-/*
-⚠ PROHIBIDO EDITAR ⚠ 
-El codigo de este archivo esta totalmente hecho por:
-- The Carlos  (https://github.com/thecarlos19)
-
-El codigo de este archivo fue creado para:
-- Black-clover-MD (https://github.com/thecarlos19/Black-clover-MD)
-
-Adaptacion y edición echa por:
-- The carlos (https://github.com/thecarlos19)
-
-⚠ PROHIBIDO EDITAR ⚠ -- ⚠ PROHIBIDO EDITAR ⚠ -- ⚠ PROHIBIDO EDITAR ⚠
-*/
+  // canal oficial The Legends ⚡
+//Código creado x The Carlos 👑 
+//No olviden dejar créditos.
 import { useMultiFileAuthState, DisconnectReason, makeCacheableSignalKeyStore, fetchLatestBaileysVersion, Browsers } from "@whiskeysockets/baileys"
 import qrcode from "qrcode"
 import NodeCache from "node-cache"
@@ -90,10 +80,12 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   const subBotsCount = subBots.length
 
   if (subBotsCount >= maxSubBots) {
-    return m.reply(`❌ No se han encontrado espacios disponibles para que seas *subbot*`)
+    return m.reply(`❌ No se han encontrado espacios para *Sub-Bots* disponibles.`)
   }
 
   const availableSlots = maxSubBots - subBotsCount
+
+  // await m.reply(`🤖 *Sub-Bots conectados:* ${subBotsCount} / ${maxSubBots}\n🟢 *Espacios disponibles:* ${availableSlots}`)
 
   let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
   let id = `${who.split('@')[0]}`
@@ -114,6 +106,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   await blackJadiBot(blackJBOptions)
 
   global.db.data.users[m.sender].Subs = new Date() * 1
+
+  // await m.reply(`🥷🏻 Gracias por ser parte de la familia Black Clover ⚔️`)
 }
 
 handler.help = ['qr', 'code']
@@ -167,9 +161,7 @@ export async function blackJadiBot(options) {
       msgRetryCache,
       browser: mcode ? Browsers.macOS("Chrome") : Browsers.macOS("Desktop"),
       version: version,
-      generateHighQualityLinkPreview: true,
-      syncFullHistory: true,
-      markOnlineOnConnect: false
+      generateHighQualityLinkPreview: true
     }
 
     let sock = makeWASocket(connectionOptions)
@@ -218,10 +210,6 @@ export async function blackJadiBot(options) {
 
       const reason = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode
       if (connection === 'close') {
-        if (reason === DisconnectReason.badSession) {
-          fs.rmdirSync(pathblackJadiBot, { recursive: true })
-          console.log(chalk.red(`❌ Sesión inválida, eliminada (+${path.basename(pathblackJadiBot)})`))
-        }
         if (reason === 428 || reason === 408) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente o expiró. Intentando reconectar...\n╰─────────────────────────`))
           await creloadHandler(true).catch(console.error)
@@ -266,7 +254,7 @@ export async function blackJadiBot(options) {
         sock.isInit = true
         global.conns.push(sock)
 
-        if (m?.chat) await conn.sendMessage(m.chat, { text: args[0] ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `@${m.sender.split('@')[0]}, genial ya eres parte de nuestra familia *black clover Sub-Bots*.`, mentions: [m.sender] }, { quoted: m })
+        if (m?.chat) await conn.sendMessage(m.chat, { text: args[0] ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `@${m.sender.split('@')[0]}, genial ya eres parte de nuestra familia de Sub-Bots.`, mentions: [m.sender] }, { quoted: m })
       }
     }
 
@@ -286,6 +274,7 @@ export async function blackJadiBot(options) {
       try {
         const Handler = await import(`../handler.js?update=${Date.now()}`).catch(console.error)
         if (Object.keys(Handler || {}).length) handler = Handler
+
       } catch (e) {
         console.error('⚠️ Nuevo error: ', e)
       }

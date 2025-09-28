@@ -1,27 +1,22 @@
 const handler = async (m, { conn, participants, groupMetadata }) => {
   try {
-    // Intentamos obtener la imagen del grupo
-    const pp = await conn.profilePictureUrl(m.chat, 'image').catch(() => null) || `${global.icons}`;
+    const pp = await conn.profilePictureUrl(m.chat, 'image').catch(() => null) || global.icons;
 
-    // Obtenemos configuración del grupo desde la DB
     const { 
       antiToxic, reaction, antiTraba, antidelete, antiviewonce, 
       welcome, detect, antiLink, antiLink2, modohorny, 
       autosticker, audios 
     } = global.db.data.chats[m.chat];
 
-    // Obtenemos lista de administradores
     const groupAdmins = participants.filter((p) => p.admin);
     const listAdmin = groupAdmins
       .map((v, i) => `${i + 1}. @${v.id.split('@')[0]}`)
       .join('\n') || '*No hay administradores*';
 
-    // Identificamos al dueño del grupo
     const owner = groupMetadata.owner || 
       groupAdmins.find((p) => p.admin === 'superadmin')?.id || 
       m.chat.split`-`[0] + '@s.whatsapp.net';
 
-    // Texto del mensaje
     const text = `💥 *INFO GRUPO*
 💌 *ID:*
 → ${groupMetadata.id}
@@ -42,17 +37,15 @@ ${listAdmin}
 ◈ *Detect:* ${detect ? '✅' : '❌'}  
 ◈ *Antilink:* ${antiLink ? '✅' : '❌'} 
 ◈ *Antilink 𝟸:* ${antiLink2 ? '✅' : '❌'} 
-◈ *Modohorny:* ${modohorny ? '✅' : '❌'} 
+◈ *nsfw:* ${modohorny ? '✅' : '❌'} 
 ◈ *Autosticker:* ${autosticker ? '✅' : '❌'} 
 ◈ *Audios:* ${audios ? '✅' : '❌'} 
-◈ *Antiver:* ${antiviewonce ? '✅' : '❌'} 
 ◈ *Reacción:* ${reaction ? '✅' : '❌'}
 ◈ *Delete:* ${antidelete ? '✅' : '❌'} 
 ◈ *Antitoxic:* ${antiToxic ? '✅' : '❌'} 
 ◈ *Antitraba:* ${antiTraba ? '✅' : '❌'} 
 `.trim();
 
-    // Enviar mensaje con imagen
     await conn.sendMessage(m.chat, {
       image: { url: pp },
       caption: text,
