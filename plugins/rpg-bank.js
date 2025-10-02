@@ -3,7 +3,7 @@
 import fetch from 'node-fetch';
 import db from '../lib/database.js';
 
-const img = 'https://qu.ax/hwaYD.jpg';
+const img = 'https://files.catbox.moe/d3ynrg.jpg';
 
 function obtenerRango(level) {
   if (level >= 100000) return '🌟 Rey Mago';
