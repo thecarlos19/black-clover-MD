@@ -4,7 +4,12 @@
 El codigo de este archivo esta totalmente hecho por:
 - Aiden_NotLogic (https://github.com/ferhacks)
 
-El codigo de este archivo fue creado para:
+*El archivo original del MysticBot-MD fue liberado en mayo del 2024 aceptando su liberacion*
+
+El codigo de este archivo fue parchado en su momento por:
+- BrunoSobrino >> https://github.com/BrunoSobrino
+
+El codigo fue modificado para Black-clover-MD:
 - Black-clover-MD (https://github.com/thecarlos19/Black-clover-MD)
 
 Adaptacion y edición echa por:
@@ -102,12 +107,13 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
   let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
   let id = `${who.split('@')[0]}`
-  let pathblackJadiBot = path.join(`./blackJadiBot/`, id)
+    let pathblackJadiBot = path.join(__dirname, 'núcleo•clover', 'blackJadiBot', id)
 
   if (!fs.existsSync(pathblackJadiBot)) {
     fs.mkdirSync(pathblackJadiBot, { recursive: true })
   }
-
+  
+  
   blackJBOptions.pathblackJadiBot = pathblackJadiBot
   blackJBOptions.m = m
   blackJBOptions.conn = conn
@@ -283,15 +289,12 @@ export async function blackJadiBot(options) {
       }
     }, 60000)
 
-    let handler = await import('../handler.js')
+    let handler = await import('../núcleo•clover/handler.js')
     let creloadHandler = async function (restatConn) {
       try {
-        const Handler = await import(`../handler.js?update=${Date.now()}`).catch(console.error)
+        const Handler = await import(`../núcleo•clover/handler.js?update=${Date.now()}`).catch(console.error)
         if (Object.keys(Handler || {}).length) handler = Handler
-
-      } catch (e) {
-        console.error('⚠️ Nuevo error: ', e)
-      }
+      } catch (e) { }
       if (restatConn) {
         const oldChats = sock.chats
         try { sock.ws.close() } catch { }
@@ -304,7 +307,6 @@ export async function blackJadiBot(options) {
         sock.ev.off("connection.update", sock.connectionUpdate)
         sock.ev.off('creds.update', sock.credsUpdate)
       }
-
       sock.handler = handler.handler.bind(sock)
       sock.connectionUpdate = connectionUpdate.bind(sock)
       sock.credsUpdate = saveCreds.bind(sock, true)
