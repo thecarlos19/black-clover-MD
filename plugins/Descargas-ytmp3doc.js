@@ -76,7 +76,7 @@ const apisExtra = [
     name: "StellarWA",
     fetchUrl: async (url) => {
       try {
-        const apiKey = "Black-clover";
+        const apiKey = "black+clover";
         const res = await fetch(`https://api.stellarwa.xyz/dow/ytmp3?url=${encodeURIComponent(url)}&apikey=${apiKey}`);
         const data = await res.json();
         return data?.status && data?.data?.dl ? data.data.dl : null;

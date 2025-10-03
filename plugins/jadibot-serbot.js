@@ -99,20 +99,19 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   if (subBotsCount >= maxSubBots) {
     return m.reply(`❌ No se han encontrado espacios para *Sub-Bots* disponibles.`)
   }
-
+  
   const availableSlots = maxSubBots - subBotsCount
 
- //No tocar 
+   //No tocar 
   // await m.reply(`🤖 *Sub-Bots conectados:* ${subBotsCount} / ${maxSubBots}\n🟢 *Espacios disponibles:* ${availableSlots}`)
-
+  
   let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
   let id = `${who.split('@')[0]}`
-    let pathblackJadiBot = path.join(__dirname, 'núcleo•clover', 'blackJadiBot', id)
+  let pathblackJadiBot = path.join(process.cwd(), 'núcleo•clover', 'blackJadiBot', id)
 
   if (!fs.existsSync(pathblackJadiBot)) {
     fs.mkdirSync(pathblackJadiBot, { recursive: true })
   }
-  
   
   blackJBOptions.pathblackJadiBot = pathblackJadiBot
   blackJBOptions.m = m
@@ -125,8 +124,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   await blackJadiBot(blackJBOptions)
 
   global.db.data.users[m.sender].Subs = new Date() * 1
-
-   //No tocar 
+  
+    //No tocar 
   // await m.reply(`🥷🏻 Gracias por ser parte de la familia Black Clover ⚔️`)
 }
 
@@ -252,7 +251,7 @@ export async function blackJadiBot(options) {
           fs.rmdirSync(pathblackJadiBot, { recursive: true })
         }
         if (reason === 500) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)}). Borrando datos...\n╰─────────────────────────`))
+          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰─────────────────────────`))
           if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
           return creloadHandler(true).catch(console.error)
         }
@@ -261,7 +260,7 @@ export async function blackJadiBot(options) {
           await creloadHandler(true).catch(console.error)
         }
         if (reason === 403) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Sesión cerrada o cuenta en soporte para la sesión (+${path.basename(pathblackJadiBot)}).\n╰─────────────────────────`))
+          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Sesión cerrada o cuenta en soporte para la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
           fs.rmdirSync(pathblackJadiBot, { recursive: true })
         }
       }
