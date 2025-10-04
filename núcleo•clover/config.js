@@ -15,7 +15,7 @@ global.botNumber = ''; // Ejemplo: 525568138672
 global.owner = [
   ['5215544876071', '🜲 𝗖𝗿𝗲𝗮𝗱𝗼𝗿 👻', true],
   ['5217971289909'],
-  ['', '', false], // Espacios opcionales
+  ['5217971282613', '', false], // Espacios opcionales
   ['', '', false],
   ['', '', false]
 ];
@@ -36,12 +36,10 @@ global.blackJadibts = true;
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.packsticker = `
- ✞ 𝙱𝙾𝚃: 𝙱𝚕𝚊𝚌𝚔 𝙲𝚕𝚘𝚟𝚎𝚛 ☘
- ✞ 𝙰𝚄𝚃𝙾𝚁: 𝚃𝙷𝙴 𝙲𝙰𝐑𝙻𝙾𝚂 ✞ ᚲ`;
+  𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ✞ ᚲ`;
 
-global.packname = '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | The Carlos ';
+global.packname = '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 ✞';
 
-global.author = `${moment.tz('America/Mexico_City').format('DD/MM/YY')} ⏱ ${moment.tz('America/Mexico_City').format('HH:mm')}`;
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.wm = '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ☘';
 global.titulowm = '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ☘';
@@ -63,7 +61,7 @@ global.channel2 = 'https://whatsapp.com/channel/0029VajUPbECxoB0cYovo60W';
 global.cn = global.channel;
 global.yt = 'https://www.youtube.com/@ElCarlos.87';
 global.md = 'https://github.com/thecarlos19/black-clover-MD';
-global.correo = '';
+global.correo = 'thecarlospcok@gmail.com';
 
 global.catalogo = fs.readFileSync(new URL('../src/catalogo.jpg', import.meta.url));
 global.photoSity = [global.catalogo];
