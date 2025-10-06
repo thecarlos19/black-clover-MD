@@ -3,16 +3,6 @@
 
 <img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=0000FF&center=falso&vCenter=falso&lines=🜛+𝐁𝐋𝐀𝐂𝐊+𝐂𝐋𝐎𝐕𝐄𝐑+𝐕777+🜛;۞+𝐎𝐅𝐂+𝐔𝐏𝐃𝐀𝐓𝐄+۞;@Thecarlos✞">
 
-> 🔮 Visita este api, te puede ser útil y mucho mejor que otros Apis.
-
-> [!WARNING] 
-> Esta API necesita clave de acceso, puedes comprar saldo en la tienda oficial de Stellar —¡recarga y comienza ya! 
-
-## ☄️ Stellar-API 
-
-> **Link:** [Api Stellar](https://api.stellarwa.xyz)
-
-> **Tienda:** [Store Stellar](https://api.stellarwa.xyz/store)
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
