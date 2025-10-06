@@ -38,7 +38,7 @@ global.blackJadibts = true;
 global.packsticker = `
   𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ✞ ᚲ`;
 
-global.packname = '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 ✞';
+global.packname = '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ☘';
 
 global.author = `
 ⇝ 📆 ${moment.tz('America/Los_Angeles').format('DD/MM/YY')}
