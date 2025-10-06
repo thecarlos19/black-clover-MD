@@ -1,28 +1,31 @@
-//Codigo creado x The Carlos 👑 ` 
-//No editar ya está bien hecho,si lo vas a utilizar cambia el ytmp3 a play si tienen un Apis que funcionen manden mensaje xd 
-//No olviden dejar créditos 
-
 import fetch from "node-fetch";
-import yts from 'yt-search';
+import yts from "yt-search";
+import Jimp from "jimp";
 
 const youtubeRegexID = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/;
 
+async function resizeImage(buffer, size = 300) {
+  const image = await Jimp.read(buffer);
+  return image.resize(size, size).getBufferAsync(Jimp.MIME_JPEG);
+}
+
 const handler = async (m, { conn, text, command }) => {
+  await conn.sendMessage(m.chat, { react: { text: "⌛", key: m.key } });
+  await conn.sendMessage(m.chat, { react: { text: "✖️", key: m.key } });
+  await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } });
+
+  if (!text?.trim()) return conn.reply(m.chat, `🥷🏻 Dime el nombre del video o canción que buscas`, m);
+
   try {
-    if (!text.trim()) {
-      return conn.reply(m.chat, `🥷🏻 Por favor, ingresa el nombre o link del video.`, m);
-    }
-
-    await conn.sendMessage(m.chat, { react: { text: "⌛", key: m.key } });
-
     let videoIdToFind = text.match(youtubeRegexID) || null;
     let ytplay2 = await yts(videoIdToFind === null ? text : 'https://youtu.be/' + videoIdToFind[1]);
 
     if (videoIdToFind) {
-      const videoId = videoIdToFind[1];  
+      const videoId = videoIdToFind[1];
       ytplay2 = ytplay2.all.find(item => item.videoId === videoId) || ytplay2.videos.find(item => item.videoId === videoId);
-    } 
-    ytplay2 = ytplay2.all?.[0] || ytplay2.videos?.[0] || ytplay2;  
+    }
+
+    ytplay2 = ytplay2.all?.[0] || ytplay2.videos?.[0] || ytplay2;
 
     if (!ytplay2 || ytplay2.length == 0) {
       await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } });
@@ -44,110 +47,60 @@ const handler = async (m, { conn, text, command }) => {
       }
     }
 
-    // ===== YTMP3 / PLAY =====
     if (['ytmp3'].includes(command)) {
-      let result, fileName, captionText;
+      const apiURL = `https://api.sylphy.xyz/download/ytmp3?apikey=sylphy_2962&url=${encodeURIComponent(url)}`;
+      const res = await fetch(apiURL);
+      const json = await res.json();
 
-      const fuentes = [
-        { api: 'ZenzzXD', endpoint: `https://api.zenzxz.my.id/downloader/ytmp3?url=${encodeURIComponent(url)}`, extractor: res => res.download_url },
-        { api: 'ZenzzXD v2', endpoint: `https://api.zenzxz.my.id/downloader/ytmp3v2?url=${encodeURIComponent(url)}`, extractor: res => res.download_url },
-        { api: 'Vreden', endpoint: `https://api.vreden.my.id/api/ytmp3?url=${encodeURIComponent(url)}`, extractor: res => res.result?.download?.url },
-        { api: 'Delirius', endpoint: `https://api.delirius.my.id/download/ymp3?url=${encodeURIComponent(url)}`, extractor: res => res.data?.download?.url }
-      ];
-
-      let exito = false;
-      for (let fuente of fuentes) {
-        try {
-          const response = await fetch(fuente.endpoint);
-          if (!response.ok) continue;
-          const data = await response.json();
-          const link = fuente.extractor(data);
-          if (link) {
-            result = link;
-            fileName = `${title}.mp3`;
-            captionText = `${title} | #The Carlos 👑 (API: ${fuente.api})`;
-            exito = true;
-            break;
-          }
-        } catch (err) {
-          console.log(`⚠️ Error con ${fuente.api}:`, err.message);
-        }
-      }
-
-      if (!exito) {
-        await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } });
-        return conn.reply(m.chat, '🥲︎ No se pudo enviar el audio desde ninguna API.', m);
-      }
+      if (!json?.status || !json.res?.url) return m.reply("❌ No se pudo descargar el audio desde Sylphy.");
 
       await conn.sendMessage(
         m.chat,
-        { 
-          document: { url: result }, 
-          mimetype: 'audio/mpeg', 
-          fileName: fileName,
+        {
+          audio: { url: json.res.url },
+          mimetype: 'audio/mpeg',
+          fileName: `${json.res.title || title}.mp3`,
+          ptt: false,
           jpegThumbnail: thumbBuffer,
-          caption: captionText
-        }, 
+          caption: `${json.res.title || title} | #The Carlos 👑 (API: Sylphy)`
+        },
         { quoted: m }
       );
 
       await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } });
-    } 
-    
-    // ===== YTMP4DOC =====
-    else if (command === 'ytmp4doc') {
-      const apis = [
-        { api: 'ZenzzXD', endpoint: `https://api.zenzxz.my.id/downloader/ytmp4?url=${encodeURIComponent(url)}`, extractor: res => res.download_url },
-        { api: 'ZenzzXD v2', endpoint: `https://api.zenzxz.my.id/downloader/ytmp4v2?url=${encodeURIComponent(url)}`, extractor: res => res.download_url },
-        { api: 'Vreden', endpoint: `https://api.vreden.my.id/api/ytmp4?url=${encodeURIComponent(url)}`, extractor: res => res.result?.download?.url },
-        { api: 'Delirius', endpoint: `https://api.delirius.my.id/download/ymp4?url=${encodeURIComponent(url)}`, extractor: res => res.data?.download?.url }
-      ];
-
-      let exito = false;
-      for (let fuente of apis) {
-        try {
-          const res = await fetch(fuente.endpoint);
-          const data = await res.json();
-          const dl = fuente.extractor(data);
-          const videoTitle = data.title || title;
-
-          if (dl) {
-            await conn.sendMessage(
-              m.chat,
-              { 
-                document: { url: dl },
-                fileName: `${videoTitle}.mp4`,
-                mimetype: 'video/mp4',
-                jpegThumbnail: thumbBuffer,
-                caption: `${videoTitle} | #The Carlos 👑 (API: ${fuente.api})`
-              },
-              { quoted: m }
-            );
-            exito = true;
-            await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } });
-            break;
-          }
-        } catch (err) {
-          console.log(`Error con ${fuente.api}:`, err.message);
-        }
-      }
-
-      if (!exito) {
-        await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } });
-        return conn.reply(m.chat, '🥲︎ No se pudo enviar el video desde ninguna fuente.', m);
-      }
-    } 
-    else {
-      return conn.reply(m.chat, '🪄︎ Comando no reconocido.', m);
     }
+
+    if (['ytmp4doc'].includes(command)) {
+      const apiURL = `https://api.sylphy.xyz/download/ytmp4?apikey=sylphy-fbb9&url=${encodeURIComponent(url)}`;
+      const res = await fetch(apiURL);
+      const json = await res.json();
+
+      if (!json?.status || !json.res?.url) return m.reply("❌ No se pudo descargar el video desde Sylphy.");
+
+      const dl = json.res.url;
+      const videoTitle = json.res.title || title;
+
+      await conn.sendMessage(
+        m.chat,
+        {
+          document: { url: dl },
+          fileName: `${videoTitle}.mp4`,
+          mimetype: 'video/mp4',
+          jpegThumbnail: thumbBuffer,
+          caption: `${videoTitle} | #The Carlos 👑 (API: Sylphy)`
+        },
+        { quoted: m }
+      );
+
+      await conn.sendMessage(m.chat, { react: { text: "✅", key: m.key } });
+    }
+
   } catch (error) {
-    await conn.sendMessage(m.chat, { react: { text: "❌", key: m.key } });
-    return m.reply(`🚫 Ocurrió un error: ${error.message}`);
+    console.log("❌ Error:", error);
+    return m.reply(`⚠️ Ocurrió un error: ${error.message}`);
   }
 };
 
 handler.command = handler.help = ['ytmp3', 'ytmp4doc'];
 handler.tags = ['descargas'];
-handler.group = true;
-
 export default handler;

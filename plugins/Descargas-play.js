@@ -29,7 +29,7 @@ Elige una de las opciones para descargar:
       { buttonId: `.ytmp3 ${videoInfo.url}`, buttonText: { displayText: '🎧 Audio' } },
         { buttonId: `.ytmp4 ${videoInfo.url}`, buttonText: { displayText: '📽️ Video' } },
         { buttonId: `.ytmp3doc ${videoInfo.url}`, buttonText: { displayText: '💿 audio doc' } },
-        { buttonId: `.ytmp4doc ${videoInfo.url}`, buttonText: { displayText: '🎥 vídeo doc' } },
+        { buttonId: `.spotify ${videoInfo.url}`, buttonText: { displayText: '🦠 Spotify' } },
       ],
       viewOnce: true,
       headerType: 4,
