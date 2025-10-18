@@ -1,40 +1,40 @@
 {
-"name": "Black-clover-MD",
-"version": "7.7.7",
-"description": "El Mejor bot de WhatsApp",
-"main": "index.js",
-"type": "module",
-"directories": {
-"lib": "lib",
-"src": "src",
-"plugins": "plugins"
-},
-"scripts": {
-"start": "node index.js",
-"qr": "node index.js qr",
-"code": "node index.js code",
-"eslint": "eslint .",
-"eslintfix": "eslint --fix ."
-},
-"homepage": "https://github.com/thecarlos19/black-clover-MD",
-"author": {
-"name": "thecarlos19"
-},
-"collaborators": {
-"col1": "Antuan",
-"col2": "Russell",
-"col3": "desconocido",
-},
-"repository": {
-"type": "git",
-"url": "git+https://github.com/thecarlos19/black-clover-MD.git"
-},
-"bugs": {
-"url": "https://github.com/thecarlos19/black-clover-MD/issues"
-},
-"license": "GPL-3.0-or-later",
-"dependencies": {
- "@whiskeysockets/baileys": "github:EdderBot02/bail",
+  "name": "black-clover-MD",
+  "version": "7.7.7",
+  "description": "El Mejor bot de WhatsApp",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "lib": "lib",
+    "src": "src",
+    "plugins": "plugins"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "qr": "node index.js qr",
+    "code": "node index.js code",
+    "eslint": "eslint .",
+    "eslintfix": "eslint --fix ."
+  },
+  "homepage": "https://github.com/thecarlos19/black-clover-MD",
+  "author": {
+    "name": "thecarlos19"
+  },
+  "collaborators": {
+    "col1": "Antuan",
+    "col2": "Russell",
+    "col3": "Edgar"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thecarlos19/black-clover-MD.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thecarlos19/black-clover-MD/issues"
+  },
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@whiskeysockets/baileys": "github:EdderBot02/bail",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@bochilteam/scraper": "^4.2.4",
     "@bochilteam/scraper-sosmed": "^1.0.5",
