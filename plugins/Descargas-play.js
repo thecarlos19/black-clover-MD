@@ -5,7 +5,6 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     throw `❗ Por favor ingresa un texto para buscar.\nEjemplo: ${usedPrefix + command} Nombre del video`;
   }
 
-  
   const search = await yts(text);
   const videoInfo = search.all?.[0];
 
@@ -26,22 +25,33 @@ Elige una de las opciones para descargar:
       caption: body,
       footer: `𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ☘︎| ⚔️🥷`,
       buttons: [
-      { buttonId: `.ytmp3 ${videoInfo.url}`, buttonText: { displayText: '🎧 Audio' } },
+        { buttonId: `.ytmp3 ${videoInfo.url}`, buttonText: { displayText: '🎧 Audio' } },
         { buttonId: `.ytmp4 ${videoInfo.url}`, buttonText: { displayText: '📽️ Video' } },
         { buttonId: `.ytmp3doc ${videoInfo.url}`, buttonText: { displayText: '💿 audio doc' } },
         { buttonId: `.ytmp4doc ${videoInfo.url}`, buttonText: { displayText: '🎥 vídeo doc' } },
       ],
       viewOnce: true,
       headerType: 4,
+      contextInfo: {
+        externalAdReply: {
+          showAdAttribution: false,
+          title: '📡 Descargas clover',
+          body: '✡︎ Dev • TheCarlos',
+          mediaType: 2,
+          sourceUrl: global.redes || '',
+          thumbnail: global.icons || null
+        }
+      }
     },
     { quoted: m }
   );
-  m.react('✅'); // Reacción de éxito
+
+  m.react('✅'); 
 };
 
 handler.command = ['play', 'playvid', 'play2'];
-handler.tags = ['downloader']
-handler.group = true
-handler.limit = 6
+handler.tags = ['descargas'];
+handler.group = true;
+handler.limit = 6;
 
 export default handler;
