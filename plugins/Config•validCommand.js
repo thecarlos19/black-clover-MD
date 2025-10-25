@@ -24,7 +24,6 @@ export async function before(m, { conn }) {
 
   const comando = usedPrefix + command
 
-  // Easter Eggs ocultos
   const easterEggs = {
     'hacked': { recompensa: 100, mensaje: '👾 *Acceso oculto concedido... +100 XP.*' },
     'glitch': { recompensa: 50, mensaje: '⚡ *Glitch detectado. +50 monedas.*' },
@@ -51,7 +50,6 @@ export async function before(m, { conn }) {
     `❌ Error de sintaxis:`
   ]
 
-  // Frases de IA broma + groserías controladas (50)
   const bromas = [
     `🤖 *Estoy evolucionando... no seas pendejo.*`,
     `🛑 *¿Intentas hackearme? Ni que fueras el puto cuervo.*`,
@@ -111,18 +109,4 @@ export async function before(m, { conn }) {
     : `${errores[Math.floor(Math.random() * errores.length)]}\n*${comando}*\n📕 Usa *${usedPrefix}help* para ver el menú.`
 
   await m.reply(respuesta.trim())
-
-  // Registro del intento
-  const logDir = './logs'
-  const logFile = path.join(logDir, 'comandos_invalidos.log')
-  const chatName = m.isGroup ? (await conn.getName(m.chat)) : 'Privado'
-  const userName = await conn.getName(m.sender)
-  const logEntry = `[${new Date().toISOString()}] ✖ ${comando} | ${userName} | ${chatName} (${m.chat})\n`
-
-  try {
-    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true })
-    fs.appendFileSync(logFile, logEntry)
-  } catch (e) {
-    console.error('\x1b[31m[ANTI-CMD] Error al guardar log:\x1b[0m', e)
-  }
 }

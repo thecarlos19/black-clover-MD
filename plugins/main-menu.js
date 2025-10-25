@@ -1,19 +1,18 @@
 import { xpRange } from '../lib/levelling.js'
+import fs from 'fs'
+import path from 'path'
+import fetch from 'node-fetch'
+import Jimp from 'jimp'
 
 const textCyberpunk = (text) => {
-  const charset = {
-    a: 'ᴀ', b: 'ʙ', c: 'ᴄ', d: 'ᴅ', e: 'ᴇ', f: 'ꜰ', g: 'ɢ',
-    h: 'ʜ', i: 'ɪ', j: 'ᴊ', k: 'ᴋ', l: 'ʟ', m: 'ᴍ', n: 'ɴ',
-    o: 'ᴏ', p: 'ᴘ', q: 'ǫ', r: 'ʀ', s: 'ꜱ', t: 'ᴛ', u: 'ᴜ',
-    v: 'ᴠ', w: 'ᴡ', x: 'x', y: 'ʏ', z: 'ᴢ'
-  }
+  const charset = { a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ꜰ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'ǫ',r:'ʀ',s:'ꜱ',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ' }
   return text.toLowerCase().split('').map(c => charset[c] || c).join('')
 }
 
 let tags = {
   'main': textCyberpunk('sistema'),
   'group': textCyberpunk('grupos'),
-  'serbot': textCyberpunk('sub bots'),
+  'serbot': textCyberpunk('sub bots')
 }
 
 const defaultMenu = {
@@ -32,30 +31,53 @@ const defaultMenu = {
 %readmore
 `.trimStart(),
 
-header: '\n╭─〔 🦠 %category 〕─╮',
+  header: '\n╭─〔 🦠 %category 〕─╮',
   body: '│ ⚙️ %cmd\n',
   footer: '╰────────────────╯',
   after: '\n⌬ 𝗖𝗬𝗕𝗘𝗥 𝗠𝗘𝗡𝗨 ☠️ - Sistema ejecutado con éxito.'
 }
 
+const menuDir = './media/menu'
+if (!fs.existsSync(menuDir)) fs.mkdirSync(menuDir, { recursive: true })
+
+function getMenuMediaFile(botJid) {
+  const botId = botJid.replace(/[:@.]/g, '_')
+  return path.join(menuDir, `menuMedia_${botId}.json`)
+}
+
+function loadMenuMedia(botJid) {
+  const file = getMenuMediaFile(botJid)
+  if (fs.existsSync(file)) {
+    try { return JSON.parse(fs.readFileSync(file)) } catch (e) {
+      console.warn('Error leyendo menuMedia JSON:', e)
+      return {}
+    }
+  }
+  return {}
+}
+
 let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
-    let { exp, level } = global.db.data.users[m.sender]
-    let { min, xp, max } = xpRange(level, global.multiplier)
-    let name = await conn.getName(m.sender)
-    let _uptime = process.uptime() * 1000
-    let muptime = clockString(_uptime)
-    let ramUsage = (process.memoryUsage().rss / 1024 / 1024).toFixed(2)
-    let totalreg = Object.keys(global.db.data.users).length
-    let mode = global.opts["self"] ? "Privado" : "Público"
+    const botJid = conn.user.jid
+    const menuMedia = loadMenuMedia(botJid)
+    const subBotMenu = global.subBotMenus?.[botJid] || defaultMenu
+    const { before, header, body, footer, after } = subBotMenu
 
-    let help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
+    const { exp, level } = global.db.data.users[m.sender]
+    const { min, xp, max } = xpRange(level, global.multiplier)
+    const name = await conn.getName(m.sender)
+    const _uptime = process.uptime() * 1000
+    const muptime = clockString(_uptime)
+    const totalreg = Object.keys(global.db.data.users).length
+    const mode = global.opts["self"] ? "Privado" : "Público"
+
+    const help = Object.values(global.plugins).filter(p => !p.disabled).map(p => ({
       help: Array.isArray(p.help) ? p.help : [p.help],
       tags: Array.isArray(p.tags) ? p.tags : [p.tags],
       prefix: 'customPrefix' in p,
       limit: p.limit,
       premium: p.premium,
-      enabled: !p.disabled,
+      enabled: !p.disabled
     }))
 
     for (let plugin of help) {
@@ -65,8 +87,6 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         }
       }
     }
-
-    const { before, header, body, footer, after } = defaultMenu
 
     let _text = [
       before,
@@ -80,7 +100,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       after
     ].join('\n')
 
-    let replace = {
+    const replace = {
       '%': '%',
       name,
       level,
@@ -89,17 +109,32 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       totalreg,
       mode,
       muptime,
-      ram: ramUsage,
       readmore: String.fromCharCode(8206).repeat(4001)
     }
 
-    let text = _text.replace(/%(\w+)/g, (_, key) => replace[key] || '')
+    const text = _text.replace(/%(\w+)/g, (_, key) => replace[key] || '')
 
-    // el mejor bot 
+    let thumbBuffer
+    if (menuMedia.thumbnail && fs.existsSync(menuMedia.thumbnail)) {
+      const img = await Jimp.read(menuMedia.thumbnail)
+      thumbBuffer = await img.resize(300, Jimp.AUTO).getBufferAsync(Jimp.MIME_JPEG)
+    } else {
+      thumbBuffer = await fetch('https://files.catbox.moe/loczhh.jpg').then(res => res.arrayBuffer()).then(Buffer.from)
+    }
+
+    let mediaMessage
+    if (menuMedia.video && fs.existsSync(menuMedia.video)) {
+      mediaMessage = { video: fs.readFileSync(menuMedia.video), jpegThumbnail: thumbBuffer, gifPlayback: true }
+    } else {
+      const defaultVideo = await fetch('https://files.catbox.moe/n7wh11.mp4').then(res => res.arrayBuffer()).then(Buffer.from)
+      mediaMessage = { video: defaultVideo, jpegThumbnail: thumbBuffer, gifPlayback: true }
+    }
+
+    const menuTitle = menuMedia.menuTitle || '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | 𝕳𝖆𝖐 v777 🥷🏻'
+
     await conn.sendMessage(m.chat, {
-      video: { url: 'https://files.catbox.moe/n7wh11.mp4' },
+      ...mediaMessage,
       caption: text,
-      gifPlayback: true,
       footer: '🧠 BLACK CLOVER SYSTEM ☘️',
       buttons: [
         { buttonId: `${_p}menurpg`, buttonText: { displayText: '🏛️ M E N U R P G' }, type: 1 },
@@ -107,10 +142,10 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       ],
       contextInfo: {
         externalAdReply: {
-          title: '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗  | 𝕳𝖆𝖐 v777 🥷🏻',
-          body: ' —͟͟͞͞𖣘𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 ㊗  ',
-          thumbnailUrl: 'https://files.catbox.moe/loczhh.jpg', 
-          sourceUrl: 'https://github.com/thecarlos19/black-clover-MD', 
+          title: menuTitle,
+          body: '🇲🇽 𝐃𝐞𝐯 • 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 𖣘',
+          thumbnail: thumbBuffer,
+          sourceUrl: 'https://github.com/thecarlos19/black-clover-MD',
           mediaType: 1,
           renderLargerThumbnail: true
         }
@@ -130,8 +165,8 @@ handler.register = true
 export default handler
 
 function clockString(ms) {
-  let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
-  let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-  let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
+  const h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
+  const m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
+  const s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
 }
