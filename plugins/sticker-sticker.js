@@ -10,15 +10,14 @@ let handler = async (m, { conn, args }) => {
   try {
     const q = m.quoted ? m.quoted : m
     const mime = (q.msg || q).mimetype || q.mediaType || ''
-
+    if (!fs.existsSync('./tmp')) fs.mkdirSync('./tmp')
     if (/webp|image|video/g.test(mime)) {
       if (/video/.test(mime) && ((q.msg || q).seconds > 8)) {
         return m.reply('⚠️ *El video no puede durar más de 8 segundos.*')
       }
-
       const media = await q.download()
       if (!media) return m.reply('❌ *No se pudo descargar el archivo. Asegúrate de responder a una imagen/video o gif.*')
-
+      const tmpPath = path.join('./tmp', `${Date.now()}.webp`)
       try {
         stiker = await sticker(
           media,
@@ -26,21 +25,21 @@ let handler = async (m, { conn, args }) => {
           global.packsticker || 'Black Clover Pack',
           global.author || 'By The Carlos'
         )
+        if (Buffer.isBuffer(stiker)) fs.writeFileSync(tmpPath, stiker)
       } catch (e) {
         let out
         if (/webp/.test(mime)) out = await webp2png(media)
         else if (/image/.test(mime)) out = await uploadImage(media)
         else if (/video/.test(mime)) out = await uploadFile(media)
         if (typeof out !== 'string') out = await uploadImage(media)
-
         stiker = await sticker(
           false,
           out,
           global.packsticker || 'Black Clover Pack',
           global.author || 'By The Carlos'
         )
+        if (Buffer.isBuffer(stiker)) fs.writeFileSync(tmpPath, stiker)
       }
-
     } else if (args[0]) {
       if (isUrl(args[0])) {
         stiker = await sticker(
@@ -49,35 +48,37 @@ let handler = async (m, { conn, args }) => {
           global.packsticker || 'Black Clover Pack',
           global.author || 'By The Carlos'
         )
+        const tmpPath = path.join('./tmp', `${Date.now()}.webp`)
+        if (Buffer.isBuffer(stiker)) fs.writeFileSync(tmpPath, stiker)
       } else {
         return m.reply('📛 *El enlace proporcionado no es válido.*')
       }
     } else {
       return m.reply('📌 *Envía o responde a una imagen/video/gif (máx 8s) o proporciona un enlace válido.*')
     }
-
   } catch (e) {
     console.error('❌ Error al crear el sticker:', e)
     return m.reply('⚠️ *Ocurrió un error inesperado al intentar crear el sticker.*')
   }
-
   if (stiker) {
     try {
-      // Leer la primera imagen disponible en src/img
       const imgFolder = path.join('./src/img')
-      const imgFiles = fs.readdirSync(imgFolder).filter(f => /\.(jpe?g|png|webp)$/i.test(f))
+      const imgFiles = fs.existsSync(imgFolder) ? fs.readdirSync(imgFolder).filter(f => /\.(jpe?g|png|webp)$/i.test(f)) : []
       let contextInfo = {}
       if (imgFiles.length > 0) {
-        contextInfo = {
-          externalAdReply: {
-            title: 'Black-clover-MD 🥷🏻',
-            body: 'Dev • The Carlos ✨',
-            mediaType: 2,
-            thumbnail: fs.readFileSync(path.join(imgFolder, imgFiles[0]))
+        const randomImg = path.join(imgFolder, imgFiles[Math.floor(Math.random() * imgFiles.length)])
+        const thumb = fs.existsSync(randomImg) ? fs.readFileSync(randomImg) : null
+        if (thumb) {
+          contextInfo = {
+            externalAdReply: {
+              title: 'Black-clover-MD 🥷🏻',
+              body: 'Dev • The Carlos ✨',
+              mediaType: 2,
+              thumbnail: thumb
+            }
           }
         }
       }
-
       if (Buffer.isBuffer(stiker)) {
         await conn.sendMessage(
           m.chat,

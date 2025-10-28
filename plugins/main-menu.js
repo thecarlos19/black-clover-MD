@@ -24,15 +24,15 @@ const defaultMenu = {
 │ 🌐 𝙈𝙤𝙙𝙚      » %mode  
 │ ⏳ 𝘼𝙘𝙩𝙞𝙫𝙤   » %muptime  
 │ 👥 𝙐𝙨𝙪𝙖𝙧𝙞𝙤𝙨 » %totalreg  
-★━━━━━━━━━━━━━━━━━★
+🎃🕸️──♱𓉸⋆⋅☆⋅⋆𓉸♱──🕸️🎃
 
-🧬 » 𝗛𝗔𝗖𝗞 𝗡𝗢𝗗𝗘 𝗔𝗖𝗧𝗜𝗩𝗢 «  
+🕷️ » 𝗠𝗘𝗡𝗨 𝐇𝐚𝐥𝐥𝐨𝐰𝐞𝐞𝐧   «  
 👑 » 𝗢𝗽𝗲𝗿𝗮𝗱𝗼𝗿:—͟͟͞͞𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 𖣘 «
 %readmore
 `.trimStart(),
 
-  header: '\n╭─〔 🦠 %category 〕─╮',
-  body: '│ ⚙️ %cmd\n',
+  header: '\n╭─〔 🎃 %category 〕─╮',
+  body: '│ 🕯️ %cmd\n',
   footer: '╰────────────────╯',
   after: '\n⌬ 𝗖𝗬𝗕𝗘𝗥 𝗠𝗘𝗡𝗨 ☠️ - Sistema ejecutado con éxito.'
 }
@@ -116,18 +116,19 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
 
     let thumbBuffer
     if (menuMedia.thumbnail && fs.existsSync(menuMedia.thumbnail)) {
-      const img = await Jimp.read(menuMedia.thumbnail)
-      thumbBuffer = await img.resize(300, Jimp.AUTO).getBufferAsync(Jimp.MIME_JPEG)
+      thumbBuffer = fs.readFileSync(menuMedia.thumbnail)
     } else {
-      thumbBuffer = await fetch('https://files.catbox.moe/loczhh.jpg').then(res => res.arrayBuffer()).then(Buffer.from)
+      thumbBuffer = await fetch('https://qu.ax/gJeMX.jpg').then(res => res.arrayBuffer()).then(Buffer.from)
     }
+
+    const uniqueThumb = Buffer.concat([thumbBuffer, Buffer.from(conn.user.jid)])
 
     let mediaMessage
     if (menuMedia.video && fs.existsSync(menuMedia.video)) {
-      mediaMessage = { video: fs.readFileSync(menuMedia.video), jpegThumbnail: thumbBuffer, gifPlayback: true }
+      mediaMessage = { video: fs.readFileSync(menuMedia.video), jpegThumbnail: uniqueThumb, gifPlayback: true }
     } else {
       const defaultVideo = await fetch('https://files.catbox.moe/n7wh11.mp4').then(res => res.arrayBuffer()).then(Buffer.from)
-      mediaMessage = { video: defaultVideo, jpegThumbnail: thumbBuffer, gifPlayback: true }
+      mediaMessage = { video: defaultVideo, jpegThumbnail: uniqueThumb, gifPlayback: true }
     }
 
     const menuTitle = menuMedia.menuTitle || '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | 𝕳𝖆𝖐 v777 🥷🏻'
@@ -143,8 +144,8 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       contextInfo: {
         externalAdReply: {
           title: menuTitle,
-          body: '🇲🇽 𝐃𝐞𝐯 • 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 𖣘',
-          thumbnail: thumbBuffer,
+          body: 'ִ┊࣪ ˖𝐃𝐞𝐯 • 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 ♱',
+          thumbnail: uniqueThumb,
           sourceUrl: 'https://github.com/thecarlos19/black-clover-MD',
           mediaType: 1,
           renderLargerThumbnail: true
