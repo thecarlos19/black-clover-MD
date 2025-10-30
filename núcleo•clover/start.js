@@ -303,6 +303,7 @@ global.reloadHandler = async function(restatConn) {
   return true
 };
 
+
 global.rutaJadiBot = join(__dirname, '../núcleo•clover/blackJadiBot')
 
 if (global.blackJadibts) {
@@ -401,7 +402,7 @@ async function _quickTest() {
 }
 
 function clearTmp() {
-  const tmpDir = join(__dirname, 'tmp')
+  const tmpDir = join(process.cwd(), 'tmp')
   if (!existsSync(tmpDir)) mkdirSync(tmpDir, { recursive: true })
   const filenames = readdirSync(tmpDir)
   filenames.forEach(file => {
@@ -450,6 +451,22 @@ function purgeOldFiles() {
   })
 }
 
+if (!opts['test']) {
+  if (global.db) {
+    setInterval(async () => {
+      try {
+        if (global.db.data) await global.db.write()
+        if (opts['autocleartmp'] && (global.support || {}).find) {
+          const tmpDirs = [os.tmpdir(), join(process.cwd(), 'tmp'), `${jadi}`]
+          tmpDirs.forEach(dir => cp.spawn('find', [dir, '-amin', '3', '-type', 'f', '-delete']))
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }, 30000)
+  }
+}
+
 setInterval(async () => {
   if (stopped === 'close' || !conn || !conn.user) return
   await clearTmp()
@@ -474,29 +491,40 @@ setInterval(async () => {
 
 _quickTest().then(() => conn.logger.info(chalk.bold(`✞ H E C H O\n`.trim()))).catch(console.error)
 
-let stopped; 
+let stopped
 
 setInterval(async () => {
-  if (stopped === 'close' || !conn || !conn?.user) return;
-  const _uptime = process.uptime() * 1000;
-  const uptime = clockString(_uptime);
-  const bio = `🦠 Black-clover-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`;
-  await conn?.updateProfileStatus(bio).catch((_) => _);
-}, 60000);
+  if (stopped === 'close' || !conn || !conn?.user) return
+  const _uptime = process.uptime() * 1000
+  const uptime = clockString(_uptime)
+  const bio = `🦠 Black-clover-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`
+  await conn?.updateProfileStatus(bio).catch(_ => _)
+  if (global.rutaJadiBot) {
+    const bots = readdirSync(global.rutaJadiBot)
+    for (const bot of bots) {
+      const credsPath = join(global.rutaJadiBot, bot, 'creds.json')
+      if (existsSync(credsPath)) {
+        try {
+          await conn?.updateProfileStatus(bio).catch(_ => _)
+        } catch {}
+      }
+    }
+  }
+}, 60000)
 
 function clockString(ms) {
-  const d = isNaN(ms) ? '--' : Math.floor(ms / 86400000);
-  const h = isNaN(ms) ? '--' : Math.floor(ms / 3600000) % 24;
-  const m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60;
-  const s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60;
-  return [d, 'd ️', h, 'h ', m, 'm ', s, 's '].map((v) => v.toString().padStart(2, 0)).join('');
+  const d = isNaN(ms) ? '--' : Math.floor(ms / 86400000)
+  const h = isNaN(ms) ? '--' : Math.floor(ms / 3600000) % 24
+  const m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
+  const s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
+  return [d, 'd ', h, 'h ', m, 'm ', s, 's '].map((v) => v.toString().padStart(2, 0)).join('')
 }
 
 async function isValidPhoneNumber(number) {
   try {
     number = number.replace(/\s+/g, '')
-    if (number.startsWith('+521')) number = number.replace('+521', '+52');
-    else if (number.startsWith('+52') && number[4] === '1') number = number.replace('+52 1', '+52');
+    if (number.startsWith('+521')) number = number.replace('+521', '+52')
+    else if (number.startsWith('+52') && number[4] === '1') number = number.replace('+52 1', '+52')
     const parsedNumber = phoneUtil.parseAndKeepRawInput(number)
     return phoneUtil.isValidNumber(parsedNumber)
   } catch {
