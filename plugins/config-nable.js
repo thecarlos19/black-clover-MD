@@ -14,7 +14,6 @@ const handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, i
 ${usedPrefix + command} welcome
 ${usedPrefix + command} autoresponder
 ${usedPrefix + command} autoaceptar
-${usedPrefix + command} autorechazar
 ${usedPrefix + command} detect
 ${usedPrefix + command} antidelete
 ${usedPrefix + command} antilink
