@@ -58,6 +58,8 @@ function loadMenuMedia(botJid) {
 
 let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
+    await conn.sendMessage(m.chat, { react: { text: '🎃', key: m.key } })
+
     const botJid = conn.user.jid
     const menuMedia = loadMenuMedia(botJid)
     const subBotMenu = global.subBotMenus?.[botJid] || defaultMenu
