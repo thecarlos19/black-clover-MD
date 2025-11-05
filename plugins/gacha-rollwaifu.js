@@ -43,7 +43,6 @@ let handler = async (m, { conn }) => {
     const userId = m.sender
     const now = Date.now()
 
-    // Cooldown de 15 minutos
     if (cooldowns[userId] && now < cooldowns[userId]) {
         const remainingTime = Math.ceil((cooldowns[userId] - now) / 1000)
         const minutes = Math.floor(remainingTime / 60)
@@ -53,39 +52,40 @@ let handler = async (m, { conn }) => {
 
     try {
         const characters = await loadCharacters()
+        if (!Array.isArray(characters) || characters.length === 0) throw new Error('No hay personajes disponibles.')
+
         const randomCharacter = characters[Math.floor(Math.random() * characters.length)]
-        const randomImage = randomCharacter.img[Math.floor(Math.random() * randomCharacter.img.length)]
+        if (!randomCharacter || typeof randomCharacter !== 'object') throw new Error('Personaje inválido.')
+
+        const imgs = Array.isArray(randomCharacter.img) && randomCharacter.img.length > 0 ? randomCharacter.img : [randomCharacter.img || '']
+        const randomImage = imgs[Math.floor(Math.random() * imgs.length)]
 
         const harem = await loadHarem()
         const userEntry = harem.find(entry => entry.characterId === randomCharacter.id)
 
         const statusMessage = randomCharacter.user 
-            ? `Reclamado por @${randomCharacter.user.split('@')[0]}` 
+            ? `Reclamado por @${randomCharacter.user.split('@')[0]}`
             : 'Libre'
 
-        const message = `❀ Nombre » *${randomCharacter.name}*
-⚥ Género » *${randomCharacter.gender}*
-✰ Valor » *${randomCharacter.value}*
+        const message = `❀ Nombre » *${randomCharacter.name || 'Desconocido'}*
+⚥ Género » *${randomCharacter.gender || 'N/A'}*
+✰ Valor » *${randomCharacter.value || 'N/A'}*
 ♡ Estado » ${statusMessage}
-❖ Fuente » *${randomCharacter.source}*
-✦ ID: *${randomCharacter.id}*`
+❖ Fuente » *${randomCharacter.source || 'Desconocida'}*
+✦ ID: *${randomCharacter.id || 'Sin ID'}*`
 
-        // Menciones si ya está reclamado
         const mentions = userEntry ? [userEntry.userId] : []
 
-        // Enviar imagen con texto
         await conn.sendMessage(m.chat, {
             image: { url: randomImage },
             caption: message,
             mentions
         }, { quoted: m })
 
-        // Si está libre, actualizar archivo
         if (!randomCharacter.user) {
             await saveCharacters(characters)
         }
 
-        // Cooldown 15 minutos
         cooldowns[userId] = now + 15 * 60 * 1000
 
     } catch (error) {
