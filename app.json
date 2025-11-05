@@ -1,7 +1,7 @@
 {
-  "name": "SILA MD",
-  "description": "THE BEST WHATSAPP BOT SILA MD",
-  "logo": "https://files.catbox.moe/gnjb7s.jpg",
+  "name": "BLACK CLOVER MD",
+  "description": "THE BEST WHATSAPP BOT",
+  "logo": "https://files.catbox.moe/4ic2zr.jpg",
   "keywords": ["bot", "whatsapp", "nodejs"],
   "repository": "https://github.com/your-username/sila-md",
   "stack": "heroku-24",
@@ -34,7 +34,7 @@
     "ALIVE_IMG": {
       "description": "Paste your image URL for alive command",
       "required": true,
-      "value": "https://files.catbox.moe/gnjb7s.jpg"
+      "value": "https://files.catbox.moe/4ic2zr.jpg"
     },
     "ALIVE_MSG": {
       "description": "Paste your alive message here",
@@ -54,12 +54,12 @@
     "OWNER_NUMBER": {
       "description": "Bot owner's WhatsApp number with country code",
       "required": false,
-      "value": "255xxxxxxxx"
+      "value": "52xxxxxxxx"
     },
     "BOT_NAME": {
       "description": "Name of your bot",
       "required": false,
-      "value": "SILA MD"
+      "value": "BLACK CLOVER"
     }
   },
   "buildpacks": [
