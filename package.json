@@ -4,11 +4,13 @@
   "description": "El Mejor bot de WhatsApp",
   "main": "index.js",
   "type": "module",
+
   "directories": {
     "lib": "lib",
     "src": "src",
     "plugins": "plugins"
   },
+
   "scripts": {
     "start": "node index.js",
     "qr": "node index.js qr",
@@ -16,6 +18,7 @@
     "eslint": "eslint .",
     "eslintfix": "eslint --fix ."
   },
+
   "homepage": "https://github.com/thecarlos19/black-clover-MD",
   "author": {
     "name": "thecarlos19"
@@ -25,6 +28,7 @@
     "col2": "Russell",
     "col3": "Edgar"
   },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thecarlos19/black-clover-MD.git"
@@ -33,6 +37,7 @@
     "url": "https://github.com/thecarlos19/black-clover-MD/issues"
   },
   "license": "GPL-3.0-or-later",
+
   "dependencies": {
     "@whiskeysockets/baileys": "github:Kone457/baileys",
     "@adiwajshing/keyed-db": "^0.2.4",
@@ -98,8 +103,11 @@
     "api-dylux": "^1.7.2",
     "yargs": "^17.3.1"
   },
+
   "optionalDependencies": {
     "wa-sticker-formatter": "^4.3.2",
     "moment-timezone": "^0.5.37"
-  }
+  },
+
+  "_note": "Compatible con todas las plataformas"
 }
