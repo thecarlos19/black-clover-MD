@@ -18,6 +18,7 @@ Adaptacion y edición echa por:
 ⚠ PROHIBIDO EDITAR ⚠ -- ⚠ PROHIBIDO EDITAR ⚠ -- ⚠ PROHIBIDO EDITAR ⚠
 */
 
+
 import { useMultiFileAuthState, DisconnectReason, makeCacheableSignalKeyStore, fetchLatestBaileysVersion, Browsers } from "@whiskeysockets/baileys"
 import qrcode from "qrcode"
 import NodeCache from "node-cache"
@@ -49,7 +50,7 @@ let rtx =
 📲 *Escanea el Grimorio QR desde tu WhatsApp:*  
 ⋮ > *Dispositivos vinculados* > *Escanear código*  
 
-⏳ *El sello mágico dura solo 45 segundos...* ⚔️  
+⏳ *El sello mágico dura solo 45 segundos...*
 
 🔥 *Conviértete en un Sub-Bot Temporal y sirve al Reino Mágico*  
 🧿 *Tu energía quedará vinculada al Grimorio principal*`
@@ -85,7 +86,11 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
   let time = global.db.data.users[m.sender].Subs + 120000
   if (new Date() - global.db.data.users[m.sender].Subs < 120000) {
-    return conn.reply(m.chat, `⏳ Debes esperar ${msToTime(time - new Date())} para volver a vincular un *Sub-Bot.*`, m)
+    let remaining = time - new Date()
+    setTimeout(() => {
+      conn.reply(m.chat, `> Ya estás listo para conectarte de nuevo 🗿`, m)
+    }, remaining)
+    return conn.reply(m.chat, `⏳ Debes esperar ${msToTime(remaining)} para volver a vincular un *Sub-Bot.*`, m)
   }
 
   const subBots = [...new Set(
@@ -102,9 +107,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   
   const availableSlots = maxSubBots - subBotsCount
 
-   //No tocar 
-  // await m.reply(`🤖 *Sub-Bots conectados:* ${subBotsCount} / ${maxSubBots}\n🟢 *Espacios disponibles:* ${availableSlots}`)
-  
   let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
   let id = `${who.split('@')[0]}`
   let pathblackJadiBot = path.join(process.cwd(), 'núcleo•clover', 'blackJadiBot', id)
@@ -124,9 +126,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   await blackJadiBot(blackJBOptions)
 
   global.db.data.users[m.sender].Subs = new Date() * 1
-  
-    //No tocar 
-  // await m.reply(`🥷🏻 Gracias por ser parte de la familia Black Clover ⚔️`)
 }
 
 handler.help = ['qr', 'code']
@@ -214,18 +213,6 @@ export async function blackJadiBot(options) {
       if (codeBot && codeBot.key) {
         setTimeout(() => { conn.sendMessage(m.sender, { delete: codeBot.key }) }, 30000)
       }
-      const endSesion = async (loaded) => {
-        if (!loaded) {
-          try {
-            sock.ws.close()
-          } catch { }
-          sock.ev.removeAllListeners()
-          let i = global.conns.indexOf(sock)
-          if (i < 0) return
-          delete global.conns[i]
-          global.conns.splice(i, 1)
-        }
-      }
 
       const reason = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode
       if (connection === 'close') {
@@ -237,21 +224,17 @@ export async function blackJadiBot(options) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue reemplazada por otra sesión activa.\n╰─────────────────────────`))
           try {
             if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null }) : ""
-          } catch (error) {
-            console.error(chalk.bold.yellow(`Error 440 no se pudo enviar mensaje a: +${path.basename(pathblackJadiBot)}`))
-          }
+          } catch {}
         }
         if (reason == 405 || reason == 401) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰─────────────────────────`))
           try {
             if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
-          } catch (error) {
-            console.error(chalk.bold.yellow(`Error 405 no se pudo enviar mensaje a: +${path.basename(pathblackJadiBot)}`))
-          }
+          } catch {}
           fs.rmdirSync(pathblackJadiBot, { recursive: true })
         }
         if (reason === 500) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰─────────────────────────`))
+          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
           if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
           return creloadHandler(true).catch(console.error)
         }
@@ -268,12 +251,11 @@ export async function blackJadiBot(options) {
         if (!global.db.data) loadDatabase()
         if (!global.db.data?.users) loadDatabase()
         let userName = sock.authState.creds.me.name || 'Anónimo'
-        let userJid = sock.authState.creds.me.jid || `${path.basename(pathblackJadiBot)}@s.whatsapp.net`
-        console.log(chalk.bold.cyanBright(`\n❒────────────【• SUB-BOT •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`))
+        console.log(chalk.bold.cyanBright(`\n❒────────────【• blackJadiBot •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`))
         sock.isInit = true
         global.conns.push(sock)
 
-        if (m?.chat) await conn.sendMessage(m.chat, { text: args[0] ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*`, mentions: [m.sender] }, { quoted: m })
+        if (m?.chat) await conn.sendMessage(m.chat, { text: args[0] ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa el comando .personalizar para personalizar tu bot y que quede a tu gusto XD `, mentions: [m.sender] }, { quoted: m })
       }
     }
 

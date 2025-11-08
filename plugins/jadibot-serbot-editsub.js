@@ -15,7 +15,9 @@ function getMenuMediaFile(botJid) {
 function loadMenuMedia(botJid) {
   const file = getMenuMediaFile(botJid)
   if (fs.existsSync(file)) {
-    try { return JSON.parse(fs.readFileSync(file)) } catch (e) { 
+    try { 
+      return JSON.parse(fs.readFileSync(file)) 
+    } catch (e) { 
       console.warn('Error al leer menuMedia JSON:', e)
       return {} 
     }
@@ -37,7 +39,6 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
   try {
     switch (command) {
 
-      // ===== CAMBIAR IMAGEN O VIDEO DEL MENÚ =====
       case 'setmenuimg': {
         const q = m.quoted || m
         const mime = (q.msg || q).mimetype || ''
@@ -60,7 +61,6 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         break
       }
 
-      // ===== CAMBIAR TÍTULO DEL MENÚ =====
       case 'setmenutitle': {
         if (!text) return m.reply('❎ Ingresa el nuevo título del menú.')
         if (!menuMedia || typeof menuMedia !== 'object') menuMedia = {}
@@ -70,7 +70,6 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         break
       }
 
-      // ===== CAMBIAR FOTO DE PERFIL =====
       case 'subpfp':
       case 'subimagen': {
         const q = m.quoted || m
@@ -85,7 +84,6 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         break
       }
 
-      // ===== CAMBIAR BIOGRAFÍA =====
       case 'substatus':
       case 'subbio':
         if (!text) return m.reply('❎ Ingresa la nueva biografía del SubBot.')
@@ -93,22 +91,53 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         m.reply(`✅ Biografía actualizada:\n${text}`)
         break
 
-      // ===== CAMBIAR NOMBRE =====
       case 'subusername':
       case 'subuser':
         if (!text) return m.reply('❎ Ingresa el nuevo nombre del SubBot.')
         await conn.updateProfileName(text)
         m.reply(`✅ Nombre del SubBot actualizado a:\n${text}`)
         break
-    }
 
+      case 'personalizar': {
+        const info = `
+╭━━━〔 PERSONALIZAR SUBBOT BLACK 〕
+┃
+┃ ✦ ${usedPrefix}setmenuimg
+┃     > Cambia la imagen o video del menú.
+┃     ➜ Responde a una imagen (jpg/png)
+┃       o video (mp4) con este comando.
+┃
+┃ ✦ ${usedPrefix}setmenutitle <texto>
+┃     > Cambia el título del menú.
+┃
+┃ ✦ ${usedPrefix}subpfp
+┃     Cambia la foto de perfil del SubBot.
+┃     ➜ Responde a una imagen.
+┃
+┃ ✦ ${usedPrefix}substatus <texto>
+┃     > Cambia la biografía del SubBot.
+┃
+┃ ✦ ${usedPrefix}subusername <texto>
+┃     > Cambia el nombre del SubBot.
+┃
+┃ *Todos los comandos solo pueden ser usados
+┃ por el SubBot o propietario.*
+┃
+╰━━━━━━━━━━━━━━━━━━━━━━━╯
+`
+        m.reply(info)
+        break
+      }
+
+    }
   } catch (error) {
     console.error(error)
     m.reply(`⚠︎ Se produjo un error:\n${error.message}`)
   }
 }
 
-handler.help = ['setmenuimg','setmenutitle','subpfp','subimagen','substatus','subbio','subusername','subuser']
+handler.help = ['personalizar','setmenuimg','setmenutitle','subpfp','subimagen','substatus','subbio','subusername','subuser']
 handler.tags = ['subbot']
-handler.command = ['setmenuimg','setmenutitle','subpfp','subimagen','substatus','subbio','subusername','subuser']
+handler.command = ['personalizar','setmenuimg','setmenutitle','subpfp','subimagen','substatus','subbio','subusername','subuser']
+
 export default handler
