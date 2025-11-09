@@ -251,7 +251,7 @@ export async function blackJadiBot(options) {
         if (!global.db.data) loadDatabase()
         if (!global.db.data?.users) loadDatabase()
         let userName = sock.authState.creds.me.name || 'Anónimo'
-        console.log(chalk.bold.cyanBright(`\n❒────────────【• blackJadiBot •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`))
+        console.log(chalk.bold.cyanBright(`\n❒────────────【• SUB-BOT  •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`))
         sock.isInit = true
         global.conns.push(sock)
 
