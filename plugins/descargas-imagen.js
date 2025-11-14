@@ -1,36 +1,54 @@
-import { googleImage } from '@bochilteam/scraper';
+import axios from 'axios'
 
-const handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) {
-    throw `*🥷 Uso correcto:* ${usedPrefix + command} Yuki Suou`;
-  }
-
-  await conn.sendMessage(m.chat, { text: '⚔️ *Buscando imágenes...*' }, { quoted: m });
-
+const handler = async (m, { conn, text, usedPrefix }) => {
+  if (!text) return conn.reply(m.chat, `Por favor, ingrese un texto para buscar una Imagen.`, m)
   try {
-    const results = await googleImage(text);
-    if (!results || results.length === 0) {
-      return conn.sendMessage(m.chat, { text: `❌ No se encontraron imágenes para *${text}*.` }, { quoted: m });
-    }
-
-    // Tomar una imagen aleatoria
-    const randomImage = results[Math.floor(Math.random() * results.length)];
-
-    // Enviar la imagen encontrada
-    await conn.sendMessage(m.chat, {
-      image: { url: randomImage },
-      caption: `🔍 *Resultado de búsqueda:* ${text}`
-    }, { quoted: m });
-
-  } catch (e) {
-    await conn.sendMessage(m.chat, { text: `❌ Error: ${e.message}` }, { quoted: m });
+    await m.react('🕒')
+    const res = await getGoogleImageSearch(text)
+    const urls = await res.getAll()
+    if (urls.length < 2) return conn.reply(m.chat, '✧ No se encontraron suficientes imágenes para un álbum.', m)
+    const medias = urls.slice(0, 10).map(url => ({ type: 'image', data: { url } }))
+    const caption = ` Resultados de búsqueda para: ${text}`
+    await conn.sendSylphy(m.chat, medias, { caption, quoted: m })
+    await m.react('✔️')
+  } catch (error) {
+    await m.react('✖️')
+    conn.reply(m.chat, 'Ocurrió un error al buscar las imágenes.', m)
   }
-};
+}
 
-handler.help = ['imagen <query>'];
-handler.tags = ['buscador', 'descargas'];
-handler.command = ['image', 'imagen'];
-handler.group = true;
-handler.register = true;
+handler.help = ['imagen']
+handler.tags = ['descargas']
+handler.command = ['imagen', 'image']
 
-export default handler;
+export default handler
+
+function getGoogleImageSearch(query) {
+  const apis = [
+    `${global.APIs.delirius.url}/search/gimage?query=${encodeURIComponent(query)}`,
+    `${global.APIs.siputzx.url}/api/images?query=${encodeURIComponent(query)}`
+  ]
+
+  return {
+    getAll: async () => {
+      for (const url of apis) {
+        try {
+          const res = await axios.get(url)
+          const data = res.data
+          if (Array.isArray(data?.data)) {
+            const urls = data.data
+              .map(d => d.url)
+              .filter(u => typeof u === 'string' && u.startsWith('http'))
+            if (urls.length) return urls
+          }
+        } catch (e) {}
+      }
+      return []
+    },
+
+    getRandom: async function () {
+      const all = await this.getAll()
+      return all[Math.floor(Math.random() * all.length)] || null
+    }
+  }
+}

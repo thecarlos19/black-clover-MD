@@ -11,7 +11,9 @@ if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true })
 async function ensureImage(filename, url) {
   const filePath = path.join(tmpDir, filename)
   if (!fs.existsSync(filePath)) {
-    const buffer = await fetch(url).then(res => res.arrayBuffer()).then(Buffer.from)
+    const res = await fetch(url)
+    const arrayBuffer = await res.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
     fs.writeFileSync(filePath, buffer)
   }
   return filePath
@@ -19,33 +21,38 @@ async function ensureImage(filename, url) {
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   const user = global.db.data.users[m.sender]
+  const followKey = 'siguiendo'
+
+  if (!user.followed) {
+    if ((text || '').toLowerCase() === followKey) {
+      user.followed = true
+      return conn.sendMessage(m.chat, { text: `✅ Perfecto! Verificado que sigues a *TheCarlosZX*.\nAhora puedes usar *${usedPrefix + command} Nombre.Edad* para registrarte.` }, { quoted: m })
+    }
+
+    return conn.sendMessage(m.chat, {
+      text: `⚠️ Para poder usar el bot primero debes seguir a mi creador en Instagram:\n\n👉 https://www.instagram.com/_carlitos.zx\n\nDespués de seguirlo, escribe:\n\n*${usedPrefix + command} ${followKey}*`
+    }, { quoted: m })
+  }
+
   if (user.registered === true) {
-    return conn.sendMessage(
-      m.chat,
-      { text: `⚠️ Ya estás registrado, guerrero del Reino.\n\nUsa *${usedPrefix}perfil* para ver tu grimorio.` },
-      { quoted: m }
-    )
+    return conn.sendMessage(m.chat, { text: `⚠️ Ya estás registrado.\nUsa *${usedPrefix}perfil* para ver tu grimorio.` }, { quoted: m })
   }
 
   const regex = /^([a-zA-ZÀ-ÿñÑ\s]+)\.(\d{1,2})$/i
   if (!regex.test(text)) {
-    return conn.sendMessage(
-      m.chat,
-      { text: `⚠️ Formato incorrecto. Usa:\n*${usedPrefix + command} Nombre.Edad*\n\nEjemplo:\n*${usedPrefix + command} Asta.18*` },
-      { quoted: m }
-    )
+    return conn.sendMessage(m.chat, {
+      text: `⚠️ Formato incorrecto. Usa:\n*${usedPrefix + command} Nombre.Edad*\n\nEjemplo:\n*${usedPrefix + command} Asta.18*`
+    }, { quoted: m })
   }
 
-  let [_, name, age] = text.match(regex)
-  age = parseInt(age)
+  let match = text.match(regex)
+  let name = match[1]
+  let age = parseInt(match[2])
+
   if (age < 5 || age > 100) {
-    return conn.sendMessage(
-      m.chat,
-      { text: `⚠️ Edad no válida. Debe estar entre 5 y 100 años.` },
-      { quoted: m }
-    )
+    return conn.sendMessage(m.chat, { text: `⚠️ Edad no válida (entre 5 y 100 años).` }, { quoted: m })
   }
-
+  
   const paises = ['Clover', 'Diamond', 'Spade', 'Heart']
   const afinidades = ['🔥 Fuego', '💧 Agua', '🌪️ Viento', '🌱 Tierra', '⚡ Rayo', '🌑 Oscuridad', '🌞 Luz']
 
@@ -105,7 +112,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       {
         image: { url: registroImg },
         caption: responseMessage,
-        mentions: [...new Set((responseMessage.match(/@(\d{5,16})/g) || []).map(v => v.replace('@', '') + '@s.whatsapp.net'))],
+        mentions: [...new Set(((responseMessage.match(/@(\d{5,16})/g)) || []).map(v => v.replace('@', '') + '@s.whatsapp.net'))],
         contextInfo
       },
       { quoted: m }
