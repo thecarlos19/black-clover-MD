@@ -5,10 +5,9 @@ let handler = async (m, { conn, usedPrefix }) => {
   let _muptime = 0
   let totalreg = Object.keys(global.db.data.users).length
   let totalchats = Object.keys(global.db.data.chats).length
-  let vs = global.vs || '1.0.0'
+  let vs = global.vs || '7.7.7'
   let pp = "https://files.catbox.moe/8lfoj3.jpg"
 
-  // Tiempo de actividad (uptime) del proceso principal
   if (process.send) {
     process.send('uptime')
     _muptime = await new Promise(resolve => {
@@ -19,17 +18,14 @@ let handler = async (m, { conn, usedPrefix }) => {
 
   let muptime = clockString(_muptime || 0)
 
-  // Filtrar subbots activos (conexiones abiertas)
   let users = [...new Set(global.conns.filter(connItem => 
     connItem.user && connItem.ws?.socket?.readyState === ws.OPEN
   ))]
 
-  // Obtener chats y filtrar grupos
   const chats = Object.entries(conn.chats || {}).filter(([id, data]) => data?.isChats)
   const groupsIn = chats.filter(([id]) => id.endsWith('@g.us'))
   const totalUsers = users.length
 
-  // Medir velocidad (ping simple)
   let old = performance.now()
   let neww = performance.now()
   let speed = neww - old
@@ -52,9 +48,12 @@ let handler = async (m, { conn, usedPrefix }) => {
 
 🕰️ *Actividad:* ${muptime}
 🚀 *Velocidad:* ${speed.toFixed(3)}s
+
+📣 *Canal oficial:* 
+https://whatsapp.com/channel/0029VbB36XC8aKvQevh8Bp04
+
 `.trim()
 
-  // Contacto para usar como mensaje citado (puedes ajustarlo)
   const fkontak = {
     key: {
       participants: "0@s.whatsapp.net",

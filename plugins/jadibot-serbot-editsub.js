@@ -99,32 +99,30 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         break
 
       case 'personalizar': {
-        const info = `
-╭━━━〔 PERSONALIZAR SUBBOT BLACK 〕
-┃
-┃ ✦ ${usedPrefix}setmenuimg
-┃     > Cambia la imagen o video del menú.
-┃     ➜ Responde a una imagen (jpg/png)
-┃       o video (mp4) con este comando.
-┃
-┃ ✦ ${usedPrefix}setmenutitle <texto>
-┃     > Cambia el título del menú.
-┃
-┃ ✦ ${usedPrefix}subpfp
-┃     Cambia la foto de perfil del SubBot.
-┃     ➜ Responde a una imagen.
-┃
-┃ ✦ ${usedPrefix}substatus <texto>
-┃     > Cambia la biografía del SubBot.
-┃
-┃ ✦ ${usedPrefix}subusername <texto>
-┃     > Cambia el nombre del SubBot.
-┃
-┃ *Todos los comandos solo pueden ser usados
-┃ por el SubBot o propietario.*
-┃
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-`
+        const info = `✙ *Opciones de Personalización:*
+
+▢ ${usedPrefix}setmenuimg
+   ↳ Cambia la *imagen o video* del menú.
+   • Responde a una imagen (jpg/png)
+   • O a un video (mp4)
+
+▢ ${usedPrefix}setmenutitle <texto>
+   ↳ Cambia el *título del menú*.
+
+▢ ${usedPrefix}subpfp
+   ↳ Cambia la *foto de perfil* del SubBot.
+   • Responde a una imagen.
+
+▢ ${usedPrefix}substatus <texto>
+   ↳ Cambia la *biografía* del SubBot.
+
+▢ ${usedPrefix}subusername <texto>
+   ↳ Cambia el *nombre del SubBot*.
+
+📢 *Canal oficial del bot*
+https://whatsapp.com/channel/0029VbB36XC8aKvQevh8Bp04
+
+⚠️ *Todos los comandos solo pueden ser usados por el SubBot o el propietario.*`
         m.reply(info)
         break
       }
