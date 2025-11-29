@@ -137,7 +137,7 @@ const handler = async (m, { conn, text, command }) => {
       thumbnail = videoInfo.thumbnail
     }
     const thumbResized = await resizeImage(await (await fetch(thumbnail)).buffer(), 300)
-    const res3 = await fetch("https://qu.ax/gPaVW.jpg")
+    const res3 = await fetch("https://qu.ax/xCgVW.jpg")
     const thumb3 = Buffer.from(await res3.arrayBuffer())
     const fkontak = {
       key: { fromMe: false, participant: "0@s.whatsapp.net" },
