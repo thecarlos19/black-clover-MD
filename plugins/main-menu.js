@@ -130,7 +130,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     if (menuMedia.video && fs.existsSync(menuMedia.video)) {
       mediaMessage = { video: fs.readFileSync(menuMedia.video), jpegThumbnail: uniqueThumb, gifPlayback: true }
     } else {
-      const defaultVideo = await fetch('https://qu.ax/eBXcC.mp4').then(res => res.arrayBuffer()).then(Buffer.from)
+      const defaultVideo = await fetch('https://files.catbox.moe/kku6hy.mp4').then(res => res.arrayBuffer()).then(Buffer.from)
       mediaMessage = { video: defaultVideo, jpegThumbnail: uniqueThumb, gifPlayback: true }
     }
 

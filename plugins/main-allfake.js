@@ -114,7 +114,7 @@ handler.all = async function (m) {
   global.fake = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, newsletterName: channelRD.name, serverMessageId: -1 }, quoted: m } }
 
   global.icono = pickRandom([
-    'https://qu.ax/uvXUR.jpg',
+    'https://files.catbox.moe/9mtsqf.jpg',
   ])
 
   global.rcanal = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, serverMessageId: 100, newsletterName: channelRD.name }, externalAdReply: { showAdAttribution: true, title: "𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ☘", body: "𝐓𝐇𝐄 𝐂𝐀𝐑𝐋𝐎𝐒", mediaUrl: null, description: null, previewType: "PHOTO", thumbnailUrl: icono, sourceUrl: redes, mediaType: 1, renderLargerThumbnail: false }, } }
