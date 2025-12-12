@@ -19,19 +19,47 @@ async function ensureImage(filename, url) {
   return filePath
 }
 
+const INSTAGRAM_USER_ID = process.env.INSTAGRAM_USER_ID || ''
+const IG_ACCESS_TOKEN = process.env.IG_ACCESS_TOKEN || ''
+
+async function verificaInstagram(username) {
+  if (!INSTAGRAM_USER_ID || !IG_ACCESS_TOKEN) return true
+  try {
+    const url = `https://graph.instagram.com/${INSTAGRAM_USER_ID}/followers?access_token=${IG_ACCESS_TOKEN}`
+    const req = await fetch(url)
+    const json = await req.json()
+    if (!json || !json.data) return true
+    return json.data.some(f => f.username && username && f.username.toLowerCase() === username.toLowerCase())
+  } catch (e) {
+    return true
+  }
+}
+
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   const user = global.db.data.users[m.sender]
   const followKey = 'siguiendo'
 
+  if (user.followed) {
+    const igUser = (m.pushName || '').replace(/\s+/g, '').toLowerCase()
+    const sigue = await verificaInstagram(igUser)
+    if (!sigue) {
+      user.followed = false
+      return conn.sendMessage(m.chat, { text: `⚠️ Has dejado de seguir a mi creador en Instagram.\nPor favor síguelo nuevamente:\n👉 https://www.instagram.com/_carlitos.zx\n\nLuego escribe:\n*${usedPrefix + command} ${followKey}*` }, { quoted: m })
+    }
+  }
+
   if (!user.followed) {
     if ((text || '').toLowerCase() === followKey) {
+      const igUser = (m.pushName || '').replace(/\s+/g, '').toLowerCase()
+      const sigue = await verificaInstagram(igUser)
+      if (!sigue) {
+        return conn.sendMessage(m.chat, { text: `❌ No detecto que sigas a mi creador\n\n👉 https://www.instagram.com/_carlitos.zx\n\nCuando lo sigas escribe:\n*${usedPrefix + command} ${followKey}*` }, { quoted: m })
+      }
       user.followed = true
-      return conn.sendMessage(m.chat, { text: `✅ Perfecto! Verificado que sigues a *TheCarlosZX*.\nAhora puedes usar *${usedPrefix + command} Nombre.Edad* para registrarte.` }, { quoted: m })
+      return conn.sendMessage(m.chat, { text: `✅ ¡Perfecto! Verificado que sigues a TheCarlosZX.\nAhora puedes usar *${usedPrefix + command} Nombre.Edad* para registrarte.` }, { quoted: m })
     }
 
-    return conn.sendMessage(m.chat, {
-      text: `⚠️ Para poder usar el bot primero debes seguir a mi creador en Instagram:\n\n👉 https://www.instagram.com/_carlitos.zx\n\nDespués de seguirlo, escribe:\n\n*${usedPrefix + command} ${followKey}*`
-    }, { quoted: m })
+    return conn.sendMessage(m.chat, { text: `⚠️ Para poder usar el bot primero debes seguir a mi creador en Instagram:\n\n👉 https://www.instagram.com/_carlitos.zx\n\nDespués de seguirlo, escribe:\n\n*${usedPrefix + command} ${followKey}*` }, { quoted: m })
   }
 
   if (user.registered === true) {
@@ -40,9 +68,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   const regex = /^([a-zA-ZÀ-ÿñÑ\s]+)\.(\d{1,2})$/i
   if (!regex.test(text)) {
-    return conn.sendMessage(m.chat, {
-      text: `⚠️ Formato incorrecto. Usa:\n*${usedPrefix + command} Nombre.Edad*\n\nEjemplo:\n*${usedPrefix + command} Asta.18*`
-    }, { quoted: m })
+    return conn.sendMessage(m.chat, { text: `⚠️ Formato incorrecto. Usa:\n*${usedPrefix + command} Nombre.Edad*\n\nEjemplo:\n*${usedPrefix + command} Asta.18*` }, { quoted: m })
   }
 
   let match = text.match(regex)
@@ -52,7 +78,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (age < 5 || age > 100) {
     return conn.sendMessage(m.chat, { text: `⚠️ Edad no válida (entre 5 y 100 años).` }, { quoted: m })
   }
-  
+
   const paises = ['Clover', 'Diamond', 'Spade', 'Heart']
   const afinidades = ['🔥 Fuego', '💧 Agua', '🌪️ Viento', '🌱 Tierra', '⚡ Rayo', '🌑 Oscuridad', '🌞 Luz']
 
@@ -69,7 +95,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   user.afinidad = afinidad
   user.nivelMagico = nivelMagico
 
-  const registroImg = await ensureImage('grimorio.jpg', 'https://qu.ax/AfutJ.jpg')
+  let profilePic
+  try {
+    profilePic = await conn.profilePictureUrl(m.sender, 'image')
+  } catch {
+    profilePic = 'https://qu.ax/AfutJ.jpg'
+  }
+
+  const registroImg = await ensureImage('perfil.jpg', profilePic)
   const thumbnailBuffer = fs.readFileSync(await ensureImage('registro_completo.jpg', 'https://qu.ax/AfutJ.jpg'))
 
   let responseMessage = `> *🌿!**R E G I S T R O  M Á G I C O*\n\n`
@@ -81,7 +114,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   responseMessage += `> *!* 💠 *Nivel Mágico:* ${nivelMagico}\n`
   responseMessage += `> *!* 📖 *Grimorio:* ${grimorioColor}\n`
   responseMessage += `> *!* ✧────────────────✧\n\n`
-  responseMessage += `> *!* 🕯️ 𝑬𝒍 𝒗í𝒏𝒄𝒖𝒍𝒐 𝒎á𝒈𝒊𝒄𝒐 𝒔𝒆 𝒉𝒂 𝒆𝒔𝒕𝒂𝒃𝒍𝒆𝒄𝒊𝒅𝒐.\n`
+  responseMessage += `> *!* 🕯️ 𝑬𝒍 𝒗í𝒏𝒄𝒖𝒍𝒐 𝒎á𝒈𝒊𝒄𝒐 𝒔𝒆 𝒉⟮ 𝒆𝒔𝒕𝒂𝒃𝒍𝒆𝒄𝒊𝒅𝒐.\n`
   responseMessage += `> *🌿!* ⚔️ 𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐, *${name.toUpperCase()}* 𝒅𝒆𝒍 𝑹𝒆𝒊𝒏𝒐 ${country}.\n`
   responseMessage += `> *!* ☘️ ¡𝑬𝒍 𝒅𝒆𝒔𝒕𝒊𝒏𝒐 𝒕𝒆 𝒂𝒈𝒖𝒂𝒓𝒅𝒂!`
 

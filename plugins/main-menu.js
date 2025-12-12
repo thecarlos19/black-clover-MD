@@ -121,7 +121,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     if (menuMedia.thumbnail && fs.existsSync(menuMedia.thumbnail)) {
       thumbBuffer = fs.readFileSync(menuMedia.thumbnail)
     } else {
-      thumbBuffer = await fetch('https://qu.ax/QkdXt.jpg').then(res => res.arrayBuffer()).then(Buffer.from)
+      thumbBuffer = await fetch('https://files.catbox.moe/c5hat3.jpg').then(res => res.arrayBuffer()).then(Buffer.from)
     }
 
     const uniqueThumb = Buffer.concat([thumbBuffer, Buffer.from(conn.user.jid)])
