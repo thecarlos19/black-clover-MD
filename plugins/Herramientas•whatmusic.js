@@ -12,11 +12,12 @@ let handler = async (m) => {
   let q = m.quoted ? m.quoted : m
   let mime = (q.msg || q).mimetype || ''
   if (/audio|video/.test(mime)) {
+    if (!fs.existsSync('./tmp')) fs.mkdirSync('./tmp')
     let media = await q.download()
     let ext = mime.split('/')[1]
     let filePath = path.join('./tmp', `${m.sender}.${ext}`)
     fs.writeFileSync(filePath, media)
-    let res = await acr.identify(fs.readFileSync(filePath))
+    let res = await acr.identify(media)
     let { code, msg } = res.status
     if (code !== 0) {
       fs.unlinkSync(filePath)
@@ -29,7 +30,7 @@ let handler = async (m) => {
     let genres = info.genres ? info.genres.map(v => v.name).join(', ') : 'No encontrado'
     let release_date = info.release_date || 'No encontrado'
     let txt = `
-𝙍𝙀𝙎𝙐𝙇𝙏𝘼𝘿𝙊 𝘿𝙀 𝙇𝘼 𝘽𝙐𝙎𝙌𝙐𝙀𝘿𝘼𝙎 
+𝙍𝙀𝙎𝙐𝙇𝙏𝘼𝘿𝙊 𝘿𝙀 𝙇𝘼 𝘽𝙐𝙎𝙌𝙐𝙀𝘿𝘼 
 
 • 🌻 𝙏𝙄𝙏𝙐𝙇𝙊: ${title}
 • 🍃 𝘼𝙍𝙏𝙄𝙎𝙏𝘼: ${artists}
