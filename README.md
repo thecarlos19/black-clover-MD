@@ -14,7 +14,7 @@
 
 <h1 align="center">Black - Clover</h1>
 <p align="center">
-  <img src="https://qu.ax/qbPui" width="300" alt="Black Clover">
+  <img src="https://files.catbox.moe/o5hjm2.jpg" width="300" alt="Black Clover">
 </p>
 
 <p align="center">
