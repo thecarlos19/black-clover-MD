@@ -1,12 +1,10 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
-// Función principal para generar música usando Suno AI
 async function suno(prompt, { style = '', title = '', instrumental = false } = {}) {
     if (!prompt) throw new Error('Se requiere un prompt')
     if (typeof instrumental !== 'boolean') throw new Error('El parámetro instrumental debe ser un booleano')
 
-    // Obtener token de verificación
     const { data: cf } = await axios.get('https://api.nekorinn.my.id/tools/rynn-stuff', {
         params: {
             mode: 'turnstile-min',
@@ -16,10 +14,8 @@ async function suno(prompt, { style = '', title = '', instrumental = false } = {
         }
     })
 
-    // Crear un ID único para la solicitud
     const uid = crypto.createHash('md5').update(Date.now().toString()).digest('hex')
 
-    // Crear tarea de generación de música
     const { data: task } = await axios.post('https://aiarticle.erweima.ai/api/v1/secondary-page/api/create', {
         prompt,
         channel: 'MUSIC',
@@ -37,7 +33,6 @@ async function suno(prompt, { style = '', title = '', instrumental = false } = {
         }
     })
 
-    // Esperar hasta que la canción esté lista
     while (true) {
         const { data } = await axios.get(`https://aiarticle.erweima.ai/api/v1/secondary-page/api/${task.data.recordId}`, {
             headers: {
@@ -59,17 +54,15 @@ async function suno(prompt, { style = '', title = '', instrumental = false } = {
     }
 }
 
-// Handler del comando para el bot
 let handler = async (m, { conn, text }) => {
-    // 🔒 Validación VIP/Premium
     let user = global.db.data.users[m.sender]
     if (!user.premium && !user.vip) {
         return m.reply('🚩 Este comando es exclusivo para usuarios *VIP/Premium*')
     }
 
     if (!text) return m.reply(`Ejemplo: .suno canción sobre mi amor hacia ella (femenina), vocalista masculino, estilo lofi relajado`)
-    
-    m.reply('Generando canción... 🎵')
+
+    m.reply('Generando canción... 🫧')
     try {
         let result = await suno(text)
 
@@ -79,7 +72,6 @@ let handler = async (m, { conn, text }) => {
         let songTitle = result.data[0].title || 'Suno Music'
         let lyrics = result.data[0].prompt || ''
 
-        // Enviar audio al chat
         await conn.sendMessage(m.chat, {
             audio: { url: audioUrl },
             mimetype: 'audio/mpeg',
@@ -88,7 +80,6 @@ let handler = async (m, { conn, text }) => {
         }, 
         { quoted: m })
 
-        // Enviar letras si existen
         if (lyrics) {
             m.reply(`*Letras de la canción: ${songTitle}*\n\n${lyrics}`)
         }
@@ -100,7 +91,6 @@ let handler = async (m, { conn, text }) => {
 handler.help = ['suno <prompt>']
 handler.tags = ['ai']
 handler.command = ['suno']
-handler.premium = true   
-handler.limit = false 
+handler.premium = false   
 
 export default handler
