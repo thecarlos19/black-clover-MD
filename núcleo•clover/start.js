@@ -1,7 +1,6 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1'
 import './config.js'
-import cluster from 'cluster'
-const { setupMaster, fork } = cluster
+import { setupMaster, fork } from 'cluster'
 import { watchFile, unwatchFile } from 'fs'
 import cfonts from 'cfonts'
 import {createRequire} from 'module'
@@ -39,58 +38,53 @@ const {chain} = lodash
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
 protoType()
 serialize()
+
 global.__filename = function filename(pathURL = import.meta.url, rmPrefix = platform !== 'win32') {
-  return rmPrefix ? /file:\/\/\//.test(pathURL) ? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString();
-};
-global.__dirname = function dirname(pathURL) {
-  return path.dirname(global.__filename(pathURL, true));
-};
-global.__require = function require(dir = import.meta.url) {
-  return createRequire(dir);
-};
+return rmPrefix ? /file:\/\/\//.test(pathURL) ? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString();
+}; global.__dirname = function dirname(pathURL) {
+return path.dirname(global.__filename(pathURL, true))
+}; global.__require = function require(dir = import.meta.url) {
+return createRequire(dir)
+}
 
-global.API = (name, path = '/', query = {}, apikeyqueryname) =>
-  (name in global.APIs ? global.APIs[name] : name) +
-  path +
-  (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '');
+global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({...query, ...(apikeyqueryname ? {[apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name]} : {})})) : '');
 
-global.timestamp = { start: new Date() };
+global.timestamp = {start: new Date}
 
-const __dirname = global.__dirname(import.meta.url);
+const __dirname = global.__dirname(import.meta.url)
 
-global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse());
-global.prefix = new RegExp('^[#/!.]');
+global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
+global.prefix = new RegExp('^[#/!.]')
+// global.opts['db'] = process.env['db']
 
-global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile('./src/database/database.json'));
+global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile('./src/database/database.json'))
 
-global.DATABASE = global.db;
+global.DATABASE = global.db 
 global.loadDatabase = async function loadDatabase() {
-  if (global.db.READ) {
-    return new Promise((resolve) =>
-      setInterval(async function () {
-        if (!global.db.READ) {
-          clearInterval(this);
-          resolve(global.db.data == null ? global.loadDatabase() : global.db.data);
-        }
-      }, 1000)
-    );
-  }
-  if (global.db.data !== null) return;
-  global.db.READ = true;
-  await global.db.read().catch(console.error);
-  global.db.READ = null;
-  global.db.data = {
-    users: {},
-    chats: {},
-    stats: {},
-    msgs: {},
-    sticker: {},
-    settings: {},
-    ...(global.db.data || {}),
-  };
-  global.db.chain = chain(global.db.data);
-};
-loadDatabase();
+if (global.db.READ) {
+return new Promise((resolve) => setInterval(async function() {
+if (!global.db.READ) {
+clearInterval(this)
+resolve(global.db.data == null ? global.loadDatabase() : global.db.data);
+}}, 1 * 1000))
+}
+if (global.db.data !== null) return
+global.db.READ = true
+await global.db.read().catch(console.error)
+global.db.READ = null
+global.db.data = {
+users: {},
+chats: {},
+stats: {},
+msgs: {},
+sticker: {},
+settings: {},
+...(global.db.data || {}),
+}
+global.db.chain = chain(global.db.data)
+}
+loadDatabase()
+
 
 const { state, saveState, saveCreds } = await useMultiFileAuthState(global.sessions);
 const msgRetryCounterMap = (MessageRetryMap) => {};
@@ -118,6 +112,7 @@ if (methodCodeQR) opcion = '1';
 
 const credsExist = fs.existsSync(`./${sessions}/creds.json`);
 
+
 if (!methodCodeQR && !methodCode && !credsExist) {
   do {
     opcion = await question(
@@ -135,92 +130,59 @@ if (!methodCodeQR && !methodCode && !credsExist) {
 console.info = () => {};
 console.debug = () => {};
 
-const printQR = opcion === '1' || methodCodeQR;
-const browserName = printQR ? `${nameqr}` : 'Ubuntu';
-const browserProduct = 'Edge';
-const browserVersion = printQR ? '20.0.04' : '110.0.1587.56';
-
 const connectionOptions = {
-  logger: pino({ level: 'silent' }),
-  printQRInTerminal: printQR,
-  mobile: MethodMobile,
-  browser: [browserName, browserProduct, browserVersion],
-  auth: {
-    creds: state.creds,
-    keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
-  },
-  markOnlineOnConnect: true,
-  generateHighQualityLinkPreview: true,
-  getMessage: async (clave) => {
-    const jid = jidNormalizedUser(clave.remoteJid);
-    const msg = await store.loadMessage(jid, clave.id);
-    return msg?.message || "";
-  },
-  msgRetryCounterCache,
-  msgRetryCounterMap,
-  defaultQueryTimeoutMs: undefined,
-  version,
-};
-
-global.conn = makeWASocket(connectionOptions);
-
-if (!credsExist && (opcion === '2' || methodCode)) {
-  if (!conn.authState.creds.registered) {
-    let addNumber
-
-    if (!phoneNumber) {
-      phoneNumber = await question(chalk.magentaBright('✞ Ingrese su número de WhatsApp:\n--> '))
-      phoneNumber = phoneNumber.trim()
-      if (!phoneNumber.startsWith('+')) phoneNumber = `+${phoneNumber}`
-      phoneNumber = phoneNumber.replace(/[^\d+]/g, '')
-
-      if (phoneNumber.length < 10 || phoneNumber.length > 15) {
-        console.log(chalk.redBright('✞ Número inválido'))
-        process.exit(0)
-      }
-
-      try {
-        phoneUtil.parse(phoneNumber)
-      } catch {
-        console.log(chalk.redBright('✞ Número inválido'))
-        process.exit(0)
-      }
-    }
-
-    addNumber = phoneNumber.replace(/\D/g, '')
-
-    await new Promise(resolve => {
-      conn.ev.on('connection.update', u => {
-        if (u.connection === 'open') resolve()
-      })
-    })
-
-    let codeBot = await conn.requestPairingCode(addNumber, 'CLOVER77')
-    codeBot = codeBot?.match(/.{1,4}/g)?.join('-') || codeBot
-    console.log(chalk.bgGreen.black('✞ Código:'), chalk.white(codeBot))
-    rl.close()
-  }
+logger: pino({ level: 'silent' }),
+printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
+mobile: MethodMobile, 
+browser: opcion == '1' ? [`${nameqr}`, 'Edge', '20.0.04'] : methodCodeQR ? [`${nameqr}`, 'Edge', '20.0.04'] : ['Ubuntu', 'Edge', '110.0.1587.56'],
+auth: {
+creds: state.creds,
+keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
+},
+markOnlineOnConnect: true, 
+generateHighQualityLinkPreview: true, 
+getMessage: async (clave) => {
+let jid = jidNormalizedUser(clave.remoteJid)
+let msg = await store.loadMessage(jid, clave.id)
+return msg?.message || ""
+},
+msgRetryCounterCache,
+msgRetryCounterMap,
+defaultQueryTimeoutMs: undefined,
+version,
 }
 
-conn.isInit = false;
-conn.well = false;
-
-conn.logger.info(` ✞ H E C H O\n`);
-
+global.conn = makeWASocket(connectionOptions)
+if (!fs.existsSync(`./${sessions}/creds.json`)) {
+if (opcion === '2' || methodCode) {
+opcion = '2'
+if (!conn.authState.creds.registered) {
+let addNumber
+if (!!phoneNumber) {
+addNumber = phoneNumber.replace(/[^0-9]/g, '')
+} else {
+do {
+phoneNumber = await question(chalk.bgBlack(chalk.bold.greenBright(`✞ Por favor, Ingrese el número de WhatsApp.\n${chalk.bold.magentaBright('---> ')}`)))
+phoneNumber = phoneNumber.replace(/\D/g,'')
+if (!phoneNumber.startsWith('+')) {
+phoneNumber = `+${phoneNumber}`
+}} while (!await isValidPhoneNumber(phoneNumber))
+rl.close()
+addNumber = phoneNumber.replace(/\D/g, '')
+setTimeout(async () => {
+let codeBot = await conn.requestPairingCode(addNumber)
+codeBot = codeBot?.match(/.{1,4}/g)?.join("-") || codeBot
+console.log(chalk.bold.white(chalk.bgMagenta(`✞ Código:`)), chalk.bold.white(chalk.white(codeBot)))
+}, 3000)
+}}}}
+conn.isInit = false
+conn.well = false
+conn.logger.info(` ✞ H E C H O\n`)
 if (!opts['test']) {
-  if (global.db) {
-    setInterval(async () => {
-      try {
-        if (global.db.data) await global.db.write();
-        if (opts['autocleartmp'] && (global.support || {}).find) {
-          const tmpDirs = [os.tmpdir(), 'tmp', `${jadi}`];
-          tmpDirs.forEach((dir) => cp.spawn('find', [dir, '-amin', '3', '-type', 'f', '-delete']));
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }, 30000);
-  }
+if (global.db) setInterval(async () => {
+if (global.db.data) await global.db.write()
+if (opts['autocleartmp'] && (global.support || {}).find) (tmp = [os.tmpdir(), 'tmp', `${jadi}`], tmp.forEach((filename) => cp.spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete'])))
+}, 30 * 1000)
 }
 
 async function connectionUpdate(update) {
