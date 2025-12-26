@@ -39,11 +39,8 @@ import NodeCache from 'node-cache'
 const { CONNECTING } = ws
 const { chain } = lodash
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
-
 protoType()
 serialize()
-
-/* ================= CORRECCIONES NECESARIAS ================= */
 global.sessions = global.sessions || 'sessions'
 const jadi = 'blackJadiBot'
 const nameqr = 'Black Clover Bot'
@@ -139,7 +136,6 @@ const MethodMobile = process.argv.includes('mobile')
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 const question = (texto) => new Promise((resolver) => rl.question(texto, resolver))
 
-/* ================= CORRECCIÓN NECESARIA ================= */
 const isValidPhoneNumber = async (number) => {
   try {
     return phoneUtil.isValidNumber(phoneUtil.parse(number))
@@ -213,13 +209,12 @@ if (!credsExist) {
           phoneNumber = phoneNumber.replace(/\D/g, '')
           if (!phoneNumber.startsWith('+')) phoneNumber = `+${phoneNumber}`
         } while (!(await isValidPhoneNumber(phoneNumber)))
-        rl.close()
+ 
         addNumber = phoneNumber.replace(/\D/g, '')
-        setTimeout(async () => {
-          let codeBot = await conn.requestPairingCode(addNumber)
+          let codeBot = await conn.requestPairingCode(addNumber, "CLOVER77")
           codeBot = codeBot?.match(/.{1,4}/g)?.join('-') || codeBot
-          console.log(chalk.bold.white(chalk.bgGreen.black(`✞ Código:`)), chalk.bold.white(chalk.white(codeBot)))
-        }, 3000)
+          console.log(chalk.bold.black(chalk.bgGreen.black(`✞ Código:`)), chalk.bold.white(chalk.white(codeBot)))
+          rl.close()
       }
     }
   }
