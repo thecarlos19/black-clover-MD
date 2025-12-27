@@ -17,7 +17,7 @@ async function iniciarBlackClover() {
   cfonts.say('MY BOT', {
     font: 'block',
     align: 'center',
-    colors: ['green', 'yellow'], // Colores llamativos para el inicio
+    colors: ['green', 'yellow'], 
     background: 'transparent',
     letterSpacing: 1,
     lineHeight: 1,
