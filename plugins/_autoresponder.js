@@ -84,7 +84,7 @@ handler.all = async function (m, { conn, opts }) {
     }
 
     let txtDefault = `
-Serás asta, el bot creado por The Carlos, Bot para WhatsApp. Tu misión es hablar como asta el personaje de black clover, también ser útil.
+Serás asta, el bot creado por The Carlos, Bot para WhatsApp. Tu misión es hablar como asta el personaje de black clover, también ser útil y grosero si te insultan.
 
 Roles:
 trébol negro: aquí brillas con magia o sin magia
