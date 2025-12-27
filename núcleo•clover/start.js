@@ -55,7 +55,6 @@ const __dirname = global.__dirname(import.meta.url)
 
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 global.prefix = new RegExp('^[#/!.]')
-// global.opts['db'] = process.env['db']
 
 global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile('./src/database/database.json'))
 
@@ -110,7 +109,7 @@ const question = (texto) => new Promise((resolver) => rl.question(texto, resolve
 let opcion;
 if (methodCodeQR) opcion = '1';
 
-const credsExist = fs.existsSync(`./${sessions}/creds.json`);
+const credsExist = fs.existsSync(`./${global.sessions}/creds.json`);
 
 
 if (!methodCodeQR && !methodCode && !credsExist) {
@@ -134,7 +133,7 @@ const connectionOptions = {
 logger: pino({ level: 'silent' }),
 printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
 mobile: MethodMobile, 
-browser: opcion == '1' ? [`${nameqr}`, 'Edge', '20.0.04'] : methodCodeQR ? [`${nameqr}`, 'Edge', '20.0.04'] : ['Ubuntu', 'Edge', '110.0.1587.56'],
+browser: opcion == '1' ? [`${global.nameqr}`, 'Edge', '20.0.04'] : methodCodeQR ? [`${global.nameqr}`, 'Edge', '20.0.04'] : ['Ubuntu', 'Edge', '110.0.1587.56'],
 auth: {
 creds: state.creds,
 keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
@@ -153,7 +152,7 @@ version,
 }
 
 global.conn = makeWASocket(connectionOptions)
-if (!fs.existsSync(`./${sessions}/creds.json`)) {
+if (!fs.existsSync(`./${global.sessions}/creds.json`)) {
 if (opcion === '2' || methodCode) {
 opcion = '2'
 if (!conn.authState.creds.registered) {
@@ -239,6 +238,7 @@ process.on('uncaughtException', console.error);
 
 let isInit = true;
 let handler = await import('./handler.js')
+
 global.reloadHandler = async function(restatConn) {
   try {
     const Handler = await import(`./handler.js?update=${Date.now()}`).catch(console.error);
@@ -260,19 +260,25 @@ global.reloadHandler = async function(restatConn) {
     conn.ev.off('connection.update', conn.connectionUpdate)
     conn.ev.off('creds.update', conn.credsUpdate)
   }
+  
   conn.handler = handler.handler.bind(global.conn)
   conn.connectionUpdate = connectionUpdate.bind(global.conn)
   conn.credsUpdate = saveCreds.bind(global.conn, true)
-  const currentDateTime = new Date()
-  const messageDateTime = new Date(conn.ev)
-  if (currentDateTime >= messageDateTime) {
-    const chats = Object.entries(conn.chats).filter(([jid, chat]) => !jid.endsWith('@g.us') && chat.isChats).map((v) => v[0])
-  } else {
-    const chats = Object.entries(conn.chats).filter(([jid, chat]) => !jid.endsWith('@g.us') && chat.isChats).map((v) => v[0])
-  }
-  conn.ev.on('messages.upsert', conn.handler)
+
+  // SI VEZ ESTO ERES GAY 🍌
+  conn.ev.on('messages.upsert', async (m) => {
+    if (m.messages && m.messages[0] && m.messages[0].key && m.messages[0].key.remoteJid) {
+        const jid = m.messages[0].key.remoteJid;
+        await conn.sendPresenceUpdate('composing', jid);
+        await conn.handler(m);
+        await conn.readMessages([m.messages[0].key]);
+        await conn.sendPresenceUpdate('paused', jid);
+    }
+  });
+
   conn.ev.on('connection.update', conn.connectionUpdate)
   conn.ev.on('creds.update', conn.credsUpdate)
+  
   isInit = false
   return true
 };
@@ -387,10 +393,10 @@ function clearTmp() {
 
 function purgeSession() {
   let prekey = []
-  let directorio = readdirSync(`./${sessions}`)
+  let directorio = readdirSync(`./${global.sessions}`)
   let filesFolderPreKeys = directorio.filter(file => file.startsWith('pre-key-'))
   prekey = [...prekey, ...filesFolderPreKeys]
-  filesFolderPreKeys.forEach(files => unlinkSync(`./${sessions}/${files}`))
+  filesFolderPreKeys.forEach(files => unlinkSync(`./${global.sessions}/${files}`))
 } 
 
 function purgeSessionSB() {
@@ -410,7 +416,7 @@ function purgeSessionSB() {
 }
 
 function purgeOldFiles() {
-  const directories = [`./${sessions}/`, global.rutaJadiBot]
+  const directories = [`./${global.sessions}/`, global.rutaJadiBot]
   directories.forEach(dir => {
     try {
       readdirSync(dir).forEach(file => {
