@@ -2,17 +2,16 @@ import { join, dirname } from 'path'
 import { createRequire } from 'module'
 import { fileURLToPath } from 'url'
 import { setupMaster, fork } from 'cluster'
-import { watchFile, unwatchFile, existsSync, writeFileSync } from 'fs'
+import { existsSync, writeFileSync } from 'fs'
 import cfonts from 'cfonts'
 import { createInterface } from 'readline'
-import yargs from 'yargs'
 import chalk from 'chalk'
 
 console.log(chalk.bold.hex('#00FFFF')('\n✞─ Iniciando Black Clover IA ─✞'))
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const require = createRequire(__dirname)
-const { name, description, author, version } = require(join(__dirname, './package.json'))
+require(join(__dirname, './package.json'))
 
 const rl = createInterface({
   input: process.stdin,
@@ -21,7 +20,7 @@ const rl = createInterface({
 
 async function barraCargaCyberpunk() {
   const frames = [
-    '[⏳] Iniciando Black clover...',
+    '[⏳] Iniciando Black Clover...',
     '[🔮] Reuniendo maná primitivo...',
     '[💾] Cargando hechizos prohibidos...',
     '[⚡] Sincronizando con demonios...',
@@ -36,16 +35,75 @@ async function barraCargaCyberpunk() {
   console.log()
 }
 
-async function animarTextoCyberpunk(texto, delay = 40) {
-  for (let i = 0; i < texto.length; i++) {
-    process.stdout.write(chalk.bold.hex('#FF0055')(texto[i]))
+async function animacionBlackClover() {
+  const frames = [
+chalk.hex('#555555')(`
+ ╭━┳━╭━╭━╮╮
+ ┃   ┣▅╋▅┫┃
+ ┃ ┃ ╰━╰━━━━━━╮
+ ╰┳╯       ◢▉◣
+  ┃        ▉▉▉
+  ┃        ◥▉◤
+  ┃    ╭━┳━━━━╯
+  ┣━━━━━━┫  INICIANDO PROTOCOLO
+`),
+
+chalk.hex('#FF0000')(`
+ ╭━┳━╭━╭━╮╮
+ ┃   ┣▅╋▅┫┃
+ ┃ ┃ ╰━╰━━━━━━╮
+ ╰┳╯       ◢▉◣
+  ┃        ▉▉▉
+  ┃        ◥▉◤
+  ┃    ╭━┳━━━━╯
+  ┣━━━━━━┫  ANTIMAGIA DETECTADA
+`),
+
+chalk.hex('#FFD700')(`
+　　　　　⣀⠤⠖⠒⠒⠒⠢⠤⣀   
+　　　⣠⠊⠁ ⣀　⣀　　⠈⠑⡄ 
+　　⢠⠃⣰⠁⠈⣀⣤⣤⡑　⣢⣭⢉⣿ 
+　　⢸ ⡏ ⢰⣿⣿⣿⡜　⣿⣿⡇⣿ 
+　　⠈⣆⡇ ⠘⠿⣿⡿⠎⣀⡙⠿⠓⢙⡄
+　　　⠈⠳⢄⣀⠠⡒⠁⠐⠚⠃ ⢶⠋ 
+　　　　　　⢸ ⢇⣮⣥⠼⢬⠼⠞  
+　　　　⣠⠶⣮⡆⢸⣟⣀⣐⣺⡆   
+`),
+
+chalk.hex('#FF00FF')(`
+─────█─▄▀█──█▀▄─█─────
+────▐▌──────────▐▌────
+────█▌▀▄──▄▄──▄▀▐█────
+───▐██──▀▀──▀▀──██▌───
+──▄████▄──▐▌──▄████▄──
+        NÚCLEO DESPIERTO
+`)
+  ]
+
+  const duracionTotal = 3000
+  const delay = Math.floor(duracionTotal / frames.length)
+
+  for (let i = 0; i < frames.length; i++) {
+    console.clear()
+    console.log(frames[i])
     await new Promise(res => setTimeout(res, delay))
   }
-  console.log()
 }
 
 async function iniciarBlackClover() {
   console.clear()
+
+  console.log(chalk.bold.cyanBright('\n⟦ ⌬ ACCESO CONCEDIDO | ASTA-BOT V.777 ⟧'))
+  console.log(chalk.gray('⌬ Canalizando acceso mágico...'))
+  await new Promise(res => setTimeout(res, 600))
+
+  await animacionBlackClover()
+
+  await barraCargaCyberpunk()
+  await new Promise(res => setTimeout(res, 500))
+
+  console.log(chalk.redBright('\n☰✦☰═☰  B  L  A  C  K    C  L  O  V  E  R  ☰═☰✦☰'))
+  await new Promise(res => setTimeout(res, 700))
 
   cfonts.say('El mejor Bot ', {
     font: 'block',
@@ -55,78 +113,21 @@ async function iniciarBlackClover() {
   })
 
   console.log(chalk.bold.hex('#00FFFF')(`
-    ╭━┳━╭━╭━╮╮
-    ┃   ┣▅╋▅┫┃
-    ┃ ┃ ╰━╰━━━━━━╮
-    ╰┳╯       ◢▉◣
-     ┃        ▉▉▉
-     ┃        ◥▉◤
-     ┃    ╭━┳━━━━╯
-     ┣━━━━━━┫  [ ACCESO CONCEDIDO ]
+█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+█░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█
+█░░║║║╠─║─║─║║║║║╠─░░█
+█░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█
+█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+        [ ACCESO CONCEDIDO ]
   `))
 
-  await animarTextoCyberpunk('>> Cargando núcleo del sistema...', 30)
   await new Promise(res => setTimeout(res, 800))
 
-  console.log(chalk.bold.hex('#FF0000')(`
-　　　　⢀⣤⣶⣶⣖⣦⣄⡀        
-　　　⢀⣾⡟⣉⣽⣿⢿⡿⣿⣿⣆       
-　　⢠⣿⣿⣿⡗⠋⠙⡿⣷⢌⣿⣿       
-⣷⣄⣀⣿⣿⣿⣿⣷⣦⣤⣾⣿⣿⣿⡿       
-⠈⠙⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀ ⢀    
-　　⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠻⠿⠿⠋    
-　　　⠹⣿⣿⣿⣿⣿⣿⣿⣿⡇        
-　　　　⠈⢿⣿⣿⣿⣿⣿⣿⣇       ⡄
-　　　　　⠙⢿⣿⣿⣿⣿⣿⣆    ⢀⡾ 
-　　　　　　⠈⠻⣿⣿⣿⣿⣷⣶⣴⣾⠏  
-　　　　　　　　⠈⠉⠛⠛⠛⠋⠁
-  `))
-  
-  await animarTextoCyberpunk('>> Sincronizando con The Carlos (Capitán de los toros negros)...', 30)
-  await new Promise(res => setTimeout(res, 1000))
-
-  console.log(chalk.bold.hex('#FFD700')(`
-　　　　　⣀⠤⠖⠒⠒⠒⠢⠤⣀   
-　　　　⣠⠊⠁ ⣀　⣀　　⠈⠑⡄ 
-　　　⢠⠃⣰⠁⠈⣀⣤⣤⡑　⣢⣭⢉⣿ 
-　　　⢸ ⡏ ⢰⣿⣿⣿⡜　⣿⣿⡇⣿ 
-　　　⠈⣆⡇ ⠘⠿⣿⡿⠎⣀⡙⠿⠓⢙⡄
-　　　　⠈⠳⢄⣀⠠⡒⠁⠐⠚⠃ ⢶⠋ 
-　　　　　　⢸ ⢇⣮⣥⠼⢬⠼⠞  
-　　　　⣠⠶⣮⡆⢸⣟⣀⣐⣺⡆   
-　　　⡸⠈⣾⢿⢿⡦⡉⠁⠁⣩⠇   
-　　　⣰⢁⠞⣔⣷⡏⡳⡽⠉⠉⠁    
-　　⢀⡴⠁⢮⣷⣾⣽⢾⣇⡧⠤⠒⣒⣶⣿⣿⡆
-　　⠸⣋⠚⠓⣒⣩ ⢻⡟⠿⡯⠿⢧⣽⡞⠙⠋
-　　⡔⢉⠉ ⠋⡤⡜⣿⡤⠷⠃ ⠈⠉⠁  
-　　⢳⢬⠈⣀⣤⢍⣰⡇         
-　　⠈⠻⡍⢹ ⢳⡌⢣         
-　　　⣹⠸⡄ ⢻⡄⢧⡀       
-　　　⢸⣅⣀⡷ ⢰⣥⢄⡗       
-　　⢀⡾⣡⠃ ⡰⣣⢯⠊        
-　　⣾⢡⠋ ⣼⠝⡱⠁         
-⢀⣼⣃⣯ ⣜⡷⠾⠗⣶⣄        
-⠈⢷⣂⢫⢽⣦⠉⠁⠘⠚⠚        
-  ⠙⡷⠾⠋
-  `))
-
   console.log(chalk.bold.hex('#FF00FF')('\n⌬═════════════════════⌬'))
-  console.log(chalk.bold.white('      SISTEMA CARGADO POR: ') + chalk.bold.hex('#FFD700')('The Carlos 👑'))
+  console.log(chalk.bold.white('      SISTEMA CREO POR: ') + chalk.bold.hex('#FFD700')('The Carlos 👑'))
   console.log(chalk.bold.hex('#FF00FF')('⌬═══════════════════════⌬\n'))
-  
+
   await new Promise(res => setTimeout(res, 1200))
-}
-
-const frases = [
-  '\n✠ Black Clover reiniciado. ⚙️ Cargando sistemas...\n',
-  '\n✠ Reinicio completado. ⚡ Black Clover listo.\n',
-  '\n✠ Sistema Black Clover: ⚙️ Online.\n',
-  '\n✠ Black Clover revive desde las sombras. ⛓️\n',
-  '\n✠ Reboot: Black Clover ⚔️\n'
-]
-
-function fraseAleatoria() {
-  return chalk.bold.hex('#FF00FF')(frases[Math.floor(Math.random() * frases.length)])
 }
 
 let isRunning = false
@@ -146,8 +147,6 @@ const archivoArranque = './.arranque-ok'
 if (!existsSync(archivoArranque)) {
   await iniciarBlackClover()
   writeFileSync(archivoArranque, 'CARLOS_FINAL')
-} else {
-  console.log(fraseAleatoria())
 }
 
 start('start.js')
