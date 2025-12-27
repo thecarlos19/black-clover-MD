@@ -19,19 +19,18 @@ Adaptacion y edición echa por:
 */
 
 
-import { useMultiFileAuthState, DisconnectReason, makeCacheableSignalKeyStore, fetchLatestBaileysVersion, Browsers } from "@whiskeysockets/baileys"
+import { useMultiFileAuthState, makeCacheableSignalKeyStore, fetchLatestBaileysVersion, Browsers } from "@whiskeysockets/baileys"
 import qrcode from "qrcode"
 import NodeCache from "node-cache"
 import fs from "fs"
 import path from "path"
-import pino from 'pino'
-import chalk from 'chalk'
-import * as ws from 'ws'
-import { fileURLToPath } from 'url'
-import { makeWASocket } from '../lib/simple.js'
+import pino from "pino"
+import chalk from "chalk"
+import * as ws from "ws"
+import { fileURLToPath } from "url"
+import { makeWASocket } from "../lib/simple.js"
 
-const { exec } = await import('child_process')
-const { CONNECTING } = ws
+const { exec } = await import("child_process")
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -40,9 +39,6 @@ let crm1 = "Y2QgcGx1Z2lucy"
 let crm2 = "A7IG1kNXN1b"
 let crm3 = "SBpbmZvLWRvbmFyLmpz"
 let crm4 = "IF9hdXRvcmVzcG9uZGVyLmpzIGluZm8tYm90Lmpz"
-
-let drm1 = ""
-let drm2 = ""
 
 let rtx =
 `˚₊·✞『 𝗕𝗹𝗮𝗰𝗸 𝗖𝗹𝗼𝘃𝗲𝗿 - 𝗦𝘂𝗯 𝗕𝗼𝘁 』✞·—̳͟͞͞₊˚  
@@ -65,7 +61,7 @@ let rtx2 =
 
 🧿 *SISTEMA ➤ [ CÓDIGO ACTIVO ] — Activa el vínculo cuando estés preparado* ⚔️`
 
-const maxSubBots = 500
+const maxSubBots = 1000
 
 let blackJBOptions = {}
 
@@ -105,59 +101,72 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     return m.reply(`❌ No se han encontrado espacios para *Sub-Bots* disponibles.`)
   }
   
-  const availableSlots = maxSubBots - subBotsCount
 
-  let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-  let id = `${who.split('@')[0]}`
-  let pathblackJadiBot = path.join(process.cwd(), 'núcleo•clover', 'blackJadiBot', id)
+  let who = m.mentionedJid?.[0] || m.sender
+  let id = who.split("@")[0]
 
-  if (!fs.existsSync(pathblackJadiBot)) {
-    fs.mkdirSync(pathblackJadiBot, { recursive: true })
-  }
-  
-  blackJBOptions.pathblackJadiBot = pathblackJadiBot
-  blackJBOptions.m = m
-  blackJBOptions.conn = conn
-  blackJBOptions.args = args
-  blackJBOptions.usedPrefix = usedPrefix
-  blackJBOptions.command = command
-  blackJBOptions.fromCommand = true
+  const baseDir = "./blackJadiBot"
+  const pathblackJadiBot = path.join(baseDir, id)
 
-  await blackJadiBot(blackJBOptions)
+  fs.mkdirSync(pathblackJadiBot, { recursive: true })
 
-  global.db.data.users[m.sender].Subs = new Date() * 1
+  await blackJadiBot({
+    pathblackJadiBot,
+    m,
+    conn,
+    args,
+    usedPrefix,
+    command,
+    fromCommand: true
+  })
+
+  global.db.data.users[m.sender].Subs = Date.now()
 }
 
-handler.help = ['qr', 'code']
-handler.tags = ['serbot']
-handler.command = ['qr', 'code']
+handler.help = ["qr", "code"]
+handler.tags = ["serbot"]
+handler.command = ["qr", "code"]
 
 export default handler
 
 export async function blackJadiBot(options) {
   let { pathblackJadiBot, m, conn, args, usedPrefix, command } = options
+
   if (command === 'code') {
     command = 'qr'
     args.unshift('code')
   }
+
   const mcode = args[0] && /(--code|code)/.test(args[0].trim())
     ? true
     : args[1] && /(--code|code)/.test(args[1].trim())
       ? true
       : false
+
   let txtCode, codeBot, txtQR
+
   if (mcode) {
-    args[0] = args[0].replace(/^--code$|^code$/, "").trim()
+    args[0] = args[0]?.replace(/^--code$|^code$/, "").trim()
     if (args[1]) args[1] = args[1].replace(/^--code$|^code$/, "").trim()
-    if (args[0] == "") args[0] = undefined
+    if (args[0] === "") args[0] = undefined
   }
+
   const pathCreds = path.join(pathblackJadiBot, "creds.json")
+
   if (!fs.existsSync(pathblackJadiBot)) {
     fs.mkdirSync(pathblackJadiBot, { recursive: true })
   }
+
   try {
-    if (args[0] && args[0] != undefined) {
-      fs.writeFileSync(pathCreds, JSON.stringify(JSON.parse(Buffer.from(args[0], "base64").toString("utf-8")), null, '\t'))
+    if (args[0]) {
+      fs.writeFileSync(
+        pathCreds,
+        JSON.stringify(
+          JSON.parse(Buffer.from(args[0], "base64").toString("utf-8")),
+          null,
+          '\t'
+        )
+      )
     }
   } catch {
     conn.reply(m.chat, `⚠️ Use correctamente el comando » ${usedPrefix + command}`, m)
@@ -165,20 +174,24 @@ export async function blackJadiBot(options) {
   }
 
   const comb = Buffer.from(crm1 + crm2 + crm3 + crm4, "base64")
-  exec(comb.toString("utf-8"), async (err, stdout, stderr) => {
+
+  exec(comb.toString("utf-8"), async () => {
     const { version } = await fetchLatestBaileysVersion()
-    const msgRetry = () => { }
+    const msgRetry = () => {}
     const msgRetryCache = new NodeCache()
-    const { state, saveState, saveCreds } = await useMultiFileAuthState(pathblackJadiBot)
+    const { state, saveCreds } = await useMultiFileAuthState(pathblackJadiBot)
 
     const connectionOptions = {
       logger: pino({ level: "fatal" }),
       printQRInTerminal: false,
-      auth: { creds: state.creds, keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' })) },
+      auth: {
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
+      },
       msgRetry,
       msgRetryCache,
       browser: mcode ? Browsers.macOS("Chrome") : Browsers.macOS("Desktop"),
-      version: version,
+      version,
       generateHighQualityLinkPreview: true
     }
 
@@ -189,114 +202,154 @@ export async function blackJadiBot(options) {
     async function connectionUpdate(update) {
       const { connection, lastDisconnect, isNewLogin, qr } = update
       if (isNewLogin) sock.isInit = false
+
       if (qr && !mcode) {
-        if (m?.chat) {
-          txtQR = await conn.sendMessage(m.chat, { image: await qrcode.toBuffer(qr, { scale: 8 }), caption: rtx.trim() }, { quoted: m })
-        } else {
-          return
-        }
-        if (txtQR && txtQR.key) {
-          setTimeout(() => { conn.sendMessage(m.sender, { delete: txtQR.key }) }, 30000)
+        txtQR = await conn.sendMessage(
+          m.chat,
+          { image: await qrcode.toBuffer(qr, { scale: 8 }), caption: rtx.trim() },
+          { quoted: m }
+        )
+        if (txtQR?.key) {
+          setTimeout(() => conn.sendMessage(m.sender, { delete: txtQR.key }), 30000)
         }
         return
       }
+
       if (qr && mcode) {
-        let secret = await sock.requestPairingCode((m.sender.split('@')[0]))
-        secret = secret.match(/.{1,4}/g)?.join("-")
+        let addNumber = m.sender.split('@')[0]
+        let code = await sock.requestPairingCode(addNumber)
+        code = code?.match(/.{1,4}/g)?.join('-') || code
+
         txtCode = await conn.sendMessage(m.chat, { text: rtx2 }, { quoted: m })
-        codeBot = await m.reply(secret)
-        console.log(secret)
-      }
-      if (txtCode && txtCode.key) {
-        setTimeout(() => { conn.sendMessage(m.sender, { delete: txtCode.key }) }, 30000)
-      }
-      if (codeBot && codeBot.key) {
-        setTimeout(() => { conn.sendMessage(m.sender, { delete: codeBot.key }) }, 30000)
+        codeBot = await m.reply(code)
+
+        console.log(chalk.bgGreen.black('✞ Código:'), chalk.white(code))
+
+        if (txtCode?.key) {
+          setTimeout(() => conn.sendMessage(m.sender, { delete: txtCode.key }), 30000)
+        }
+        if (codeBot?.key) {
+          setTimeout(() => conn.sendMessage(m.sender, { delete: codeBot.key }), 30000)
+        }
+        return
       }
 
       const reason = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode
+
       if (connection === 'close') {
         if (reason === 428 || reason === 408) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente o expiró. Intentando reconectar...\n╰─────────────────────────`))
           await creloadHandler(true).catch(console.error)
         }
+
         if (reason === 440) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue reemplazada por otra sesión activa.\n╰─────────────────────────`))
           try {
-            if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null }) : ""
+            if (options.fromCommand && m?.chat) {
+              await conn.sendMessage(
+                `${path.basename(pathblackJadiBot)}@s.whatsapp.net`,
+                { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' },
+                { quoted: m }
+              )
+            }
           } catch {}
         }
-        if (reason == 405 || reason == 401) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰─────────────────────────`))
+
+        if (reason === 405 || reason === 401) {
           try {
-            if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
+            if (options.fromCommand && m?.chat) {
+              await conn.sendMessage(
+                `${path.basename(pathblackJadiBot)}@s.whatsapp.net`,
+                { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' },
+                { quoted: m }
+              )
+            }
           } catch {}
           fs.rmdirSync(pathblackJadiBot, { recursive: true })
         }
+
         if (reason === 500) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
-          if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
-          return creloadHandler(true).catch(console.error)
+          if (options.fromCommand && m?.chat) {
+            await conn.sendMessage(
+              `${path.basename(pathblackJadiBot)}@s.whatsapp.net`,
+              { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' },
+              { quoted: m }
+            )
+          }
+          return creloadHandler(true)
         }
+
         if (reason === 515) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Reinicio automático para la sesión (+${path.basename(pathblackJadiBot)}).\n╰─────────────────────────`))
-          await creloadHandler(true).catch(console.error)
+          await creloadHandler(true)
         }
+
         if (reason === 403) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Sesión cerrada o cuenta en soporte para la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
           fs.rmdirSync(pathblackJadiBot, { recursive: true })
         }
       }
-      if (connection == 'open') {
-        if (!global.db.data) loadDatabase()
+
+      if (connection === 'open') {
         if (!global.db.data?.users) loadDatabase()
-        let userName = sock.authState.creds.me.name || 'Anónimo'
-        console.log(chalk.bold.cyanBright(`\n❒────────────【• SUB-BOT  •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`))
+
         sock.isInit = true
         global.conns.push(sock)
 
-        if (m?.chat) await conn.sendMessage(m.chat, { text: args[0] ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa el comando .personalizar para personalizar tu bot y que quede a tu gusto XD `, mentions: [m.sender] }, { quoted: m })
+        if (m?.chat) {
+          await conn.sendMessage(
+            m.chat,
+            {
+              text: args[0]
+                ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...`
+                : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa el comando .personalizar para personalizar tu bot`,
+              mentions: [m.sender]
+            },
+            { quoted: m }
+          )
+        }
       }
     }
 
-    setInterval(async () => {
+    setInterval(() => {
       if (!sock.user) {
-        try { sock.ws.close() } catch { }
+        try { sock.ws.close() } catch {}
         sock.ev.removeAllListeners()
         let i = global.conns.indexOf(sock)
-        if (i < 0) return
-        delete global.conns[i]
-        global.conns.splice(i, 1)
+        if (i >= 0) global.conns.splice(i, 1)
       }
     }, 60000)
 
-    let handler = await import('../núcleo•clover/handler.js')
-    let creloadHandler = async function (restatConn) {
+    let handler = await import('../handler.js')
+
+    let creloadHandler = async function (restartConn) {
       try {
-        const Handler = await import(`../núcleo•clover/handler.js?update=${Date.now()}`).catch(console.error)
-        if (Object.keys(Handler || {}).length) handler = Handler
-      } catch (e) { }
-      if (restatConn) {
+        const Handler = await import(`../handler.js?update=${Date.now()}`)
+        if (Object.keys(Handler).length) handler = Handler
+      } catch {}
+
+      if (restartConn) {
         const oldChats = sock.chats
-        try { sock.ws.close() } catch { }
+        try { sock.ws.close() } catch {}
         sock.ev.removeAllListeners()
         sock = makeWASocket(connectionOptions, { chats: oldChats })
         isInit = true
       }
+
       if (!isInit) {
         sock.ev.off("messages.upsert", sock.handler)
         sock.ev.off("connection.update", sock.connectionUpdate)
-        sock.ev.off('creds.update', sock.credsUpdate)
+        sock.ev.off("creds.update", sock.credsUpdate)
       }
+
       sock.handler = handler.handler.bind(sock)
       sock.connectionUpdate = connectionUpdate.bind(sock)
       sock.credsUpdate = saveCreds.bind(sock, true)
+
       sock.ev.on("messages.upsert", sock.handler)
       sock.ev.on("connection.update", sock.connectionUpdate)
       sock.ev.on("creds.update", sock.credsUpdate)
+
       isInit = false
       return true
     }
+
     creloadHandler(false)
   })
 }
