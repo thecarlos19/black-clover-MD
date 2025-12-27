@@ -8,62 +8,19 @@ import { createInterface } from 'readline'
 import yargs from 'yargs'
 import chalk from 'chalk'
 
-console.log(chalk.bold.hex('#00FF00')('\n── AGENTE DE INICIO CARGADO ──'))
+console.log(chalk.bold.hex('#00FFFF')('\n── INICIANDO PROTOCOLO BLACK CLOVER ──'))
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const require = createRequire(__dirname)
 const { name, description, author, version } = require(join(__dirname, './package.json'))
 const rl = createInterface(process.stdin, process.stdout)
 
-async function animarTextoCyberpunk(texto, delay = 40, glitch = true) {
-  const efectos = '⚔️🔥⚡🩸🔱🧿🌀🪬⛓️💠'
-  let resultado = ''
+async function animarTextoCyberpunk(texto, delay = 40) {
   for (let i = 0; i < texto.length; i++) {
-    resultado += texto[i]
-    let linea = resultado
-    if (glitch && Math.random() > 0.8) {
-      const ruido = efectos[Math.floor(Math.random() * efectos.length)]
-      linea += chalk.white(ruido)
-    }
-    process.stdout.write('\r' + chalk.bold.hex('#FF0055')(linea))
+    process.stdout.write(chalk.bold.hex('#FF0055')(texto[i]))
     await new Promise(res => setTimeout(res, delay))
   }
   console.log()
-}
-
-async function barraMistica() {
-  const simbolos = ['⚡', '🔥', '🌀', '🩸', '🔱', '✨']
-  for (let i = 0; i <= 10; i++) {
-    const carga = '█'.repeat(i) + '░'.repeat(10 - i)
-    const simb = simbolos[i % simbolos.length]
-    process.stdout.write(`\r${chalk.hex('#00FFFF')('        [')} ${chalk.hex('#FF00FF')(carga)} ${chalk.hex('#00FFFF')(']')} ${chalk.bold.white(i * 10 + '%')} ${simb}`)
-    await new Promise(res => setTimeout(res, 200))
-  }
-  console.log()
-}
-
-async function animacionAstaDemon() {
-  const demonFrames = [
-    `
-       ⚔️  [ MODO ANTIPRE-MAGIA ]  ⚔️
-            ⚡   ◢▇◣   ⚡
-               👹  😈  👹
-            ◥████████◤
-               ◢██◣
-    `,
-    `
-       🔥  [ LIBERANDO DEMONIO ]  🔥
-            ✨   ◢▇◣   ✨
-               🔴  💀  🔴
-            ◥████████◤
-               ◢██◣
-    `
-  ]
-  for (let i = 0; i < 6; i++) {
-    console.clear()
-    console.log(chalk.bold.hex(i % 2 === 0 ? '#FF0000' : '#8B0000')(demonFrames[i % demonFrames.length]))
-    await new Promise(res => setTimeout(res, 300))
-  }
 }
 
 async function iniciarBlackClover() {
@@ -72,49 +29,76 @@ async function iniciarBlackClover() {
   cfonts.say('MY BOT', {
     font: 'block',
     align: 'center',
-    colors: ['#FF0000', '#000000'],
-    background: 'transparent',
+    colors: ['#00FFFF', '#FF00FF'],
     letterSpacing: 1
   })
 
-  console.log(chalk.bold.hex('#FFD700')('\n\t   ─── ❖ ── ✦ ── ⚔️ ── ✦ ── ❖ ───'))
-  console.log(chalk.bold.white('\t      SISTEMA DE ASALTO: BLACK CLOVER'))
-  console.log(chalk.bold.hex('#FFD700')('\t   ─── ❖ ── ✦ ── ⚔️ ── ✦ ── ❖ ───\n'))
+  console.log(chalk.bold.hex('#00FFFF')(`
+    ╭━┳━╭━╭━╮╮
+    ┃   ┣▅╋▅┫┃
+    ┃ ┃ ╰━╰━━━━━━╮
+    ╰┳╯       ◢▉◣
+     ┃        ▉▉▉
+     ┃        ◥▉◤
+     ┃    ╭━┳━━━━╯
+     ┣━━━━━━┫  [ ACCESO CONCEDIDO ]
+  `))
 
+  await animarTextoCyberpunk('>> Cargando alma del demonio en el núcleo...', 30)
   await new Promise(res => setTimeout(res, 800))
 
-  await animarTextoCyberpunk('🔱 Iniciando protocolo de resurrección de mana...', 40)
-  await barraMistica()
-
-  console.log(chalk.bold.hex('#00FFFF')('\n[💠] IDENTIFICANDO PROPIETARIO...'))
-  cfonts.say('THE CARLOS', {
-    font: 'chrome',
-    align: 'center',
-    colors: ['candy', 'system'],
-    letterSpacing: 2
-  })
+  console.log(chalk.bold.hex('#FF0000')(`
+　　　　⢀⣤⣶⣶⣖⣦⣄⡀        
+　　　⢀⣾⡟⣉⣽⣿⢿⡿⣿⣿⣆       
+　　⢠⣿⣿⣿⡗⠋⠙⡿⣷⢌⣿⣿       
+⣷⣄⣀⣿⣿⣿⣿⣷⣦⣤⣾⣿⣿⣿⡿       
+⠈⠙⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀ ⢀    
+　　⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠻⠿⠿⠋    
+　　　⠹⣿⣿⣿⣿⣿⣿⣿⣿⡇        
+　　　　⠈⢿⣿⣿⣿⣿⣿⣿⣇       ⡄
+　　　　　⠙⢿⣿⣿⣿⣿⣿⣆    ⢀⡾ 
+　　　　　　⠈⠻⣿⣿⣿⣿⣷⣶⣴⣾⠏  
+　　　　　　　　⠈⠉⠛⠛⠛⠋⠁
+  `))
   
+  await animarTextoCyberpunk('>> Sincronizando con THE CARLOS (Capitán del Escuadrón)...', 30)
   await new Promise(res => setTimeout(res, 1000))
-  await animacionAstaDemon()
 
-  console.log(chalk.bold.hex('#FF0000')('\n  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓'))
-  console.log(chalk.bold.white('    🔥 ESTADO: ') + chalk.bold.hex('#00FF00')('ONLINE'))
-  console.log(chalk.bold.white('    ⚔️ ARMA: ') + chalk.bold.hex('#FF0055')('ESPADA DE DANMA'))
-  console.log(chalk.bold.white('    👑 LIDER: ') + chalk.bold.hex('#FFD700')('THE CARLOS'))
-  console.log(chalk.bold.hex('#FF0000')('  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛'))
+  console.log(chalk.bold.hex('#FFD700')(`
+　　　　　⣀⠤⠖⠒⠒⠒⠢⠤⣀   
+　　　　⣠⠊⠁ ⣀　⣀　　⠈⠑⡄ 
+　　　⢠⠃⣰⠁⠈⣀⣤⣤⡑　⣢⣭⢉⣿ 
+　　　⢸ ⡏ ⢰⣿⣿⣿⡜　⣿⣿⡇⣿ 
+　　　⠈⣆⡇ ⠘⠿⣿⡿⠎⣀⡙⠿⠓⢙⡄
+　　　　⠈⠳⢄⣀⠠⡒⠁⠐⠚⠃ ⢶⠋ 
+　　　　　　⢸ ⢇⣮⣥⠼⢬⠼⠞  
+　　　　⣠⠶⣮⡆⢸⣟⣀⣐⣺⡆   
+　　　⡸⠈⣾⢿⢿⡦⡉⠁⠁⣩⠇   
+　　　⣰⢁⠞⣔⣷⡏⡳⡽⠉⠉⠁    
+　　⢀⡴⠁⢮⣷⣾⣽⢾⣇⡧⠤⠒⣒⣶⣿⣿⡆
+　　⠸⣋⠚⠓⣒⣩ ⢻⡟⠿⡯⠿⢧⣽⡞⠙⠋
+　　⡔⢉⠉ ⠋⡤⡜⣿⡤⠷⠃ ⠈⠉⠁  
+　　⢳⢬⠈⣀⣤⢍⣰⡇         
+　　⠈⠻⡍⢹ ⢳⡌⢣         
+　　　⣹⠸⡄ ⢻⡄⢧⡀       
+　　　⢸⣅⣀⡷ ⢰⣥⢄⡗       
+　　⢀⡾⣡⠃ ⡰⣣⢯⠊        
+　　⣾⢡⠋ ⣼⠝⡱⠁         
+⢀⣼⣃⣯ ⣜⡷⠾⠗⣶⣄        
+⠈⢷⣂⢫⢽⣦⠉⠁⠘⠚⠚        
+  ⠙⡷⠾⠋
+  `))
 
-  await animarTextoCyberpunk('\n⛓️ Rompiendo sellos de seguridad del Reino del Trébol...', 30)
+  console.log(chalk.bold.hex('#FF00FF')('\n⌬═════════════════════════════════⌬'))
+  console.log(chalk.bold.white('      SISTEMA CARGADO POR: ') + chalk.bold.hex('#FFD700')('THE CARLOS 👑'))
+  console.log(chalk.bold.hex('#FF00FF')('⌬═════════════════════════════════⌬\n'))
   
-  console.log(chalk.bold.hex('#FF4500')('\n「 💢 ¡MI MAGIA ES NO RENDIRME NUNCA! 💢 」'))
-  console.log(chalk.bold.gray('\n      Sincronización completa... ¡A la batalla! ⚔️\n'))
-  
-  await new Promise(res => setTimeout(res, 1500))
+  await new Promise(res => setTimeout(res, 1200))
 }
 
 const frases = [
-  '\n🔱 Grimorio abierto. ⛓️ Black Clover despertando...\n',
-  '\n⚡ Rayo Negro detectado. ⚔️ Sistema listo.\n',
-  '\n💀 Las sombras obedecen a The Carlos.\n'
+  '\n✠ Black Clover: Despertando Antimateria...\n',
+  '\n⚡ Grimorio de 5 hojas detectado.\n'
 ]
 
 function fraseAleatoria() {
@@ -128,35 +112,16 @@ function start(file) {
   let args = [join(__dirname, 'núcleo•clover', file), ...process.argv.slice(2)]
   setupMaster({ exec: args[0], args: args.slice(1) })
   let p = fork()
-  p.on('message', data => {
-    if (data === 'reset') { p.process.kill(); isRunning = false; start(file) }
-  })
   p.on('exit', (_, code) => {
     isRunning = false
-    if (code !== 0) {
-        console.error(chalk.red('🚩 FALLO EN EL REINO:'), code)
-        process.exit()
-    }
+    if (code !== 0) start(file)
   })
 }
 
 const archivoArranque = './.arranque-ok'
 if (!existsSync(archivoArranque)) {
   await iniciarBlackClover()
-  console.log(chalk.hex('#FF0000')(`
- 　　　　⢀⣤⣶⣶⣖⣦⣄⡀        
-　　　⢀⣾⡟⣉⣽⣿⢿⡿⣿⣿⣆       
-　　⢠⣿⣿⣿⡗⠋⠙⡿⣷⢌⣿⣿       
-⣷⣄⣀⣿⣿⣿⣿⣷⣦⣤⣾⣿⣿⣿⡿       
-⠈⠙⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀ ⢀    
-　　⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠻⠿⠿⠋    
-　　　⠹⣿⣿⣿⣿⣿⣿⣿⣿⡇        
-　　　　⠈⢿⣿⣿⣿⣿⣿⣿⣇       ⡄
-　　　　　⠙⢿⣿⣿⣿⣿⣿⣆    ⢀⡾ 
-　　　　　　⠈⠻⣿⣿⣿⣿⣷⣶⣴⣾⠏  
-　　　　　　　　⠈⠉⠛⠛⠛⠋⠁  [ ASTA-BOT V7 ]
-  `))
-  writeFileSync(archivoArranque, 'CARLOS_POWER')
+  writeFileSync(archivoArranque, 'CARLOS_FINAL')
 } else {
   console.log(fraseAleatoria())
 }
