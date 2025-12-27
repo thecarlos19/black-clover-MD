@@ -43,7 +43,7 @@ export async function before(m, { conn }) {
         {
           audio: { url: audioWelcome },
           mimetype: 'audio/mpeg',
-          fileName: 'welcome.mp3',
+          ptt: true,
           contextInfo: {
             mentionedJid: mentionedJids,
             externalAdReply: {
@@ -66,11 +66,11 @@ export async function before(m, { conn }) {
         {
           audio: { url: audioGoodbye },
           mimetype: 'audio/mpeg',
-          fileName: 'goodbye.mp3',
+          ptt: true,
           contextInfo: {
             mentionedJid: mentionedJids,
             externalAdReply: {
-              title: "─Ａ Ｄ Ｉ Ō S─👋🏻",
+              title: "─ A D I Ó S ─👋🏻",
               body: `${userName} se ha despedido.`,
               thumbnail: thumbnailBuffer,
               mediaType: 1,
