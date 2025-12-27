@@ -8,12 +8,33 @@ import { createInterface } from 'readline'
 import yargs from 'yargs'
 import chalk from 'chalk'
 
-console.log(chalk.bold.hex('#00FFFF')('\n── INICIANDO PROTOCOLO BLACK CLOVER ──'))
+console.log(chalk.bold.hex('#00FFFF')('\n✞─ Iniciando Black Clover IA ─✞'))
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const require = createRequire(__dirname)
 const { name, description, author, version } = require(join(__dirname, './package.json'))
-const rl = createInterface(process.stdin, process.stdout)
+
+const rl = createInterface({
+  input: process.stdin,
+  output: process.stdout
+})
+
+async function barraCargaCyberpunk() {
+  const frames = [
+    '[⏳] Iniciando Black clover...',
+    '[🔮] Reuniendo maná primitivo...',
+    '[💾] Cargando hechizos prohibidos...',
+    '[⚡] Sincronizando con demonios...',
+    '[🔥] Fusión de magia negra...',
+    '[🌌] Apertura del Reino Oscuro...',
+    '[✅] ASTA-BOT 100% OPERATIVO.'
+  ]
+  for (let frame of frames) {
+    process.stdout.write('\r' + chalk.cyanBright(frame))
+    await new Promise(res => setTimeout(res, 350))
+  }
+  console.log()
+}
 
 async function animarTextoCyberpunk(texto, delay = 40) {
   for (let i = 0; i < texto.length; i++) {
@@ -26,7 +47,7 @@ async function animarTextoCyberpunk(texto, delay = 40) {
 async function iniciarBlackClover() {
   console.clear()
 
-  cfonts.say('MY BOT', {
+  cfonts.say('El mejor Bot ', {
     font: 'block',
     align: 'center',
     colors: ['#00FFFF', '#FF00FF'],
@@ -44,7 +65,7 @@ async function iniciarBlackClover() {
      ┣━━━━━━┫  [ ACCESO CONCEDIDO ]
   `))
 
-  await animarTextoCyberpunk('>> Cargando alma del demonio en el núcleo...', 30)
+  await animarTextoCyberpunk('>> Cargando núcleo del sistema...', 30)
   await new Promise(res => setTimeout(res, 800))
 
   console.log(chalk.bold.hex('#FF0000')(`
@@ -61,7 +82,7 @@ async function iniciarBlackClover() {
 　　　　　　　　⠈⠉⠛⠛⠛⠋⠁
   `))
   
-  await animarTextoCyberpunk('>> Sincronizando con THE CARLOS (Capitán del Escuadrón)...', 30)
+  await animarTextoCyberpunk('>> Sincronizando con The Carlos (Capitán de los toros negros)...', 30)
   await new Promise(res => setTimeout(res, 1000))
 
   console.log(chalk.bold.hex('#FFD700')(`
@@ -89,16 +110,19 @@ async function iniciarBlackClover() {
   ⠙⡷⠾⠋
   `))
 
-  console.log(chalk.bold.hex('#FF00FF')('\n⌬═════════════════════════════════⌬'))
-  console.log(chalk.bold.white('      SISTEMA CARGADO POR: ') + chalk.bold.hex('#FFD700')('THE CARLOS 👑'))
-  console.log(chalk.bold.hex('#FF00FF')('⌬═════════════════════════════════⌬\n'))
+  console.log(chalk.bold.hex('#FF00FF')('\n⌬═════════════════════⌬'))
+  console.log(chalk.bold.white('      SISTEMA CARGADO POR: ') + chalk.bold.hex('#FFD700')('The Carlos 👑'))
+  console.log(chalk.bold.hex('#FF00FF')('⌬═══════════════════════⌬\n'))
   
   await new Promise(res => setTimeout(res, 1200))
 }
 
 const frases = [
-  '\n✠ Black Clover: Despertando Antimateria...\n',
-  '\n⚡ Grimorio de 5 hojas detectado.\n'
+  '\n✠ Black Clover reiniciado. ⚙️ Cargando sistemas...\n',
+  '\n✠ Reinicio completado. ⚡ Black Clover listo.\n',
+  '\n✠ Sistema Black Clover: ⚙️ Online.\n',
+  '\n✠ Black Clover revive desde las sombras. ⛓️\n',
+  '\n✠ Reboot: Black Clover ⚔️\n'
 ]
 
 function fraseAleatoria() {
