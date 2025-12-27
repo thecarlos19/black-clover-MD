@@ -265,7 +265,7 @@ global.reloadHandler = async function(restatConn) {
   conn.connectionUpdate = connectionUpdate.bind(global.conn)
   conn.credsUpdate = saveCreds.bind(global.conn, true)
 
-  // SI VEZ ESTO ERES GAY 🍌
+  // Read messages function created by Brayan  
   conn.ev.on('messages.upsert', async (m) => {
     if (m.messages && m.messages[0] && m.messages[0].key && m.messages[0].key.remoteJid) {
         const jid = m.messages[0].key.remoteJid;
