@@ -144,11 +144,17 @@ const archivoArranque = './.arranque-ok'
 if (!existsSync(archivoArranque)) {
   await iniciarBlackClover()
   console.log(chalk.hex('#FF0000')(`
-    ◢▇◣┈┈◢▇◣
-    ▇▇▇◣┈┈◢▇▇▇
-    ◥▇▇▇◣◢▇▇▇◤
-    ┈┈◥▇▇▇▇◤
-    ┈┈┈┈◥▇◤   [ ASTA-BOT V7 ]
+ 　　　　⢀⣤⣶⣶⣖⣦⣄⡀        
+　　　⢀⣾⡟⣉⣽⣿⢿⡿⣿⣿⣆       
+　　⢠⣿⣿⣿⡗⠋⠙⡿⣷⢌⣿⣿       
+⣷⣄⣀⣿⣿⣿⣿⣷⣦⣤⣾⣿⣿⣿⡿       
+⠈⠙⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⡀ ⢀    
+　　⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠻⠿⠿⠋    
+　　　⠹⣿⣿⣿⣿⣿⣿⣿⣿⡇        
+　　　　⠈⢿⣿⣿⣿⣿⣿⣿⣇       ⡄
+　　　　　⠙⢿⣿⣿⣿⣿⣿⣆    ⢀⡾ 
+　　　　　　⠈⠻⣿⣿⣿⣿⣷⣶⣴⣾⠏  
+　　　　　　　　⠈⠉⠛⠛⠛⠋⠁  [ ASTA-BOT V7 ]
   `))
   writeFileSync(archivoArranque, 'CARLOS_POWER')
 } else {
