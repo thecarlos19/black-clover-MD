@@ -4,9 +4,9 @@ const baileys = (await import("@whiskeysockets/baileys")).default
 const { proto, generateWAMessageFromContent, generateWAMessageContent } = baileys
 
 let handler = async (message, { conn, text }) => {
-  if (!text) return conn.reply(message.chat, ' *¿Qué video de TikTok quieres buscar?*', message, fake)
+  if (!text) return conn.reply(message.chat, '🥷🏻 Por favor, ingrese un texto para realizar una búsqueda en TikTok.', message, fake)
 
-  await conn.reply(message.chat, '🔍 Buscando en TikTok...', message, fake)
+  await conn.reply(message.chat, '⌛ *DESCARGANDO SUS RESULTADOS..*', message, fake)
 
   async function createVideoMessage(url, caption) {
     try {
@@ -64,7 +64,7 @@ let handler = async (message, { conn, text }) => {
             messageContextInfo: { deviceListMetadata: {}, deviceListMetadataVersion: 2 },
             interactiveMessage: proto.Message.InteractiveMessage.fromObject({
               body: proto.Message.InteractiveMessage.Body.create({ text: null }),
-              footer: proto.Message.InteractiveMessage.Footer.create({ text: '🌱 Resultados de TikTok' }),
+              footer: proto.Message.InteractiveMessage.Footer.create({ text: '🍀 Resultados de TikTok' }),
               header: proto.Message.InteractiveMessage.Header.create({ title: null, hasMediaAttachment: false }),
               carouselMessage
             })
