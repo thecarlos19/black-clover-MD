@@ -86,6 +86,6 @@ handler.help = ['tiktoksearch <texto>']
 handler.tags = ['downloader']
 handler.command = ['tiktoksearch', 'tts', 'ttsearch']
 handler.register = true
-
+handler.group = true;
 
 export default handler
