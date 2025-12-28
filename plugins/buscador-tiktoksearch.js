@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 const baileys = (await import("@whiskeysockets/baileys")).default
 const { proto, generateWAMessageFromContent, generateWAMessageContent } = baileys
