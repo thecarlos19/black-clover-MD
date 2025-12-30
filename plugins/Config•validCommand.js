@@ -5,15 +5,24 @@ import fs from 'fs'
 import path from 'path'
 
 export async function before(m, { conn }) {
-  if (!m.text || !global.prefix.test(m.text)) return
+  if (!m.text || !global.prefix) return
 
+  global.prefix.lastIndex = 0
+  if (!global.prefix.test(m.text)) return
+
+  global.prefix.lastIndex = 0
   const usedPrefix = global.prefix.exec(m.text)[0]
   const command = m.text.slice(usedPrefix.length).trim().split(/\s+/)[0].toLowerCase()
 
+  global.db.data = global.db.data || {}
+  global.db.data.users = global.db.data.users || {}
+
   const isValidCommand = (cmd, plugins) =>
-    Object.values(plugins).some(p => {
+    Object.values(plugins || {}).some(p => {
+      if (!p || !p.command) return false
       const cmds = p.command
-      return cmds && (Array.isArray(cmds) ? cmds : [cmds]).includes(cmd)
+      if (cmds instanceof RegExp) return cmds.test(cmd)
+      return (Array.isArray(cmds) ? cmds : [cmds]).includes(cmd)
     })
 
   if (isValidCommand(command, global.plugins)) {
@@ -25,11 +34,11 @@ export async function before(m, { conn }) {
   const comando = usedPrefix + command
 
   const easterEggs = {
-    'hacked': { recompensa: 100, mensaje: '👾 *Acceso oculto concedido... +100 XP.*' },
-    'glitch': { recompensa: 50, mensaje: '⚡ *Glitch detectado. +50 monedas.*' },
-    'neo': { recompensa: 77, mensaje: '🧬 *Bienvenido al núcleo, Neo. +77 XP.*' },
-    'thematrix': { recompensa: 133, mensaje: '🟩 *Has visto más allá del código. +133 monedas.*' },
-    'elcodigooculto': { recompensa: 250, mensaje: '🔐 *Descubriste el código oculto. +250 XP.*' }
+    hacked: { recompensa: 100, mensaje: '👾 *Acceso oculto concedido... +100 XP.*' },
+    glitch: { recompensa: 50, mensaje: '⚡ *Glitch detectado. +50 monedas.*' },
+    neo: { recompensa: 77, mensaje: '🧬 *Bienvenido al núcleo, Neo. +77 XP.*' },
+    thematrix: { recompensa: 133, mensaje: '🟩 *Has visto más allá del código. +133 monedas.*' },
+    elcodigooculto: { recompensa: 250, mensaje: '🔐 *Descubriste el código oculto. +250 XP.*' }
   }
 
   const egg = easterEggs[command]
