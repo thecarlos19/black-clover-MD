@@ -14,7 +14,8 @@ const tags = {
 
 const defaultMenu = {
   before: `
-⎯ ͟͞͞ 𝙐𝙎𝙀𝙍 𝙎𝙏𝘼𝙏𝙐𝙎  ͟͞͞⎯
+⧼⋆꙳• *REGISTRO CLOVER* ⋆꙳•⧽
+
 > 🪐 𝙉𝙤𝙢𝙗𝙧𝙚   » %name
 > ⚙️ 𝙉𝙞𝙫𝙚𝙡     » %level
 > ⚡ 𝙀𝙭𝙥        » %exp / %maxexp
@@ -26,9 +27,9 @@ const defaultMenu = {
 👑 » 𝗢𝗽𝗲𝗿𝗮𝗱𝗼𝗿:—͟͟͞͞ 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 𖣘 «
 %readmore
 `.trimStart(),
-  header: '\n⧼⋆꙳•〔 🍀 %category 〕⋆꙳•⧽',
-  body: '> 🦠 %cmd',
-  footer: '╰⋆꙳•❅‧*₊⋆☃︎‧*❆₊⋆╯',
+  header: '\n⧼⋆꙳•〔 🛸 %category 〕⋆꙳•⧽',
+  body: '> 🔖 %cmd',
+  footer: '╰⋆꙳•❅‧*₊⋆꙳︎‧*❆₊⋆╯',
   after: '\n⌬ 𝗖𝗬𝗕𝗘𝗥 𝗠𝗘𝗡𝗨 🧬 - Sistema ejecutado con éxito.'
 }
 
@@ -47,8 +48,8 @@ const loadMenuMedia = jid => {
 const fetchBuffer = async url =>
   Buffer.from(await (await fetch(url)).arrayBuffer())
 
-const defaultThumb = fetchBuffer('https://files.catbox.moe/mnnxpk.jpg')
-const defaultVideo = fetchBuffer('https://files.catbox.moe/jkokln.mp4')
+const defaultThumb = await fetchBuffer('https://files.catbox.moe/aoxdb6.jpg')
+const defaultVideo = await fetchBuffer('https://files.catbox.moe/jkokln.mp4')
 
 let handler = async (m, { conn, usedPrefix }) => {
   await conn.sendMessage(m.chat, { react: { text: '⚔️', key: m.key } })
@@ -57,7 +58,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   const menuMedia = loadMenuMedia(botJid)
   const menu = global.subBotMenus?.[botJid] || defaultMenu
 
-  const user = global.db.data.users[m.sender]
+  const user = global.db.data.users[m.sender] || { level: 0, exp: 0 }
   const { min, xp } = xpRange(user.level, global.multiplier)
 
   const replace = {
@@ -71,7 +72,7 @@ let handler = async (m, { conn, usedPrefix }) => {
     readmore: String.fromCharCode(8206).repeat(4001)
   }
 
-  const help = Object.values(global.plugins)
+  const help = Object.values(global.plugins || {})
     .filter(p => !p.disabled)
     .map(p => ({
       help: [].concat(p.help || []),
@@ -98,11 +99,11 @@ let handler = async (m, { conn, usedPrefix }) => {
 
   const thumb = menuMedia.thumbnail && fs.existsSync(menuMedia.thumbnail)
     ? fs.readFileSync(menuMedia.thumbnail)
-    : await defaultThumb
+    : defaultThumb
 
   const video = menuMedia.video && fs.existsSync(menuMedia.video)
     ? fs.readFileSync(menuMedia.video)
-    : await defaultVideo
+    : defaultVideo
 
   const uniqueThumb = Buffer.concat([thumb, Buffer.from(botJid)])
 
