@@ -1,200 +1,134 @@
+import { spawn } from "child_process"
+import fs from "fs"
 import fetch from "node-fetch"
 import yts from "yt-search"
 import Jimp from "jimp"
-import axios from "axios"
-import crypto from "crypto"
+
+const name = "Descargas - black clover"
 
 async function resizeImage(buffer, size = 300) {
-  const image = await Jimp.read(buffer)
-  return image.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
+  const img = await Jimp.read(buffer)
+  return img.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
 }
 
-const savetube = {
-  api: {
-    base: "https://media.savetube.me/api",
-    info: "/v2/info",
-    download: "/download",
-    cdn: "/random-cdn"
-  },
-  headers: {
-    accept: "*/*",
-    "content-type": "application/json",
-    origin: "https://yt.savetube.me",
-    referer: "https://yt.savetube.me/",
-    "user-agent": "Postify/1.0.0"
-  },
-  crypto: {
-    hexToBuffer: (hexString) => {
-      const matches = hexString.match(/.{1,2}/g)
-      return Buffer.from(matches.join(""), "hex")
-    },
-    decrypt: async (enc) => {
-      const secretKey = "C5D58EF67A7584E4A29F6C35BBC4EB12"
-      const data = Buffer.from(enc, "base64")
-      const iv = data.slice(0, 16)
-      const content = data.slice(16)
-      const key = savetube.crypto.hexToBuffer(secretKey)
-      const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv)
-      let decrypted = decipher.update(content)
-      decrypted = Buffer.concat([decrypted, decipher.final()])
-      return JSON.parse(decrypted.toString())
+const yt = {
+  static: Object.freeze({
+    baseUrl: "https://cnv.cx",
+    headers: {
+      "accept-encoding": "gzip, deflate, br, zstd",
+      origin: "https://frame.y2meta-uk.com",
+      "user-agent": "Mozilla/5.0"
+    }
+  }),
+  resolveConverterPayload(link, f = "720p") {
+    if (!["144p", "240p", "360p", "720p", "1080p"].includes(f)) throw Error("Formato inválido")
+    return {
+      link,
+      format: "mp4",
+      videoQuality: f.replace("p", ""),
+      filenameStyle: "pretty",
+      vCodec: "h264"
     }
   },
-  isUrl: (str) => {
-    try {
-      new URL(str)
-      return /youtube.com|youtu.be/.test(str)
-    } catch {
-      return false
-    }
+  sanitizeFileName(n) {
+    const ext = n.match(/\.[^.]+$/)[0]
+    const base = n.replace(ext, "").replace(/[^A-Za-z0-9]/g, "_").replace(/_+/g, "_").toLowerCase()
+    return base + ext
   },
-  youtube: (url) => {
-    const patterns = [
-      /youtube.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-      /youtube.com\/embed\/([a-zA-Z0-9_-]{11})/,
-      /youtu.be\/([a-zA-Z0-9_-]{11})/
-    ]
-    for (let pattern of patterns) {
-      const match = url.match(pattern)
-      if (match) return match[1]
-    }
-    return null
+  async getBuffer(u) {
+    const r = await fetch(u)
+    if (!r.ok) throw Error("No se pudo descargar")
+    return Buffer.from(await r.arrayBuffer())
   },
-  request: async (endpoint, data = {}, method = "post") => {
-    try {
-      const { data: response } = await axios({
-        method,
-        url: `${endpoint.startsWith("http") ? "" : savetube.api.base}${endpoint}`,
-        data: method === "post" ? data : undefined,
-        params: method === "get" ? data : undefined,
-        headers: savetube.headers
-      })
-      return { status: true, code: 200, data: response }
-    } catch (error) {
-      return { status: false, code: error.response?.status || 500, error: error.message }
-    }
+  async getKey() {
+    const r = await fetch(this.static.baseUrl + "/v2/sanity/key", { headers: this.static.headers })
+    return r.json()
   },
-  getCDN: async () => {
-    const response = await savetube.request(savetube.api.cdn, {}, "get")
-    if (!response.status) return response
-    return { status: true, code: 200, data: response.data.cdn }
+  async convert(u, f) {
+    const { key } = await this.getKey()
+    const payload = this.resolveConverterPayload(u, f)
+    const r = await fetch(this.static.baseUrl + "/v2/converter", {
+      method: "post",
+      headers: { ...this.static.headers, key },
+      body: new URLSearchParams(payload)
+    })
+    return r.json()
   },
-  download: async (link, type = "video") => {
-    if (!savetube.isUrl(link)) return { status: false, code: 400, error: "URL inválida" }
-    const id = savetube.youtube(link)
-    if (!id) return { status: false, code: 400, error: "No se pudo obtener el ID del video" }
-    try {
-      const cdnx = await savetube.getCDN()
-      if (!cdnx.status) return cdnx
-      const cdn = cdnx.data
-      const videoInfo = await savetube.request(
-        `https://${cdn}${savetube.api.info}`,
-        { url: `https://www.youtube.com/watch?v=${id}` }
-      )
-      if (!videoInfo.status || !videoInfo.data?.data)
-        return { status: false, code: 500, error: "No se pudo obtener información del video" }
-      const decrypted = await savetube.crypto.decrypt(videoInfo.data.data)
-      const downloadData = await savetube.request(
-        `https://${cdn}${savetube.api.download}`,
-        {
-          id,
-          downloadType: "video",
-          quality: "720p",
-          key: decrypted.key
-        }
-      )
-      if (!downloadData?.data?.data?.downloadUrl)
-        return { status: false, code: 500, error: "No se pudo obtener link de descarga" }
-      return {
-        status: true,
-        code: 200,
-        result: {
-          title: decrypted.title || "",
-          author: decrypted.channel || "",
-          views: decrypted.viewCount || "",
-          timestamp: decrypted.lengthSeconds || "",
-          ago: decrypted.uploadedAt || "",
-          format: "mp4",
-          download: downloadData.data.data.downloadUrl,
-          thumbnail: decrypted.thumbnail || ""
-        }
-      }
-    } catch (error) {
-      return { status: false, code: 500, error: error.message }
-    }
+  async download(u, f) {
+    const { url, filename } = await this.convert(u, f)
+    const buffer = await this.getBuffer(url)
+    return { buffer, fileName: this.sanitizeFileName(filename) }
   }
 }
 
-const handler = async (m, { conn, text, command }) => {
+async function convertToFast(buffer) {
+  const tempIn = "./temp_in.mp4"
+  const tempOut = "./temp_out.mp4"
+  fs.writeFileSync(tempIn, buffer)
+  await new Promise((res, rej) => {
+    const ff = spawn("ffmpeg", ["-i", tempIn, "-c", "copy", "-movflags", "faststart", tempOut])
+    ff.on("close", c => c === 0 ? res() : rej())
+  })
+  const out = fs.readFileSync(tempOut)
+  fs.unlinkSync(tempIn)
+  fs.unlinkSync(tempOut)
+  return out
+}
+
+const handler = async (m, { conn, args }) => {
+  if (!args[0]) return m.reply("🎬 Pasa el link o nombre")
   await m.react("⌛")
-  if (!text?.trim())
-    return conn.reply(m.chat, "Dame el link de YouTube o el nombre XD", m)
-  try {
-    let url, title, thumbnail
-    if (savetube.isUrl(text)) {
-      const id = savetube.youtube(text)
-      const search = await yts({ videoId: id })
-      url = text
-      title = search.title || ""
-      thumbnail = search.thumbnail
-    } else {
-      const search = await yts.search({ query: text, pages: 1 })
-      if (!search.videos.length)
-        return m.reply("❌ ¡Ni con el radar del dragón encontré ese video!")
-      const videoInfo = search.videos[0]
-      url = videoInfo.url
-      title = videoInfo.title
-      thumbnail = videoInfo.thumbnail
-    }
-    const thumbResized = await resizeImage(await (await fetch(thumbnail)).buffer(), 300)
-    const res3 = await fetch("https://qu.ax/xCgVW.jpg")
-    const thumb3 = Buffer.from(await res3.arrayBuffer())
-    const fkontak = {
-      key: { fromMe: false, participant: "0@s.whatsapp.net" },
-      message: {
-        documentMessage: {
-          title: `🎬「 ${title} 」⚡`,
-          fileName: `Descargas black clover`,
-          jpegThumbnail: thumb3
-        }
-      }
-    }
-    if (command == "ytmp4") {
-      const dl = await savetube.download(url, "video")
-      if (!dl.status) {
-        await m.react("✖️")
-        return m.reply(`❌ Error zorra: ${dl.error}`)
-      }
-      try {
-        const { headers } = await axios.head(dl.result.download)
-        const fileSize = parseInt(headers["content-length"] || 0)
-        if (fileSize > 209715200) {
-          await m.react("✖️")
-          return m.reply("⚠️ El archivo supera los 200 MB, no puedo enviarlo.")
-        }
-      } catch {}
-      await conn.sendMessage(
-        m.chat,
-        {
-          video: { url: dl.result.download },
-          mimetype: "video/mp4",
-          fileName: `${dl.result.title}.mp4`,
-          jpegThumbnail: thumbResized,
-          caption: `🎬 *${dl.result.title}*`
-        },
-        { quoted: fkontak }
-      )
-      await m.react("✅")
-      return
-    }
-  } catch (error) {
-    await m.react("✖️")
-    return m.reply(`💢 Error perra: ${error.message}`)
+
+  let url, title, thumbnail
+
+  if (args[0].includes("youtu")) {
+    const info = await yts({ videoId: args[0].split("v=")[1] })
+    url = args[0]
+    title = info.title
+    thumbnail = info.thumbnail
+  } else {
+    const search = await yts.search(args.join(" "))
+    if (!search.videos.length) return m.reply("❌ No encontrado")
+    const v = search.videos[0]
+    url = v.url
+    title = v.title
+    thumbnail = v.thumbnail
   }
+
+  const thumb = await resizeImage(await (await fetch(thumbnail)).buffer())
+  const res3 = await fetch("https://qu.ax/xCgVW.jpg")
+  const thumb3 = Buffer.from(await res3.arrayBuffer())
+
+  const fkontak = {
+    key: { fromMe: false, participant: "0@s.whatsapp.net" },
+    message: {
+      documentMessage: {
+        title: `🎬「 ${title} 」`,
+        fileName: name,
+        jpegThumbnail: thumb3
+      }
+    }
+  }
+
+  let { buffer, fileName } = await yt.download(url, "720p")
+  buffer = await convertToFast(buffer)
+
+  await conn.sendMessage(
+    m.chat,
+    {
+      video: buffer,
+      mimetype: "video/mp4",
+      fileName,
+      jpegThumbnail: thumb
+    },
+    { quoted: fkontak }
+  )
+
+  await m.react("✅")
 }
 
 handler.command = ["ytmp4"]
-handler.help = ["ytmp4"]
 handler.tags = ["descargas"]
+handler.help = ["ytmp4 <link|nombre>"]
 
 export default handler
