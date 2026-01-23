@@ -14,8 +14,7 @@ const tags = {
 
 const defaultMenu = {
   before: `
-⧼⋆꙳• *REGISTRO CLOVER* ⋆꙳•⧽
-
+—͟͟͞͞   *REGISTRO CLOVER* »
 > 🪐 𝙉𝙤𝙢𝙗𝙧𝙚   » %name
 > ⚙️ 𝙉𝙞𝙫𝙚𝙡     » %level
 > ⚡ 𝙀𝙭𝙥        » %exp / %maxexp
