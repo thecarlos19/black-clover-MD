@@ -34,7 +34,7 @@ const yt = {
     }
   },
   sanitizeFileName(n) {
-    const ext = n.match(/\.[^.]+$/)[0]
+    const ext = n.includes('.') ? n.match(/\.[^.]+$/)[0] : '.mp3'
     const base = n.replace(ext, '').replace(/[^A-Za-z0-9]/g, '_').replace(/_+/g, '_').toLowerCase()
     return base + ext
   },
@@ -85,8 +85,9 @@ const handler = async (m, { conn, args, command }) => {
   let url, title, thumbnail
 
   if (args[0].includes('youtu')) {
-    const info = await yts({ videoId: args[0].split('v=')[1] })
-    url = args[0]
+    const id = args[0].split('v=')[1]?.split('&')[0] || args[0].split('/').pop()
+    const info = await yts({ videoId: id })
+    url = 'https://www.youtube.com/watch?v=' + id
     title = info.title
     thumbnail = info.thumbnail
   } else {
@@ -98,7 +99,10 @@ const handler = async (m, { conn, args, command }) => {
     thumbnail = v.thumbnail
   }
 
-  const thumb = await resizeImage(await (await fetch(thumbnail)).buffer())
+  const thumb = await resizeImage(
+    Buffer.from(await (await fetch(thumbnail)).arrayBuffer())
+  )
+
   const res3 = await fetch('https://qu.ax/xCgVW.jpg')
   const thumb3 = Buffer.from(await res3.arrayBuffer())
 
@@ -123,7 +127,8 @@ const handler = async (m, { conn, args, command }) => {
       {
         audio: buffer,
         mimetype: 'audio/mpeg',
-        fileName,
+        fileName: fileName.endsWith('.mp3') ? fileName : fileName + '.mp3',
+        ptt: false,
         jpegThumbnail: thumb
       },
       { quoted: fkontak }

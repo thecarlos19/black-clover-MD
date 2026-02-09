@@ -1,6 +1,15 @@
 import axios from 'axios'
+import Jimp from 'jimp'
+
 const baileys = (await import("@whiskeysockets/baileys")).default
 const { proto, generateWAMessageFromContent, generateWAMessageContent } = baileys
+
+const name = "Descargas - black clover"
+
+async function resizeImage(buffer, size = 300) {
+  const img = await Jimp.read(buffer)
+  return img.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
+}
 
 let handler = async (message, { conn, text }) => {
   if (!text) return conn.reply(message.chat, '🥷🏻 Por favor, ingrese un texto para realizar una búsqueda en TikTok.', message, fake)
@@ -85,6 +94,6 @@ handler.help = ['tiktoksearch <texto>']
 handler.tags = ['downloader']
 handler.command = ['tiktoksearch', 'tts', 'ttsearch']
 handler.register = true
-handler.group = true;
+handler.group = true
 
 export default handler

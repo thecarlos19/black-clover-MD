@@ -1,4 +1,12 @@
 import axios from 'axios'
+import Jimp from 'jimp'
+
+const name = "Descargas - black clover"
+
+async function resizeImage(buffer, size = 300) {
+  const img = await Jimp.read(buffer)
+  return img.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
+}
 
 const handler = async (m, { conn, text, usedPrefix }) => {
   if (!text) 
