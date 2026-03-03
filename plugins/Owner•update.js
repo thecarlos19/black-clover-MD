@@ -1,16 +1,32 @@
 import { execSync } from 'child_process'
-let handler = async (m, { conn, text }) => {
 
-try {
-await m.react(rwait)
-if (conn.user.jid == conn.user.jid) {
-let stdout = execSync('git pull' + (m.fromMe && text ? ' ' + text : ''))
-await conn.reply(m.chat, stdout.toString(), m, rcanal)
-await m.react(done)}
-} catch (e) {
-await m.react(error)
-await m.reply('🚩 Se han hecho cambios locales qué entran en conflicto con las Actualizaciones del Repositorio, Para actualizar, reinstala el Bot o realiza las actualizaciones manualmente.')
-}}
+let handler = async (m, { conn }) => {
+  try {
+    await m.react('⏳')
+
+    let stdout = execSync('git pull', { encoding: 'utf-8' })
+
+    await conn.reply(
+      m.chat,
+      `✅ Actualización completada:\n\n${stdout}`,
+      m,
+      rcanal
+    )
+
+    await m.react('✅')
+
+  } catch (e) {
+    console.error(e)
+
+    await m.react('❌')
+    await conn.reply(
+      m.chat,
+      '🚩 Se han hecho cambios locales que entran en conflicto con las actualizaciones del repositorio.\n\n Solución:\n• git reset --hard\n• o reinstala el bot',
+      m,
+      rcanal
+    )
+  }
+}
 
 handler.help = ['update', 'actualizar']
 handler.tags = ['owner']
