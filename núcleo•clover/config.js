@@ -15,7 +15,7 @@ global.botNumber = ''; // Ejemplo: 525568138672
 global.owner = [
   ['5215544876071', '🜲 𝗖𝗿𝗲𝗮𝗱𝗼𝗿 👻', true],
   ['5217971289909'],
-  ['521664174469', 'BrayanOFC', true],
+  ['5216641784469', 'BrayanOFC', true],
   ['5217971282613', '', false], // Espacios opcionales
   ['573244278232', 'Brayan uchiha 🐦‍⬛', true],
   ['', '', false]
