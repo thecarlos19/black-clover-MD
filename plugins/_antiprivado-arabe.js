@@ -2,7 +2,6 @@ const codigosArabes = ['+212', '+971', '+20', '+966', '+964', '+963', '+973', '+
 const regexArabe = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
 const regexComando = /^[\/!#.]/;
 
-// Objeto global para advertencias
 global.advertenciasArabes = global.advertenciasArabes || {};
 
 export async function before(m, { conn, isOwner, isROwner }) {
@@ -31,32 +30,33 @@ export async function before(m, { conn, isOwner, isROwner }) {
 
       if (advertencias >= 3) {
         await m.reply(`
-🟥 ⛔ *[BLOQUEO ACTIVADO]* ⛔ 🟥
-══════════════════════
-🛡️ *Seguridad CyberCore™ activada*
-📛 Usuario: ${numero}
-💬 Motivo: Texto no permitido (3/3)
+╭━〔 ⛔ BLOQUEO ACTIVADO 〕━⬣
+┃ 👤 Usuario: ${numero}
+┃ 🚫 Acceso: Denegado
+┃ ⚠️ Motivo: Texto no permitido
+┃ 🔢 Intentos: 3/3
+┃
+┃ 🔒 Estado: Usuario bloqueado
+┃ 🛡️ Sistema de protección activo
+╰━━━━━━━━━━━━━━━━⬣`.trim());
 
-🧨 Ejecución del protocolo [AUTOBLOCK-ΣX3]...
-🔒 Estado: *USUARIO BLOQUEADO*
-
-🔗 Acceso finalizado.
-══════════════════════`);
         await conn.updateBlockStatus(m.chat, 'block');
         console.log(`[⛔ BLOQUEADO PERMANENTE] ${numero}`);
         delete global.advertenciasArabes[numero];
+
       } else {
         await m.reply(`
-⚠️ ⚠️ *[ADVERTENCIA ${advertencias}/3]* ⚠️ ⚠️
-══════════════════════
-🚫 Sistema de defensa activado.
-💬 Has enviado texto no permitido.
+╭━〔 ⚠️ ADVERTENCIA 〕━⬣
+┃ 👤 Usuario: ${numero}
+┃ 🚫 Texto no permitido detectado
+┃ 🔢 Intentos: ${advertencias}/3
+┃
+┃ 💡 Solo comandos permitidos:
+┃ /menu  /help  /code  !info
+┃
+┃ ⚠️ Al llegar a 3 serás bloqueado
+╰━━━━━━━━━━━━━━━━⬣`.trim());
 
-📎 Solo comandos aceptados:
-Ej: */menu*, */help*, */code* !info
-
-🧬 Siguiente violación resultará en *bloqueo automático*.
-══════════════════════`);
         console.log(`[⚠️ ADVERTENCIA ${advertencias}/3] ${numero}`);
       }
 

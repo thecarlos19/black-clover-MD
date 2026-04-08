@@ -14,7 +14,7 @@ const tags = {
 
 const defaultMenu = {
   before: `
-—͟͟͞͞   *REGISTRO CLOVER* »
+—͟͟͞͞♱ *Registro Clover MD* »
 > 🪐 𝙉𝙤𝙢𝙗𝙧𝙚   » %name
 > ⚙️ 𝙉𝙞𝙫𝙚𝙡     » %level
 > ⚡ 𝙀𝙭𝙥        » %exp / %maxexp
@@ -26,8 +26,8 @@ const defaultMenu = {
 👑 » 𝗢𝗽𝗲𝗿𝗮𝗱𝗼𝗿:—͟͟͞͞ 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 𖣘 «
 %readmore
 `.trimStart(),
-  header: '\n⧼⋆꙳•〔 🛸 %category 〕⋆꙳•⧽',
-  body: '> 🔖 %cmd',
+  header: '\n⧼⋆꙳•〔 ♱ %category 〕⋆꙳•⧽',
+  body: '> 𖣘 %cmd',
   footer: '╰⋆꙳•❅‧*₊⋆꙳︎‧*❆₊⋆╯',
   after: '\n⌬ 𝗖𝗬𝗕𝗘𝗥 𝗠𝗘𝗡𝗨 🧬 - Sistema ejecutado con éxito.'
 }
@@ -47,8 +47,8 @@ const loadMenuMedia = jid => {
 const fetchBuffer = async url =>
   Buffer.from(await (await fetch(url)).arrayBuffer())
 
-const defaultThumb = await fetchBuffer('https://files.catbox.moe/aoxdb6.jpg')
-const defaultVideo = await fetchBuffer('https://files.catbox.moe/jkokln.mp4')
+const defaultThumb = await fetchBuffer('https://qu.ax/a3EAp')
+const defaultVideo = await fetchBuffer('https://files.catbox.moe/0ln7v3.mp4')
 
 let handler = async (m, { conn, usedPrefix }) => {
   await conn.sendMessage(m.chat, { react: { text: '⚔️', key: m.key } })
