@@ -19,7 +19,7 @@ let handler = async (m, { conn, isAdmin, isOwner, isROwner }) => {
   chat.isBanned = true
 
   m.reply(
-    '> El chat fue baneado correctamente.\n\n✦ Los comandos han sido desactivados.'
+    '> El chat fue baneado correctamente.\n\n✦ Los comandos han sido desactivados para usuarios normales.'
   )
 }
 
