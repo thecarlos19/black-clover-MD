@@ -90,8 +90,10 @@ const fastStart = async (buf) => {
   })
 
   const out = fs.readFileSync(b)
-  fs.unlinkSync(a)
-  fs.unlinkSync(b)
+
+  if (fs.existsSync(a)) fs.unlinkSync(a)
+  if (fs.existsSync(b)) fs.unlinkSync(b)
+
   return out
 }
 
