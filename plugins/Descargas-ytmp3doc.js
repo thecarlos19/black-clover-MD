@@ -16,8 +16,7 @@ async function validateUrl(url) {
   if (!url) return null
   try {
     const res = await fetch(url, { method: "HEAD" })
-    if (res.ok) return url
-    return null
+    return res.ok ? url : null
   } catch {
     return null
   }
@@ -26,57 +25,37 @@ async function validateUrl(url) {
 async function getFallbackMp3(videoUrl, videoId) {
   try {
     const ryuResponse = await axios.get(`https://api.ryuzei.xyz/dl/ytmp3?url=${encodeURIComponent(videoUrl)}&key=Corvette`)
-    const ryuLink = ryuResponse.data.url
-    const ryuValid = await validateUrl(ryuLink)
-    if (ryuValid) return ryuValid
+    const ryuLink = ryuResponse.data?.url
+    const valid = await validateUrl(ryuLink)
+    if (valid) return valid
   } catch {}
 
   const apiSources = [
-    {
-      name: "BetaBotz",
-      fn: () => axios
-        .get(`https://api.betabotz.eu.org/api/download/ytmp3?url=${encodeURIComponent(videoUrl)}&apikey=Btz-b2H2x`)
-        .then(r => r.data.result?.mp3 || r.data.result?.download?.url)
-    },
-    {
-      name: "Sylphy",
-      fn: () => axios
-        .get(`https://sylphy.xyz/download/v3/ytmp3?url=${videoId}&api_key=Killua-Wa`)
-        .then(r => r.data.result?.download?.url || r.data.result?.url)
-    },
-    {
-      name: "Adonix",
-      fn: () => axios
-        .get(`https://api-adonix.ultraplus.click/download/ytaudio?apikey=Yuki-WaBot&url=${encodeURIComponent(videoUrl)}`)
-        .then(r => r.data?.result?.url || r.data?.data?.url || r.data?.url)
-    },
-    {
-      name: "Vreden",
-      fn: () => axios
-        .get(`https://api.vreden.web.id/api/v1/download/youtube/audio?url=${encodeURIComponent(videoUrl)}`)
-        .then(r => r.data.result?.download?.url)
-    },
-    {
-      name: "Stellar",
-      fn: () => axios
-        .get(`https://api.stellarwa.xyz/dl/ytdl?url=${encodeURIComponent(videoUrl)}&format=mp3&key=YukiWaBot`)
-        .then(r => r.data.result?.download || r.data.result)
-    }
+    () => axios.get(`https://api.betabotz.eu.org/api/download/ytmp3?url=${encodeURIComponent(videoUrl)}&apikey=Btz-b2H2x`)
+      .then(r => r.data?.result?.mp3 || r.data?.result?.download?.url),
+
+    () => axios.get(`https://sylphy.xyz/download/v3/ytmp3?url=${videoId}&api_key=Killua-Wa`)
+      .then(r => r.data?.result?.download?.url || r.data?.result?.url),
+
+    () => axios.get(`https://api-adonix.ultraplus.click/download/ytaudio?apikey=Yuki-WaBot&url=${encodeURIComponent(videoUrl)}`)
+      .then(r => r.data?.result?.url || r.data?.data?.url || r.data?.url),
+
+    () => axios.get(`https://api.vreden.web.id/api/v1/download/youtube/audio?url=${encodeURIComponent(videoUrl)}`)
+      .then(r => r.data?.result?.download?.url),
+
+    () => axios.get(`https://api.stellarwa.xyz/dl/ytdl?url=${encodeURIComponent(videoUrl)}&format=mp3&key=YukiWaBot`)
+      .then(r => r.data?.result?.download || r.data?.result)
   ]
 
-  const errors = []
-
-  for (const api of apiSources) {
+  for (let fn of apiSources) {
     try {
-      const link = await api.fn()
-      const validLink = await validateUrl(link)
-      if (validLink) return validLink
-    } catch (e) {
-      errors.push(`${api.name}: ${e.message}`)
-    }
+      const link = await fn()
+      const valid = await validateUrl(link)
+      if (valid) return valid
+    } catch {}
   }
 
-  throw new Error(`Detalles:\n${errors.join("\n")}`)
+  throw new Error("No hay servidores disponibles")
 }
 
 const yt = {
@@ -88,8 +67,8 @@ const yt = {
       "user-agent": "Mozilla/5.0"
     }
   }),
+
   resolveConverterPayload(link, f = "128k") {
-    if (!["128k", "320k"].includes(f)) throw Error("Formato inválido")
     return {
       link,
       format: "mp3",
@@ -97,36 +76,45 @@ const yt = {
       filenameStyle: "pretty"
     }
   },
+
   sanitizeFileName(n) {
     if (!n) return "audio.mp3"
-    const extMatch = n.match(/\.[^.]+$/)
-    const ext = extMatch ? extMatch[0] : ".mp3"
-    const base = n.replace(ext, "").replace(/[^A-Za-z0-9]/g, "_").replace(/_+/g, "_").toLowerCase()
+    const ext = ".mp3"
+    const base = n.replace(/\.[^/.]+$/, "")
+      .replace(/[^A-Za-z0-9]/g, "_")
+      .replace(/_+/g, "_")
+      .toLowerCase()
     return base + ext
   },
+
   async getBuffer(u) {
     const r = await fetch(u)
-    if (!r.ok) throw Error("No se pudo descargar")
+    if (!r.ok) throw Error("Error al descargar")
     return Buffer.from(await r.arrayBuffer())
   },
+
   async getKey() {
     const r = await fetch(this.static.baseUrl + "/v2/sanity/key", { headers: this.static.headers })
     const j = await r.json().catch(() => ({}))
-    if (!j?.key) throw Error("No key")
-    return j
+    if (!j?.key) throw Error("Sin key")
+    return j.key
   },
+
   async convert(u, f) {
-    const { key } = await this.getKey()
+    const key = await this.getKey()
     const payload = this.resolveConverterPayload(u, f)
+
     const r = await fetch(this.static.baseUrl + "/v2/converter", {
-      method: "post",
+      method: "POST",
       headers: { ...this.static.headers, key },
       body: new URLSearchParams(payload)
     })
+
     const j = await r.json().catch(() => ({}))
-    if (!j?.url) throw Error("Error conversión")
+    if (!j?.url) throw Error("Fallo conversión")
     return j
   },
+
   async download(u, f) {
     const { url, filename } = await this.convert(u, f)
     const buffer = await this.getBuffer(url)
@@ -138,24 +126,25 @@ const handler = async (m, { conn, args }) => {
   if (!args[0]) return m.reply("🎵 Pasa el link o nombre")
   await m.react("⌛")
 
-  let url, title, thumbnail
+  let url = "", title = "", thumbnail = ""
 
   if (args[0].includes("youtu")) {
-    const id = args[0].includes("v=") 
-      ? args[0].split("v=")[1]?.split("&")[0] 
+    const id = args[0].includes("v=")
+      ? args[0].split("v=")[1]?.split("&")[0]
       : args[0].split("/").pop()
 
     if (!id) return m.reply("❌ Link inválido")
 
     const info = await yts({ videoId: id }).catch(() => null)
-    if (!info) return m.reply("❌ No se pudo obtener info")
+    if (!info) return m.reply("❌ Sin info")
 
     url = "https://www.youtube.com/watch?v=" + id
-    title = info.title || "Sin título"
+    title = info.title
     thumbnail = info.thumbnail
   } else {
-    const search = await yts.search(args.join(" ")).catch(() => ({ videos: [] }))
-    if (!search.videos || !search.videos.length) return m.reply("❌ No encontrado")
+    const search = await yts(args.join(" ")).catch(() => ({ videos: [] }))
+    if (!search.videos.length) return m.reply("❌ No encontrado")
+
     const v = search.videos[0]
     url = v.url
     title = v.title
@@ -165,17 +154,13 @@ const handler = async (m, { conn, args }) => {
   let thumb = null
   try {
     thumb = await resizeImage(Buffer.from(await (await fetch(thumbnail)).arrayBuffer()))
-  } catch {
-    thumb = null
-  }
+  } catch {}
 
-  let thumb3 = null
+  let fake = null
   try {
-    const res3 = await fetch("https://raw.githubusercontent.com/JTxs00/uploads/main/1776310123337.jpeg")
-    thumb3 = Buffer.from(await res3.arrayBuffer())
-  } catch {
-    thumb3 = null
-  }
+    const res = await fetch("https://raw.githubusercontent.com/JTxs00/uploads/main/1776310123337.jpeg")
+    fake = Buffer.from(await res.arrayBuffer())
+  } catch {}
 
   const fkontak = {
     key: { fromMe: false, participant: "0@s.whatsapp.net" },
@@ -183,7 +168,7 @@ const handler = async (m, { conn, args }) => {
       documentMessage: {
         title: `🎵「 ${title} 」`,
         fileName: name,
-        jpegThumbnail: thumb3 || undefined
+        jpegThumbnail: fake || undefined
       }
     }
   }
@@ -195,8 +180,8 @@ const handler = async (m, { conn, args }) => {
     buffer = res.buffer
     fileName = res.fileName
   } catch {
-    const fallbackUrl = await getFallbackMp3(url, url.split("v=")[1]?.split("&")[0])
-    buffer = await yt.getBuffer(fallbackUrl)
+    const fallback = await getFallbackMp3(url, url.split("v=")[1]?.split("&")[0])
+    buffer = await yt.getBuffer(fallback)
     fileName = "audio.mp3"
   }
 

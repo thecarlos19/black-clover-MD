@@ -1,5 +1,6 @@
 import { spawn } from "child_process"
 import fs from "fs"
+import path from "path"
 import fetch from "node-fetch"
 import yts from "yt-search"
 import Jimp from "jimp"
@@ -80,8 +81,12 @@ const core = {
 }
 
 const fastStart = async (buf) => {
-  const a = "./_in.mp4"
-  const b = "./_out.mp4"
+  const tmpDir = path.join(process.cwd(), "tmp")
+  if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
+
+  const a = path.join(tmpDir, "_in.mp4")
+  const b = path.join(tmpDir, "_out.mp4")
+
   fs.writeFileSync(a, buf)
 
   await new Promise((ok, bad) => {
