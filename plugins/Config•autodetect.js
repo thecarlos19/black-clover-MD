@@ -38,17 +38,28 @@ export async function before(m, { conn }) {
 
     const participants = metadata?.participants || []
 
-    const getName = id => {
-      const p = participants.find(x => x.id === id)
+    // ✅ FIX: nunca devuelve undefined
+    const getName = async (id) => {
+      const jid = safeId(id)
+      if (!jid) return 'Usuario'
+
+      try {
+        const name = await conn.getName(jid)
+        if (name && name !== 'undefined') return name
+      } catch {}
+
+      const p = participants.find(x => [x.id, x.jid].includes(jid))
       return (
         p?.name ||
         p?.notify ||
         p?.pushname ||
-        id.split('@')[0]
+        jid.split('@')[0]
       )
     }
 
-    const usuario = `*${getName(senderId)}*`
+    // 🔥 SOLO MENCIÓN (como pediste)
+    const usuario = `@${senderId.split('@')[0]}`
+
     const params = Array.isArray(m.messageStubParameters)
       ? m.messageStubParameters
       : []
@@ -92,12 +103,12 @@ export async function before(m, { conn }) {
       case 29:
       case 30: {
         const target = safeId(params[0])
-        const name = target ? getName(target) : 'Alguien'
+        const tag = target ? `@${target.split('@')[0]}` : 'Alguien'
 
         mensaje =
           m.messageStubType === 29
-            ? `*${name}* ahora es admin 🥳\n\n👤 Por: ${usuario}`
-            : `*${name}* ya no es admin 😿\n\n👤 Por: ${usuario}`
+            ? `${tag} ahora es admin 🥳\n\n👤 Por: ${usuario}`
+            : `${tag} ya no es admin 😿\n\n👤 Por: ${usuario}`
         break
       }
 
