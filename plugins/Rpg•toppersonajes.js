@@ -1,8 +1,6 @@
 const handler = async (m, { conn }) => {
   const db = global.db.data.users
-  const user = db[m.sender]
 
-  // 💎 
   const personajesTop = [
     { nombre: 'Cristo rey 👑', precio: 20000000 },
     { nombre: 'Arcangel Supremo 😇', precio: 9000000 },
@@ -17,90 +15,172 @@ const handler = async (m, { conn }) => {
   ]
 
   const nombresComunes = [
-    'Goku','Naruto','Sasuke','Luffy','Zoro','Sanji','Sakura','Hinata','Tanjiro','Nezuko',
-    'Levi','Eren','Itachi','Madara','Kakashi','Ichigo','Rukia','Byakuya','Saitama','Genos',
-    'Batman','Superman','Iron Man','Spider-Man','Thanos','Deadpool','Shrek','Donkey',
-    'Elsa','Anna','Simba','Scar','Woody','Buzz','Pikachu','Kirby','Link','Zelda','Ash',
-    'Charizard','Mewtwo','Deku','Bakugo','Todoroki','All Might','Gojo','Sukuna','Yuji',
-    'Megumi','Nobara','Asta','Yuno','Noelle','Yami','Rem','Emilia','Subaru','Inuyasha',
-    'Sesshomaru','Sango','Kagome','Kirito','Asuna','Sinon','Leafa','Jotaro','Dio','Josuke',
-    'Joseph','Polnareff','Shinobu','Rengoku','Giyu','Akaza','Muzan','Eula','Diluc','Klee',
-    'Zhongli','Venti','Raiden','Nahida','Albedo','Kazuha','Itto','Xiao','Yoimiya','Ayaka',
-    'Tartaglia','Scaramouche','Furina','Clorinde','Freminet','Cyno','Nilou','Baizhu',
+    'Goku','Naruto','Sasuke','Luffy','Zoro','Sanji','Sakura','Hinata',
+    'Tanjiro','Nezuko','Levi','Eren','Itachi','Madara','Kakashi',
+    'Ichigo','Rukia','Byakuya','Saitama','Genos','Batman','Superman',
+    'Iron Man','Spider-Man','Thanos','Deadpool','Shrek','Donkey',
+    'Elsa','Anna','Simba','Scar','Woody','Buzz','Pikachu','Kirby',
+    'Link','Zelda','Ash','Charizard','Mewtwo','Deku','Bakugo',
+    'Todoroki','All Might','Gojo','Sukuna','Yuji','Megumi','Nobara',
+    'Asta','Yuno','Noelle','Yami','Rem','Emilia','Subaru',
+    'Inuyasha','Sesshomaru','Sango','Kagome','Kirito','Asuna',
+    'Sinon','Leafa','Jotaro','Dio','Josuke','Joseph','Polnareff',
+    'Shinobu','Rengoku','Giyu','Akaza','Muzan','Eula','Diluc',
+    'Klee','Zhongli','Venti','Raiden','Nahida','Albedo','Kazuha',
+    'Itto','Xiao','Yoimiya','Ayaka','Tartaglia','Scaramouche',
+    'Furina','Clorinde','Freminet','Cyno','Nilou','Baizhu',
     'Alhaitham','Lynette','Lyney','Cheems'
   ].slice(0, 100)
 
   const personajesComunes = nombresComunes.map(nombre => ({
     nombre,
-    precio: 50000 // precio fijo o puedes usar uno aleatorio si prefieres
+    precio: 50000
   }))
 
   const todos = [...personajesTop, ...personajesComunes]
-  const normalizar = str => str.toLowerCase().replace(/[^a-z0-9]/gi, '').trim()
 
-  // 🔍 Ranking
+  const normalizar = text =>
+    text
+      ?.toLowerCase()
+      .replace(/[^a-z0-9]/gi, '')
+      .trim()
+
   let ranking = Object.entries(db)
-    .filter(([_, u]) => Array.isArray(u.personajes) && u.personajes.length > 0)
+    .filter(([_, u]) =>
+      Array.isArray(u.personajes) &&
+      u.personajes.length > 0
+    )
     .map(([jid, u]) => {
       let total = 0
-      const rarezas = { '👑 TOP': 0, '💎 Elite': 0, '⚔️ Medio': 0, '🌱 Básico': 0 }
 
-      for (let nombreGuardado of u.personajes) {
-        const personajeReal = todos.find(p => normalizar(p.nombre) === normalizar(nombreGuardado))
+      const rarezas = {
+        '👑 TOP': 0,
+        '💎 Elite': 0,
+        '⚔️ Medio': 0,
+        '🌱 Básico': 0
+      }
+
+      const inventario = {}
+
+      for (const nombreGuardado of u.personajes) {
+        const personajeReal = todos.find(
+          p => normalizar(p.nombre) === normalizar(nombreGuardado)
+        )
+
         const precio = personajeReal?.precio || 50000
-        const rareza = personajesTop.includes(personajeReal)
-          ? '👑 TOP'
-          : precio >= 80000 ? '💎 Elite'
-          : precio >= 60000 ? '⚔️ Medio'
-          : '🌱 Básico'
 
-        rarezas[rareza]++
+        const rareza = personajesTop.some(
+          p => normalizar(p.nombre) === normalizar(nombreGuardado)
+        )
+          ? '👑 TOP'
+          : precio >= 80000
+            ? '💎 Elite'
+            : precio >= 60000
+              ? '⚔️ Medio'
+              : '🌱 Básico'
+
         total += precio
+        rarezas[rareza]++
+
+        inventario[nombreGuardado] =
+          (inventario[nombreGuardado] || 0) + 1
       }
 
       return {
         jid,
         cantidad: u.personajes.length,
         gastado: total,
-        rarezas
+        rarezas,
+        inventario,
+        nivel: u.level || 0,
+        monedas: u.monedas || 0
       }
     })
-    .sort((a, b) => b.cantidad - a.cantidad)
+    .sort((a, b) => {
+      if (b.cantidad !== a.cantidad) {
+        return b.cantidad - a.cantidad
+      }
+
+      return b.gastado - a.gastado
+    })
     .slice(0, 10)
 
-  if (ranking.length === 0) {
-    return m.reply('❌ Aún nadie ha comprado personajes.')
+  if (!ranking.length) {
+    return conn.reply(
+      m.chat,
+      '❌ Aún no hay coleccionistas registrados.',
+      m
+    )
   }
 
-  let texto = `╭═〔 👾 𝗧𝗢𝗣 𝗖𝗢𝗟𝗘𝗖𝗖𝗜𝗢𝗡𝗜𝗦𝗧𝗔𝗦 〕═⬣\n│\n`
+  let texto = `
+╭━━━〔 👾 TOP COLECCIONISTAS 👾 〕━━━⬣
+┃
+┃ 🏆 Ranking oficial del Reino Mágico
+┃ 📦 Basado en personajes obtenidos
+╰━━━━━━━━━━━━━━━━━━━━━━⬣
+`.trim()
+
   let menciones = []
 
   for (let i = 0; i < ranking.length; i++) {
-    const { jid, cantidad, gastado, rarezas } = ranking[i]
-    let name = 'Usuario'
+    const data = ranking[i]
+
+    let nombre = 'Usuario'
+
     try {
-      name = await conn.getName(jid)
+      nombre = await conn.getName(data.jid)
     } catch {
-      name = '@' + jid.split('@')[0]
+      nombre = '@' + data.jid.split('@')[0]
     }
 
-    const medalla = i === 0 ? '🥇'
+    const medalla =
+      i === 0 ? '🥇'
       : i === 1 ? '🥈'
       : i === 2 ? '🥉'
       : '🔹'
 
-    texto += `│ ${medalla} *${i + 1}.* ${name}\n`
-    texto += `│    🧩 Personajes: *${cantidad}*\n`
-    texto += `│    💰 Gastado: *${gastado.toLocaleString('es-MX')} monedas*\n`
-    texto += `│    👑 ${rarezas['👑 TOP']}  💎 ${rarezas['💎 Elite']}  ⚔️ ${rarezas['⚔️ Medio']}  🌱 ${rarezas['🌱 Básico']}\n│\n`
+    const personajeFavorito =
+      Object.entries(data.inventario)
+        .sort((a, b) => b[1] - a[1])[0]?.[0] || 'Ninguno'
 
-    menciones.push(jid)
+    texto += `
+
+${medalla} *${i + 1}. ${nombre}*
+┃ 🧩 Personajes: *${data.cantidad}*
+┃ 💰 Valor total: *${data.gastado.toLocaleString('es-MX')} monedas*
+┃ ✨ Nivel: *${data.nivel.toLocaleString()}*
+┃ 🪙 Monedas: *${data.monedas.toLocaleString('es-MX')}*
+┃ 🎴 Favorito: *${personajeFavorito}*
+┃
+┃ 👑 TOP: *${data.rarezas['👑 TOP']}*
+┃ 💎 Elite: *${data.rarezas['💎 Elite']}*
+┃ ⚔️ Medio: *${data.rarezas['⚔️ Medio']}*
+┃ 🌱 Básico: *${data.rarezas['🌱 Básico']}*
+┃━━━━━━━━━━━━━━━━━━⬣`
+
+    menciones.push(data.jid)
   }
 
-  texto += '╰══════════════════════⬣\n'
-  texto += '\n📈 *Sigue comprando para subir en el ranking.*\n🛒 Usa *.comprar <nombre>*'
+  texto += `
 
-  conn.reply(m.chat, texto.trim(), m, { mentions: menciones })
+📈 *Sigue coleccionando personajes para subir posiciones.*
+🛒 Usa *.comprar <nombre>* para conseguir nuevos héroes.
+🎁 Usa *.invocacion* para obtener personajes especiales.`
+
+  await conn.reply(
+    m.chat,
+    texto.trim(),
+    m,
+    { mentions: menciones }
+  )
+
+  await conn.sendMessage(m.chat, {
+    react: {
+      text: '🏆',
+      key: m.key
+    }
+  })
 }
 
 handler.help = ['toppersonajes']

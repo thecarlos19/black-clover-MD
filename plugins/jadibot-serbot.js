@@ -189,6 +189,10 @@ export async function blackJadiBot(options) {
     sock.isInit = false
     let isInit = true
 
+    let reconnectAttempts = 0
+    let lastReconnect = 0
+    let maxReconnectDelay = 60000
+
     async function connectionUpdate(update) {
       const { connection, lastDisconnect, isNewLogin, qr } = update
       if (isNewLogin) sock.isInit = false
@@ -219,8 +223,15 @@ export async function blackJadiBot(options) {
 
       const reason = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode
       if (connection === 'close') {
+        const now = Date.now()
+        const delay = Math.min(5000 * (reconnectAttempts + 1), maxReconnectDelay)
+        if (now - lastReconnect < delay) return
+        lastReconnect = now
+        reconnectAttempts++
+
         if (reason === 428 || reason === 408) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente o expiró. Intentando reconectar...\n╰─────────────────────────`))
+          await new Promise(r => setTimeout(r, delay))
           await creloadHandler(true).catch(console.error)
         }
         if (reason === 440) {
@@ -239,10 +250,12 @@ export async function blackJadiBot(options) {
         if (reason === 500) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
           if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
+          await new Promise(r => setTimeout(r, delay))
           return creloadHandler(true).catch(console.error)
         }
         if (reason === 515) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Reinicio automático para la sesión (+${path.basename(pathblackJadiBot)}).\n╰─────────────────────────`))
+          await new Promise(r => setTimeout(r, delay))
           await creloadHandler(true).catch(console.error)
         }
         if (reason === 403) {
@@ -251,6 +264,7 @@ export async function blackJadiBot(options) {
         }
       }
       if (connection == 'open') {
+        reconnectAttempts = 0
         let userName = sock.authState.creds.me?.name || 'Anónimo'
         console.log(
           chalk.bold.cyanBright(
@@ -307,7 +321,7 @@ export async function blackJadiBot(options) {
       if (!isInit) {
         sock.ev.off("messages.upsert", sock.handler)
         sock.ev.off("connection.update", sock.connectionUpdate)
-        sock.ev.off('creds.update', sock.credsUpdate)
+        sock.ev.off("creds.update", sock.credsUpdate)
       }
       sock.handler = handler.handler.bind(sock)
       sock.connectionUpdate = connectionUpdate.bind(sock)
