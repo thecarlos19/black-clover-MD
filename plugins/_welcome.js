@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { execSync } from 'child_process'
 
 export async function before(m, { conn, participants, groupMetadata }) {
   if (!m.isGroup) return
@@ -13,8 +14,15 @@ export async function before(m, { conn, participants, groupMetadata }) {
   let groupName = metadata.subject
   let pp = await conn.profilePictureUrl(m.chat, 'image').catch(() => null)
 
+  const audioFolder = path.resolve('./src/welcomeaudios')
+  const tmpFolder = path.resolve('./tmp')
+
+  if (!fs.existsSync(tmpFolder)) {
+    fs.mkdirSync(tmpFolder, { recursive: true })
+  }
+
   const welcomeTitles = [
-    '👋 Welcome ',
+    '👋 Welcome',
     '✨ Bienvenido',
     '🍀 Nuevo integrante',
     '⚔️ Se une un mago',
@@ -29,6 +37,46 @@ export async function before(m, { conn, participants, groupMetadata }) {
     '🚪 Salida del grupo'
   ]
 
+  const getRandomAudio = (type) => {
+    if (!fs.existsSync(audioFolder)) return null
+
+    let files = fs.readdirSync(audioFolder).filter(file => {
+      return (
+        /\.(mp3|ogg|wav|m4a)$/i.test(file) &&
+        file.toLowerCase().startsWith(type)
+      )
+    })
+
+    if (!files.length) return null
+
+    let randomFile = files[Math.floor(Math.random() * files.length)]
+
+    return path.join(audioFolder, randomFile)
+  }
+
+  const sendPTT = async (audioPath, contextInfo) => {
+    try {
+      const output = path.join(tmpFolder, `${Date.now()}.ogg`)
+
+      execSync(
+        `ffmpeg -i "${audioPath}" -vn -c:a libopus -b:a 128k "${output}" -y`
+      )
+
+      await conn.sendMessage(m.chat, {
+        audio: { url: output },
+        mimetype: 'audio/ogg; codecs=opus',
+        ptt: true,
+        contextInfo
+      })
+
+      if (fs.existsSync(output)) {
+        fs.unlinkSync(output)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   if (m.messageStubType === 27 || m.messageStubType === 31) {
 
     const contextInfo = {
@@ -42,23 +90,10 @@ export async function before(m, { conn, participants, groupMetadata }) {
       }
     }
 
-    let audioPath = path.resolve('./src/welcome.mp3')
+    const audioPath = getRandomAudio('bienvenida')
 
-    if (fs.existsSync(audioPath)) {
-      let audioBuffer = fs.readFileSync(audioPath)
-      await conn.sendMessage(m.chat, {
-        audio: audioBuffer,
-        mimetype: 'audio/mpeg',
-        ptt: true,
-        contextInfo
-      }).catch(async () => {
-        await conn.sendMessage(m.chat, {
-          audio: { url: audioPath },
-          mimetype: 'audio/mpeg',
-          ptt: true,
-          contextInfo
-        })
-      })
+    if (audioPath) {
+      await sendPTT(audioPath, contextInfo)
     }
   }
 
@@ -75,15 +110,10 @@ export async function before(m, { conn, participants, groupMetadata }) {
       }
     }
 
-    let audioPath = path.resolve('./src/bye.mp3')
+    const audioPath = getRandomAudio('bye')
 
-    if (fs.existsSync(audioPath)) {
-      await conn.sendMessage(m.chat, {
-        audio: fs.readFileSync(audioPath),
-        mimetype: 'audio/mpeg',
-        ptt: true,
-        contextInfo
-      })
+    if (audioPath) {
+      await sendPTT(audioPath, contextInfo)
     }
   }
 }

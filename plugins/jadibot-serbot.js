@@ -168,7 +168,8 @@ export async function blackJadiBot(options) {
 
   global.conns = global.conns || []
 
-  exec(comb.toString("utf-8"), async (err, stdout, stderr) => {
+  exec(comb.toString("utf-8"), async () => {
+
     const { version } = await fetchLatestBaileysVersion()
     const msgRetry = () => { }
     const msgRetryCache = new NodeCache()
@@ -196,6 +197,7 @@ export async function blackJadiBot(options) {
     async function connectionUpdate(update) {
       const { connection, lastDisconnect, isNewLogin, qr } = update
       if (isNewLogin) sock.isInit = false
+
       if (qr && !mcode) {
         if (m?.chat) {
           txtQR = await conn.sendMessage(m.chat, { image: await qrcode.toBuffer(qr, { scale: 8 }), caption: rtx.trim() }, { quoted: m })
@@ -207,6 +209,7 @@ export async function blackJadiBot(options) {
         }
         return
       }
+
       if (qr && mcode) {
         let secret = await sock.requestPairingCode((m.sender?.split('@')[0]))
         secret = secret.match(/.{1,4}/g)?.join("-")
@@ -214,6 +217,7 @@ export async function blackJadiBot(options) {
         codeBot = await m.reply(secret)
         console.log(secret)
       }
+
       if (txtCode && txtCode.key) {
         setTimeout(() => { conn.sendMessage(m.sender, { delete: txtCode.key }) }, 30000)
       }
@@ -222,9 +226,11 @@ export async function blackJadiBot(options) {
       }
 
       const reason = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode
+
       if (connection === 'close') {
         const now = Date.now()
         const delay = Math.min(5000 * (reconnectAttempts + 1), maxReconnectDelay)
+
         if (now - lastReconnect < delay) return
         lastReconnect = now
         reconnectAttempts++
@@ -232,47 +238,56 @@ export async function blackJadiBot(options) {
         if (reason === 428 || reason === 408) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente o expiró. Intentando reconectar...\n╰─────────────────────────`))
           await new Promise(r => setTimeout(r, delay))
-          await creloadHandler(true).catch(console.error)
+          return creloadHandler(true).catch(() => {})
         }
+
         if (reason === 440) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue reemplazada por otra sesión activa.\n╰─────────────────────────`))
           try {
             if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null }) : ""
           } catch {}
+          return
         }
+
         if (reason == 405 || reason == 401) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰─────────────────────────`))
           try {
             if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
           } catch {}
-          fs.rmSync(pathblackJadiBot, { recursive: true, force: true })
+          try { fs.rmSync(pathblackJadiBot, { recursive: true, force: true }) } catch {}
+          return
         }
+
         if (reason === 500) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
           if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
           await new Promise(r => setTimeout(r, delay))
-          return creloadHandler(true).catch(console.error)
+          return creloadHandler(true).catch(() => {})
         }
-        if (reason === 515) {
+
+        if (reason === 515 || !reason) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Reinicio automático para la sesión (+${path.basename(pathblackJadiBot)}).\n╰─────────────────────────`))
           await new Promise(r => setTimeout(r, delay))
-          await creloadHandler(true).catch(console.error)
+          return creloadHandler(true).catch(() => {})
         }
+
         if (reason === 403) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Sesión cerrada o cuenta en soporte para la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
-          fs.rmSync(pathblackJadiBot, { recursive: true, force: true })
+          try { fs.rmSync(pathblackJadiBot, { recursive: true, force: true }) } catch {}
+          return
         }
       }
-      if (connection == 'open') {
+
+      if (connection === 'open') {
         reconnectAttempts = 0
         let userName = sock.authState.creds.me?.name || 'Anónimo'
+
         console.log(
           chalk.bold.cyanBright(
-            `\n❒────────────【• SUB-BOT  •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(
-              pathblackJadiBot
-            )}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`
+            `\n❒────────────【• SUB-BOT  •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`
           )
         )
+
         sock.isInit = true
         global.conns.push(sock)
 
@@ -295,43 +310,51 @@ export async function blackJadiBot(options) {
     }
 
     setInterval(async () => {
-      if (!sock.user) {
-        try { sock.ws?.close() } catch { }
-        sock.ev.removeAllListeners()
-        let i = global.conns.indexOf(sock)
-        if (i < 0) return
-        delete global.conns[i]
-        global.conns.splice(i, 1)
-      }
+      try {
+        if (!sock?.user) {
+          try { sock.ws?.close() } catch {}
+          try { sock.ev.removeAllListeners() } catch {}
+          let i = global.conns.indexOf(sock)
+          if (i >= 0) global.conns.splice(i, 1)
+        }
+      } catch {}
     }, 60000)
 
     let handler = await import('../núcleo•clover/handler.js')
+
     let creloadHandler = async function (restatConn) {
       try {
-        const Handler = await import(`../núcleo•clover/handler.js?update=${Date.now()}`).catch(console.error)
-        if (Object.keys(Handler || {}).length) handler = Handler
-      } catch (e) { }
+        const Handler = await import(`../núcleo•clover/handler.js?update=${Date.now()}`).catch(() => {})
+        if (Handler && Object.keys(Handler).length) handler = Handler
+      } catch {}
+
       if (restatConn) {
-        const oldChats = sock.chats
-        try { sock.ws?.close() } catch { }
-        sock.ev.removeAllListeners()
-        sock = makeWASocket(connectionOptions, { chats: oldChats })
+        const oldChats = sock?.chats || {}
+        try { sock.ws?.close() } catch {}
+        try { sock.ev.removeAllListeners() } catch {}
+        sock = makeWASocket(connectionOptions)
+        sock.chats = oldChats
         isInit = true
       }
+
       if (!isInit) {
         sock.ev.off("messages.upsert", sock.handler)
         sock.ev.off("connection.update", sock.connectionUpdate)
         sock.ev.off("creds.update", sock.credsUpdate)
       }
+
       sock.handler = handler.handler.bind(sock)
       sock.connectionUpdate = connectionUpdate.bind(sock)
       sock.credsUpdate = saveCreds.bind(sock)
+
       sock.ev.on("messages.upsert", sock.handler)
       sock.ev.on("connection.update", sock.connectionUpdate)
       sock.ev.on("creds.update", sock.credsUpdate)
+
       isInit = false
       return true
     }
+
     creloadHandler(false)
   })
 }

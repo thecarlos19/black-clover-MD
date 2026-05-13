@@ -1,4 +1,5 @@
 const handler = async (m, { conn }) => {
+  if (!global.db.data.users) global.db.data.users = {}
   const db = global.db.data.users
 
   const personajesTop = [
@@ -40,17 +41,19 @@ const handler = async (m, { conn }) => {
   const todos = [...personajesTop, ...personajesComunes]
 
   const normalizar = text =>
-    text
-      ?.toLowerCase()
-      .replace(/[^a-z0-9]/gi, '')
-      .trim()
+    text?.toLowerCase().replace(/[^a-z0-9]/gi, '').trim()
 
   let ranking = Object.entries(db)
-    .filter(([_, u]) =>
-      Array.isArray(u.personajes) &&
-      u.personajes.length > 0
-    )
+    .filter(([_, u]) => {
+      if (!u) return false
+      if (!Array.isArray(u.personajes)) u.personajes = []
+      return u.personajes.length > 0
+    })
     .map(([jid, u]) => {
+      if (!u.personajes) u.personajes = []
+      if (!u.monedas) u.monedas = 0
+      if (!u.level) u.level = 0
+
       let total = 0
 
       const rarezas = {
@@ -63,6 +66,8 @@ const handler = async (m, { conn }) => {
       const inventario = {}
 
       for (const nombreGuardado of u.personajes) {
+        if (!nombreGuardado) continue
+
         const personajeReal = todos.find(
           p => normalizar(p.nombre) === normalizar(nombreGuardado)
         )
@@ -92,25 +97,20 @@ const handler = async (m, { conn }) => {
         gastado: total,
         rarezas,
         inventario,
-        nivel: u.level || 0,
-        monedas: u.monedas || 0
+        nivel: u.level,
+        monedas: u.monedas
       }
     })
     .sort((a, b) => {
       if (b.cantidad !== a.cantidad) {
         return b.cantidad - a.cantidad
       }
-
       return b.gastado - a.gastado
     })
     .slice(0, 10)
 
   if (!ranking.length) {
-    return conn.reply(
-      m.chat,
-      '❌ Aún no hay coleccionistas registrados.',
-      m
-    )
+    return conn.reply(m.chat, '❌ Aún no hay coleccionistas registrados.', m)
   }
 
   let texto = `
@@ -118,21 +118,18 @@ const handler = async (m, { conn }) => {
 ┃
 ┃ 🏆 Ranking oficial del Reino Mágico
 ┃ 📦 Basado en personajes obtenidos
-╰━━━━━━━━━━━━━━━━━━━━━━⬣
-`.trim()
+╰━━━━━━━━━━━━━━━━━━━━━━⬣`.trim()
 
   let menciones = []
 
   for (let i = 0; i < ranking.length; i++) {
     const data = ranking[i]
 
-    let nombre = 'Usuario'
+    let nombre = '@' + data.jid.split('@')[0]
 
     try {
       nombre = await conn.getName(data.jid)
-    } catch {
-      nombre = '@' + data.jid.split('@')[0]
-    }
+    } catch {}
 
     const medalla =
       i === 0 ? '🥇'
@@ -149,7 +146,7 @@ const handler = async (m, { conn }) => {
 ${medalla} *${i + 1}. ${nombre}*
 ┃ 🧩 Personajes: *${data.cantidad}*
 ┃ 💰 Valor total: *${data.gastado.toLocaleString('es-MX')} monedas*
-┃ ✨ Nivel: *${data.nivel.toLocaleString()}*
+┃ ✨ Nivel: *${data.nivel}*
 ┃ 🪙 Monedas: *${data.monedas.toLocaleString('es-MX')}*
 ┃ 🎴 Favorito: *${personajeFavorito}*
 ┃
@@ -168,18 +165,10 @@ ${medalla} *${i + 1}. ${nombre}*
 🛒 Usa *.comprar <nombre>* para conseguir nuevos héroes.
 🎁 Usa *.invocacion* para obtener personajes especiales.`
 
-  await conn.reply(
-    m.chat,
-    texto.trim(),
-    m,
-    { mentions: menciones }
-  )
+  await conn.reply(m.chat, texto.trim(), m, { mentions: menciones })
 
   await conn.sendMessage(m.chat, {
-    react: {
-      text: '🏆',
-      key: m.key
-    }
+    react: { text: '🏆', key: m.key }
   })
 }
 
