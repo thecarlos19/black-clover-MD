@@ -14,9 +14,20 @@ const imgSquare = async (buf, s = 300) => {
 }
 
 const safeLink = async (u) => {
+  if (!u) return null
   try {
-    const h = await fetch(u, { method: "HEAD" })
+    const h = await fetch(u, { method: "HEAD", timeout: 5000 })
     return h.ok ? u : null
+  } catch {
+    return null
+  }
+}
+
+const getId = (url) => {
+  try {
+    if (url.includes("v=")) return url.split("v=")[1].split("&")[0]
+    if (url.includes("youtu.be/")) return url.split("youtu.be/")[1].split("?")[0]
+    return null
   } catch {
     return null
   }
@@ -24,14 +35,23 @@ const safeLink = async (u) => {
 
 const altVideo = async (link) => {
   const apis = [
-    () => axios.get(`https://api.betabotz.eu.org/api/download/ytmp4?url=${encodeURIComponent(link)}&apikey=Btz-b2H2x`).then(r => r.data.result?.mp4 || r.data.result?.url),
-    () => axios.get(`https://api.adonix.xyz/api/youtube/video?url=${encodeURIComponent(link)}`).then(r => r.data?.url),
-    () => axios.get(`https://api.vreden.web.id/api/v1/download/youtube/video?url=${encodeURIComponent(link)}`).then(r => r.data.result?.download?.url)
+    async () => {
+      const r = await axios.get(`https://api.betabotz.eu.org/api/download/ytmp4?url=${encodeURIComponent(link)}&apikey=Btz-b2H2x`)
+      return r.data?.result?.mp4 || r.data?.result?.url
+    },
+    async () => {
+      const r = await axios.get(`https://api.adonix.xyz/api/youtube/video?url=${encodeURIComponent(link)}`)
+      return r.data?.url
+    },
+    async () => {
+      const r = await axios.get(`https://api.vreden.web.id/api/v1/download/youtube/video?url=${encodeURIComponent(link)}`)
+      return r.data?.result?.download?.url
+    }
   ]
 
-  for (let f of apis) {
+  for (const fn of apis) {
     try {
-      const u = await f()
+      const u = await fn()
       const ok = await safeLink(u)
       if (ok) return ok
     } catch {}
@@ -43,7 +63,7 @@ const altVideo = async (link) => {
 const core = {
   base: "https://cnv.cx",
   headers: {
-    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-encoding": "gzip, deflate, br",
     origin: "https://frame.y2meta-uk.com",
     "user-agent": "Mozilla/5.0"
   },
@@ -84,20 +104,25 @@ const fastStart = async (buf) => {
   const tmpDir = path.join(process.cwd(), "tmp")
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
 
-  const a = path.join(tmpDir, "_in.mp4")
-  const b = path.join(tmpDir, "_out.mp4")
+  const id = Date.now()
+  const a = path.join(tmpDir, `in_${id}.mp4`)
+  const b = path.join(tmpDir, `out_${id}.mp4`)
 
   fs.writeFileSync(a, buf)
 
   await new Promise((ok, bad) => {
     const p = spawn("ffmpeg", ["-y", "-i", a, "-c", "copy", "-movflags", "faststart", b])
+    p.on("error", bad)
     p.on("close", c => c === 0 ? ok() : bad())
   })
 
-  const out = fs.readFileSync(b)
+  let out = null
+  if (fs.existsSync(b)) out = fs.readFileSync(b)
 
   if (fs.existsSync(a)) fs.unlinkSync(a)
   if (fs.existsSync(b)) fs.unlinkSync(b)
+
+  if (!out) throw new Error("ffmpeg fail")
 
   return out
 }
@@ -109,7 +134,7 @@ const handler = async (m, { conn, args }) => {
   let link = "", title = "", thumb = ""
 
   if (args[0].includes("youtu")) {
-    const id = args[0].includes("v=") ? args[0].split("v=")[1]?.split("&")[0] : args[0].split("/").pop()
+    const id = getId(args[0])
     if (!id) return m.reply("❌ inválido")
 
     const info = await yts({ videoId: id }).catch(() => null)
@@ -129,7 +154,8 @@ const handler = async (m, { conn, args }) => {
 
   let mini = null
   try {
-    mini = await imgSquare(Buffer.from(await (await fetch(thumb)).arrayBuffer()))
+    const res = await fetch(thumb)
+    mini = await imgSquare(Buffer.from(await res.arrayBuffer()))
   } catch {}
 
   let fake = null
