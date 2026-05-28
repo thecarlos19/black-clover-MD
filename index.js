@@ -1,76 +1,144 @@
+import { spawn } from 'child_process'
 import { join, dirname } from 'path'
-import { createRequire } from 'module'
 import { fileURLToPath } from 'url'
-import { setupMaster, fork } from 'cluster'
-import { existsSync, writeFileSync } from 'fs'
+import cluster from 'cluster'
+import { existsSync, writeFileSync, readFileSync } from 'fs'
 import cfonts from 'cfonts'
-import { createInterface } from 'readline'
 import chalk from 'chalk'
 
 console.log(chalk.bold.hex('#00FFFF')('\n✞─ Iniciando Black Clover IA ─✞'))
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const require = createRequire(__dirname)
-require(join(__dirname, './package.json'))
 
-const rl = createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
+const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf8'))
 
 async function barraCargaCyberpunk() {
-  const frames = [
-    '[⏳] Iniciando Black Clover...',
-    '[🔮] Reuniendo maná primitivo...',
-    '[💾] Cargando hechizos prohibidos...',
-    '[⚡] Sincronizando con demonios...',
-    '[🔥] Fusión de magia negra...',
-    '[🌌] Apertura del Reino Oscuro...',
-    '[✅] ASTA-BOT 100% OPERATIVO.'
-  ]
-  for (let frame of frames) {
-    process.stdout.write('\r' + chalk.cyanBright(frame))
-    await new Promise(res => setTimeout(res, 350))
-  }
-  console.log()
+    const frames = [
+        '[⏳] Iniciando Black Clover...',
+        '[🔮] Reuniendo maná primitivo...',
+        '[💾] Cargando hechizos prohibidos...',
+        '[⚡] Sincronizando con demonios...',
+        '[🔥] Fusión de magia negra...',
+        '[🌌] Apertura del Reino Oscuro...',
+        '[✅] ASTA-BOT 100% OPERATIVO.'
+    ]
+    for (const frame of frames) {
+        process.stdout.write('\r' + chalk.cyanBright(frame))
+        await new Promise(res => setTimeout(res, 350))
+    }
+    console.log()
 }
 
 async function animacionBlackClover() {
-  const frames = [
-chalk.hex('#555555')(`
- ╭━┳━╭━╭━╮╮
- ┃   ┣▅╋▅┫┃
- ┃ ┃ ╰━╰━━━━━━╮
- ╰┳╯       ◢▉◣
-  ┃        ▉▉▉
-  ┃        ◥▉◤
-  ┃    ╭━┳━━━━╯
-  ┣━━━━━━┫  INICIANDO PROTOCOLO
+    const frames = [
+        chalk.hex('#555555')(`
+        ───────█████████████████████
+────████▀─────────────────▀████
+──███▀───────────────────────▀███
+─██▀───────────────────────────▀██
+█▀───────────────────────────────▀█
+█─────────────────────────────────█
+█─────────────────────────────────█
+█─────────────────────────────────█
+█───█████─────────────────█████───█
+█──██▓▓▓███─────────────███▓▓▓██──█
+█──██▓▓▓▓▓██───────────██▓▓▓▓▓██──█
+█──██▓▓▓▓▓▓██─────────██▓▓▓▓▓▓██──█
+█▄──████▓▓▓▓██───────██▓▓▓▓████──▄█
+▀█▄───▀███▓▓▓██─────██▓▓▓███▀───▄█▀
+──█▄────▀█████▀─────▀█████▀────▄█
+─▄██───────────▄█─█▄───────────██▄
+─███───────────██─██───────────███
+─███───────────────────────────███
+──▀██──██▀██──█──█──█──██▀██──██▀
+───▀████▀─██──█──█──█──██─▀████▀
+────▀██▀──██──█──█──█──██──▀██▀
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+──────────██──█──█──█──██
+───────────█▄▄█▄▄█▄▄█▄▄█
+
 `),
 
-chalk.hex('#FF0000')(`
- ╭━┳━╭━╭━╮╮
- ┃   ┣▅╋▅┫┃
- ┃ ┃ ╰━╰━━━━━━╮
- ╰┳╯       ◢▉◣
-  ┃        ▉▉▉
-  ┃        ◥▉◤
-  ┃    ╭━┳━━━━╯
-  ┣━━━━━━┫  ANTIMAGIA DETECTADA
+        chalk.hex('#FF0000')(`
+────────────█───────────────█
+────────────██─────────────██
+─────────────███████████████
+────────────█████████████████
+───────────███████████████████
+──────────████──█████████──████
+─────────███████████████████████
+────────█████████████████████████
+────────█████████████████████████
+───███──▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒──███
+──█████─█████████████████████████─█████
+──█████─████████████████──███████─█████
+──█████─██████────────█──█────███─█████
+──█████─█████─▓▓▓▓▓▓▓█──█▓▓─▓─███─█████
+──█████─███─█─▓▓▓▓▓▓█──█▓▓─▓▓─███─█████
+──█████─██──█─▓▓▓▓▓█──█▓▓─▓▓▓─███─█████
+──█████─███─█─▓▓▓▓█──█▓▓─▓▓▓▓─███─█████
+──█████─█████────█──█─────────███─█████
+──█████─█████████──██████████████─█████
+───███──████████──███████████████──███
+────────█████████████████████████
+─────────███████████████████████
+──────────█████████████████████
+─────────────██████───██████
+─────────────██████───██████
+─────────────██████───██████
+─────────────██████───██████
+──────────────████─────████
+
 `),
 
-chalk.hex('#FFD700')(`
-　　　　　⣀⠤⠖⠒⠒⠒⠢⠤⣀   
-　　　⣠⠊⠁ ⣀　⣀　　⠈⠑⡄ 
-　　⢠⠃⣰⠁⠈⣀⣤⣤⡑　⣢⣭⢉⣿ 
-　　⢸ ⡏ ⢰⣿⣿⣿⡜　⣿⣿⡇⣿ 
-　　⠈⣆⡇ ⠘⠿⣿⡿⠎⣀⡙⠿⠓⢙⡄
-　　　⠈⠳⢄⣀⠠⡒⠁⠐⠚⠃ ⢶⠋ 
-　　　　　　⢸ ⢇⣮⣥⠼⢬⠼⠞  
-　　　　⣠⠶⣮⡆⢸⣟⣀⣐⣺⡆   
+        chalk.hex('#FFD700')(`
+███████████████████████████████
+████╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬████
+██╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬██
+█╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬█
+█╬╬╬███████╬╬╬╬╬╬╬╬╬███████╬╬╬█
+█╬╬██╬╬╬╬███╬╬╬╬╬╬╬███╬╬╬╬██╬╬█
+█╬██╬╬╬╬╬╬╬██╬╬╬╬╬██╬╬╬╬╬╬╬██╬█
+█╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬█
+█╬╬╬╬█████╬╬╬╬╬╬╬╬╬╬╬█████╬╬╬╬█
+█╬╬█████████╬╬╬╬╬╬╬█████████╬╬█
+█╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬█
+█╬╬╬╬╬╬╬╬╬╬╬╬╬╬█╬╬╬╬╬╬╬╬╬╬╬╬╬╬█
+█╬╬╬╬╬╬╬╬╬╬╬╬╬╬█╬╬╬╬╬╬╬╬╬╬╬╬╬╬█
+█╬╬╬╬╬╬╬╬╬╬╬╬╬╬█╬╬╬╬╬╬╬╬╬╬╬╬╬╬█
+█╬╬╬▓▓▓▓╬╬╬╬╬╬╬█╬╬╬╬╬╬╬▓▓▓▓╬╬╬█
+█╬╬▓▓▓▓▓▓╬╬█╬╬╬█╬╬╬█╬╬▓▓▓▓▓▓╬╬█
+█╬╬╬▓▓▓▓╬╬██╬╬╬█╬╬╬██╬╬▓▓▓▓╬╬╬█
+█╬╬╬╬╬╬╬╬██╬╬╬╬█╬╬╬╬██╬╬╬╬╬╬╬╬█
+█╬╬╬╬╬████╬╬╬╬███╬╬╬╬████╬╬╬╬╬█
+█╬╬╬╬╬╬╬╬╬╬╬╬╬███╬╬╬╬╬╬╬╬╬╬╬╬╬█
+██╬╬█╬╬╬╬╬╬╬╬█████╬╬╬╬╬╬╬╬█╬╬██
+██╬╬██╬╬╬╬╬╬███████╬╬╬╬╬╬██╬╬██
+██╬╬▓███╬╬╬████╬████╬╬╬███▓╬╬██
+███╬╬▓▓███████╬╬╬███████▓▓╬╬███
+███╬╬╬╬▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╬╬╬╬███
+████╬╬╬╬╬╬╬╬╬╬███╬╬╬╬╬╬╬╬╬╬████
+█████╬╬╬╬╬╬╬╬╬╬█╬╬╬╬╬╬╬╬╬╬█████
+██████╬╬╬╬╬╬╬╬███╬╬╬╬╬╬╬╬██████
+███████╬╬╬╬╬╬╬███╬╬╬╬╬╬╬███████
+████████╬╬╬╬╬╬███╬╬╬╬╬╬████████
+█████████╬╬╬╬╬███╬╬╬╬╬█████████
+███████████╬╬╬╬█╬╬╬╬███████████
+███████████████████████████████
+
 `),
 
-chalk.hex('#FF00FF')(`
+        chalk.hex('#FF00FF')(`
 ─────█─▄▀█──█▀▄─█─────
 ────▐▌──────────▐▌────
 ────█▌▀▄──▄▄──▄▀▐█────
@@ -78,41 +146,40 @@ chalk.hex('#FF00FF')(`
 ──▄████▄──▐▌──▄████▄──
         NÚCLEO DESPIERTO
 `)
-  ]
+    ]
 
-  const duracionTotal = 3000
-  const delay = Math.floor(duracionTotal / frames.length)
+    const duracionTotal = 3000
+    const delay = Math.floor(duracionTotal / frames.length)
 
-  for (let i = 0; i < frames.length; i++) {
-    console.clear()
-    console.log(frames[i])
-    await new Promise(res => setTimeout(res, delay))
-  }
+    for (let i = 0; i < frames.length; i++) {
+        console.clear()
+        console.log(frames[i])
+        await new Promise(res => setTimeout(res, delay))
+    }
 }
 
 async function iniciarBlackClover() {
-  console.clear()
+    console.clear()
 
-  console.log(chalk.bold.cyanBright('\n⟦ ⌬ ACCESO CONCEDIDO | ASTA-BOT V.777 ⟧'))
-  console.log(chalk.gray('⌬ Canalizando acceso mágico...'))
-  await new Promise(res => setTimeout(res, 600))
+    console.log(chalk.bold.cyanBright('\n⟦ ⌬ ACCESO CONCEDIDO | ASTA-BOT V.777 ⟧'))
+    console.log(chalk.gray('⌬ Canalizando acceso mágico...'))
+    await new Promise(res => setTimeout(res, 600))
 
-  await animacionBlackClover()
+    await animacionBlackClover()
+    await barraCargaCyberpunk()
+    await new Promise(res => setTimeout(res, 500))
 
-  await barraCargaCyberpunk()
-  await new Promise(res => setTimeout(res, 500))
+    console.log(chalk.redBright('\n☰✦☰═☰ B L A C K C L O V E R ☰═☰✦☰'))
+    await new Promise(res => setTimeout(res, 700))
 
-  console.log(chalk.redBright('\n☰✦☰═☰  B  L  A  C  K    C  L  O  V  E  R  ☰═☰✦☰'))
-  await new Promise(res => setTimeout(res, 700))
+    cfonts.say('El mejor Bot', {
+        font: 'block',
+        align: 'center',
+        colors: ['#00FFFF', '#FF00FF'],
+        letterSpacing: 1
+    })
 
-  cfonts.say('El mejor Bot ', {
-    font: 'block',
-    align: 'center',
-    colors: ['#00FFFF', '#FF00FF'],
-    letterSpacing: 1
-  })
-
-  console.log(chalk.bold.hex('#00FFFF')(`
+    console.log(chalk.bold.hex('#00FFFF')(`
 █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
 █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█
 █░░║║║╠─║─║─║║║║║╠─░░█
@@ -121,32 +188,50 @@ async function iniciarBlackClover() {
         [ ACCESO CONCEDIDO ]
   `))
 
-  await new Promise(res => setTimeout(res, 800))
+    await new Promise(res => setTimeout(res, 800))
 
-  console.log(chalk.bold.hex('#FF00FF')('\n⌬═════════════════════⌬'))
-  console.log(chalk.bold.white('      SISTEMA CREO POR: ') + chalk.bold.hex('#FFD700')('The Carlos 👑'))
-  console.log(chalk.bold.hex('#FF00FF')('⌬═══════════════════════⌬\n'))
+    console.log(chalk.bold.hex('#FF00FF')('\n⌬═════════════════════⌬'))
+    console.log(chalk.bold.white(' SISTEMA CREADO POR: ') + chalk.bold.hex('#FFD700')('The Carlos 👑'))
+    console.log(chalk.bold.hex('#FF00FF')('⌬═══════════════════════⌬\n'))
 
-  await new Promise(res => setTimeout(res, 1200))
+    await new Promise(res => setTimeout(res, 1200))
 }
 
 let isRunning = false
+let currentWorker = null
+
 function start(file) {
-  if (isRunning) return
-  isRunning = true
-  let args = [join(__dirname, 'núcleo•clover', file), ...process.argv.slice(2)]
-  setupMaster({ exec: args[0], args: args.slice(1) })
-  let p = fork()
-  p.on('exit', (_, code) => {
-    isRunning = false
-    if (code !== 0) start(file)
-  })
+    if (isRunning) return
+    isRunning = true
+
+    const args = [join(__dirname, 'núcleo•clover', file),...process.argv.slice(2)]
+
+    if (cluster.isPrimary) {
+        cluster.setupPrimary({ exec: args[0], args: args.slice(1) })
+        currentWorker = cluster.fork()
+
+        currentWorker.on('exit', (code, signal) => {
+            isRunning = false
+            currentWorker = null
+            if (code!== 0 && signal!== 'SIGTERM') {
+                console.log(chalk.bold.red(`black clover murió: ${code || signal}. Reiniciando...`))
+                setTimeout(() => start(file), 1000)
+            } else {
+                process.exit(0)
+            }
+        })
+
+        process.on('SIGINT', () => {
+            if (currentWorker) currentWorker.kill('SIGTERM')
+            process.exit(0)
+        })
+    }
 }
 
 const archivoArranque = './.arranque-ok'
 if (!existsSync(archivoArranque)) {
-  await iniciarBlackClover()
-  writeFileSync(archivoArranque, 'CARLOS_FINAL')
+    await iniciarBlackClover()
+    writeFileSync(archivoArranque, `CARLOS_FINAL_${packageJson.version}`)
 }
 
 start('start.js')
