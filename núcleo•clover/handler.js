@@ -13,6 +13,8 @@ const isNumber = x => typeof x === 'number' &&!isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(resolve, ms))
 
 const lidCache = new Map()
+const metadataCache = new Map()
+const normalizeJid = jid => jid?.split('@')[0]?.replace(/\D/g, '')
 
 export async function handler(chatUpdate) {
     this.msgqueque ||= []
@@ -111,19 +113,22 @@ export async function handler(chatUpdate) {
         if (typeof m.text!== "string") m.text = ""
         globalThis.setting = settings
 
-        const detectwhat = m.sender.includes('@lid')? '@lid' : '@s.whatsapp.net'
-        const isROwner = [...global.owner.map(([number]) => number)].map(v => v.replace(/\D/g, "") + detectwhat).includes(m.sender)
+        const senderNumber = normalizeJid(m.sender)
+        const botNumber = normalizeJid(botJid)
+        
+        const ownerNumbers = [...global.owner.map(([number]) => normalizeJid(number)),...global.mods.map(v => normalizeJid(v))]
+        const isROwner = ownerNumbers.includes(senderNumber)
         const isOwner = isROwner || m.fromMe
-        const isMods = isOwner || global.mods.map(v => v.replace(/\D/g, "") + detectwhat).includes(m.sender)
+        const isMods = isOwner || global.mods.map(v => normalizeJid(v)).includes(senderNumber)
         const isPrems = isROwner || user.premiumTime > 0
 
         if (opts['queque'] && m.text &&!isMods) {
             const queque = this.msgqueque
             const previousID = queque[queque.length - 1]
             queque.push(m.id || m.key.id)
-            setInterval(async () => {
-                if (!queque.includes(previousID)) return
-                await delay(5000)
+            setTimeout(() => {
+                const idx = queque.indexOf(previousID)
+                if (idx!== -1) queque.splice(idx, 1)
             }, 5000)
         }
 
@@ -132,13 +137,13 @@ export async function handler(chatUpdate) {
         let usedPrefix
 
         async function getLidFromJid(id) {
-            if (!id) return id
-            if (id.endsWith('@lid')) return id
+            if (!id || id.endsWith('@lid')) return id
             if (lidCache.has(id)) return lidCache.get(id)
             try {
                 const res = await this.onWhatsApp(id)
                 const lid = res[0]?.lid || id
                 lidCache.set(id, lid)
+                setTimeout(() => lidCache.delete(id), 300000)
                 return lid
             } catch {
                 return id
@@ -148,11 +153,32 @@ export async function handler(chatUpdate) {
         const senderLid = await getLidFromJid.call(this, m.sender)
         const botLid = await getLidFromJid.call(this, botJid)
 
-        const groupMetadata = m.isGroup? ((this.chats[m.chat] || {}).metadata || await this.groupMetadata(m.chat).catch(() => null)) : {}
-        const participants = m.isGroup && groupMetadata? groupMetadata.participants || [] : []
+        let groupMetadata = null
+        let participants = []
+        if (m.isGroup) {
+            if (metadataCache.has(m.chat)) {
+                groupMetadata = metadataCache.get(m.chat)
+            } else {
+                groupMetadata = (this.chats[m.chat] || {}).metadata || await this.groupMetadata(m.chat).catch(() => null)
+                if (groupMetadata) {
+                    metadataCache.set(m.chat, groupMetadata)
+                    setTimeout(() => metadataCache.delete(m.chat), 60000)
+                }
+            }
+            participants = groupMetadata?.participants || []
+        }
 
-        const participant = participants.find(p => [p?.id, p?.jid, p?.lid].includes(senderLid) || [p?.id, p?.jid].includes(m.sender)) || {}
-        const botParticipant = participants.find(p => [p?.id, p?.jid, p?.lid].includes(botLid) || [p?.id, p?.jid].includes(botJid)) || {}
+        let participant = {}, botParticipant = {}
+        for (const p of participants) {
+            const pNum = normalizeJid(p?.id || p?.jid || p?.lid)
+            if (!participant.id && (pNum === senderNumber || [p?.id, p?.jid, p?.lid].includes(senderLid) || [p?.id, p?.jid].includes(m.sender))) {
+                participant = p
+            }
+            if (!botParticipant.id && (pNum === botNumber || [p?.id, p?.jid, p?.lid].includes(botLid) || [p?.id, p?.jid].includes(botJid))) {
+                botParticipant = p
+            }
+            if (participant.id && botParticipant.id) break
+        }
 
         const isRAdmin = participant.admin === 'superadmin'
         const isAdmin = isRAdmin || participant.admin === 'admin'
@@ -264,9 +290,11 @@ export async function handler(chatUpdate) {
 
         if (m) {
             const utente = global.db.data.users[m.sender]
-            if (utente.muto) await this.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } })
-            utente.exp += m.exp
-            utente.monedas -= m.monedas
+            if (utente?.muto) await this.sendMessage(m.chat, { delete: { remoteJid: m.chat, fromMe: false, id: m.key.id, participant: m.key.participant } })
+            if (utente) {
+                utente.exp += m.exp
+                utente.monedas -= m.monedas
+            }
         }
 
         const stats = global.db.data.stats
@@ -283,6 +311,7 @@ export async function handler(chatUpdate) {
         if (opts['autoread']) await this.readMessages([m.key])
     }
 }
+
 
 global.dfail = (type, m, conn) => {
     const msg = {

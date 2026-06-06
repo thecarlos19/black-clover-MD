@@ -40,17 +40,21 @@ const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
 protoType()
 serialize()
 
-global.__filename = function filename(pathURL = import.meta.url, rmPrefix = platform !== 'win32') {
-    return rmPrefix ? /file:\/\/\//.test(pathURL) ? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString();
-}; 
+if (!global.reconnectAttempts) global.reconnectAttempts = 0
+if (!global.msgQueue) global.msgQueue = new Map()
+if (!global.presenceConfig) global.presenceConfig = new Map()
+
+global.__filename = function filename(pathURL = import.meta.url, rmPrefix = platform!== 'win32') {
+    return rmPrefix? /file:\/\/\//.test(pathURL)? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString();
+};
 global.__dirname = function dirname(pathURL) {
     return path.dirname(global.__filename(pathURL, true))
-}; 
+};
 global.__require = function require(dir = import.meta.url) {
     return createRequire(dir)
 }
 
-global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({...query, ...(apikeyqueryname ? {[apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name]} : {})})) : '');
+global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs? global.APIs[name] : name) + path + (query || apikeyqueryname? '?' + new URLSearchParams(Object.entries({...query,...(apikeyqueryname? {[apikeyqueryname]: global.APIKeys[name in global.APIs? global.APIs[name] : name]} : {})})) : '');
 
 global.timestamp = {start: new Date}
 
@@ -59,18 +63,18 @@ const __dirname = global.__dirname(import.meta.url)
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
 global.prefix = new RegExp('^[#/!.]')
 
-global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile('./src/database/database.json'))
+global.db = new Low(/https?:\/\//.test(opts['db'] || '')? new mongoDB(opts['db']) : new JSONFile('./src/database/database.json'))
 
-global.DATABASE = global.db 
+global.DATABASE = global.db
 global.loadDatabase = async function loadDatabase() {
     if (global.db.READ) {
         return new Promise((resolve) => setInterval(async function() {
             if (!global.db.READ) {
                 clearInterval(this)
-                resolve(global.db.data == null ? global.loadDatabase() : global.db.data);
-            }}, 1 * 1000))
+                resolve(global.db.data == null? global.loadDatabase() : global.db.data);
+            }}, 500))
     }
-    if (global.db.data !== null) return
+    if (global.db.data!== null) return
     global.db.READ = true
     await global.db.read().catch(console.error)
     global.db.READ = null
@@ -81,21 +85,20 @@ global.loadDatabase = async function loadDatabase() {
         msgs: {},
         sticker: {},
         settings: {},
-        ...(global.db.data || {}),
+     ...(global.db.data || {}),
     }
     global.db.chain = chain(global.db.data)
 }
 loadDatabase()
 
-
 const { state, saveState, saveCreds } = await useMultiFileAuthState(global.sessions);
 const msgRetryCounterMap = (MessageRetryMap) => {};
-const msgRetryCounterCache = new NodeCache();
+const msgRetryCounterCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 const { version } = await fetchLatestBaileysVersion();
 let phoneNumber = global.botNumber;
 
 const methodCodeQR = process.argv.includes("qr");
-const methodCode = !!phoneNumber || process.argv.includes("code");
+const methodCode =!!phoneNumber || process.argv.includes("code");
 const MethodMobile = process.argv.includes("mobile");
 
 const theme = {
@@ -114,7 +117,16 @@ if (methodCodeQR) opcion = '1';
 
 const credsExist = fs.existsSync(`./${global.sessions}/creds.json`);
 
-if (!methodCodeQR && !methodCode && !credsExist) {
+async function isValidPhoneNumber(number) {
+    try {
+        const parsed = phoneUtil.parseAndKeepRawInput(number)
+        return phoneUtil.isValidNumber(parsed)
+    } catch {
+        return false
+    }
+}
+
+if (!methodCodeQR &&!methodCode &&!credsExist) {
     do {
         opcion = await question(
             theme.banner('⌬ Elija una opción:\n') +
@@ -125,7 +137,7 @@ if (!methodCodeQR && !methodCode && !credsExist) {
         if (!/^[1-2]$/.test(opcion)) {
             console.log(chalk.bold.redBright(`✞ No se permiten numeros que no sean 1 o 2, tampoco letras o símbolos especiales.`));
         }
-    } while ((opcion !== '1' && opcion !== '2') || credsExist);
+    } while ((opcion!== '1' && opcion!== '2') || credsExist);
 }
 
 console.info = () => {};
@@ -133,15 +145,16 @@ console.debug = () => {};
 
 const connectionOptions = {
     logger: pino({ level: 'silent' }),
-    printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
-    mobile: MethodMobile, 
-    browser: opcion == '1' ? [`${global.nameqr}`, 'Edge', '20.0.04'] : methodCodeQR ? [`${global.nameqr}`, 'Edge', '20.0.04'] : ['Ubuntu', 'Edge', '110.0.1587.56'],
+    printQRInTerminal: opcion == '1'? true : methodCodeQR? true : false,
+    mobile: MethodMobile,
+    browser: opcion == '1'? [`${global.nameqr}`, 'Edge', '20.0.04'] : methodCodeQR? [`${global.nameqr}`, 'Edge', '20.0.04'] : ['Ubuntu', 'Edge', '110.0.1587.56'],
     auth: {
         creds: state.creds,
         keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
     },
-    markOnlineOnConnect: true, 
-    generateHighQualityLinkPreview: true, 
+    markOnlineOnConnect: false,
+    generateHighQualityLinkPreview: false,
+    syncFullHistory: false,
     getMessage: async (clave) => {
         let jid = jidNormalizedUser(clave.remoteJid)
         let msg = await store.loadMessage(jid, clave.id)
@@ -185,8 +198,8 @@ conn.logger.info(` ✞ H E C H O\n`)
 if (!opts['test']) {
     if (global.db) setInterval(async () => {
         if (global.db.data) await global.db.write()
-        if (opts['autocleartmp'] && (global.support || {}).find) (tmp = [os.tmpdir(), 'tmp', `${jadi}`], tmp.forEach((filename) => cp.spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete'])))
-    }, 30 * 1000)
+        if (opts['autocleartmp'] && (global.support || {}).find) (tmp = [tmpdir(), 'tmp', `${global.sessions}`], tmp.forEach((filename) => spawn('find', [filename, '-amin', '5', '-type', 'f', '-delete'])))
+    }, 60000)
 }
 
 async function connectionUpdate(update) {
@@ -197,7 +210,7 @@ async function connectionUpdate(update) {
     if (isNewLogin) conn.isInit = true;
     if (!global.db.data) loadDatabase();
 
-    if ((qr && qr !== '0') || methodCodeQR) {
+    if ((qr && qr!== '0') || methodCodeQR) {
         if (opcion === '1' || methodCodeQR) {
             console.log(chalk.bold.yellow(`\n❐ ESCANEA EL CÓDIGO QR - EXPIRA EN 45 SEGUNDOS`));
         }
@@ -205,45 +218,30 @@ async function connectionUpdate(update) {
 
     if (connection === 'open') {
         console.log(chalk.bold.green('\n🧙‍♂️ BLACK CLOVER BOT CONECTADO ✞'));
+        global.reconnectAttempts = 0
+        clearTmp()
+        purgeSession()
     }
 
     if (connection === 'close') {
-        switch (reason) {
-            case DisconnectReason.badSession:
-            case DisconnectReason.loggedOut:
-                console.log(chalk.bold.redBright(`\n⚠︎ SESIÓN INVÁLIDA O CERRADA, BORRA LA CARPETA ${global.sessions} Y ESCANEA EL CÓDIGO QR ⚠︎`));
-                break;
-            case DisconnectReason.connectionClosed:
-                console.log(chalk.bold.magentaBright(`\n⚠︎ CONEXIÓN CERRADA, REINICIANDO...`));
-                break;
-            case DisconnectReason.connectionLost:
-                console.log(chalk.bold.blueBright(`\n⚠︎ CONEXIÓN PERDIDA, RECONECTANDO...`));
-                break;
-            case DisconnectReason.connectionReplaced:
-                console.log(chalk.bold.yellowBright(`\n⚠︎ CONEXIÓN REEMPLAZADA, OTRA SESIÓN INICIADA`));
-                return;
-            case DisconnectReason.restartRequired:
-                console.log(chalk.bold.cyanBright(`\n☑ REINICIANDO SESIÓN...`));
-                break;
-            case DisconnectReason.timedOut:
-                console.log(chalk.bold.yellowBright(`\n⚠︎ TIEMPO AGOTADO, REINTENTANDO CONEXIÓN...`));
-                break;
-            default:
-                console.log(chalk.bold.redBright(`\n⚠︎ DESCONEXIÓN DESCONOCIDA (${reason || 'Desconocido'})`));
-                break;
-        }
-
-        if (conn?.ws?.socket === null) {
-            await global.reloadHandler(true).catch(console.error);
-            global.timestamp.connect = new Date();
+        const shouldReconnect = reason!== DisconnectReason.loggedOut && reason!== DisconnectReason.badSession && reason!== 403
+        if (shouldReconnect && global.reconnectAttempts < 5) {
+            global.reconnectAttempts++
+            console.log(chalk.bold.yellowBright(`\n⚠︎ RECONECTANDO... MOTIVO: ${reason} INTENTO: ${global.reconnectAttempts}`))
+            await new Promise(r => setTimeout(r, 5000 * global.reconnectAttempts))
+            await global.reloadHandler(true).catch(console.error)
+        } else {
+            console.log(chalk.bold.redBright(`\n⚠︎ SESIÓN CERRADA PERMANENTE. BORRA ${global.sessions} Y RECONECTA`))
+            if (reason === DisconnectReason.loggedOut) {
+                rmSync(`./${global.sessions}`, { recursive: true, force: true })
+            }
         }
     }
 }
 
 process.on('uncaughtException', (err) => {
-    
     if (err.code === 'ENAMETOOLONG') {
-        console.error(chalk.red.bold(`✘ ERROR (ENAMETOOLONG): ${err.message}. Esto suele ser causado por pasar contenido Base64 en lugar de una ruta de archivo. (El bot NO se reiniciará)`));
+        console.error(chalk.red.bold(`✘ ERROR (ENAMETOOLONG): ${err.message}.`));
     } else {
         console.error(chalk.red.bold('✘ ERROR CRÍTICO CAPTURADO:'), err);
     }
@@ -252,7 +250,6 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error(chalk.red.bold('✘ RECHAZO NO MANEJADO:'), reason);
 });
 
-
 let isInit = true;
 let handler = await import('./handler.js')
 
@@ -260,7 +257,7 @@ global.reloadHandler = async function(restatConn) {
     try {
         const Handler = await import(`./handler.js?update=${Date.now()}`).catch(console.error);
         if (Handler && (Handler.handler || Handler.default)) {
-             handler = Handler.default || Handler; 
+             handler = Handler.default || Handler;
         }
     } catch (e) {
         console.error(e);
@@ -280,18 +277,18 @@ global.reloadHandler = async function(restatConn) {
         conn.ev.off('creds.update', conn.credsUpdate)
     }
 
-    conn.handler = (handler.handler || handler).bind(global.conn) 
+    conn.handler = (handler.handler || handler).bind(global.conn)
     conn.connectionUpdate = connectionUpdate.bind(global.conn)
     conn.credsUpdate = saveCreds.bind(global.conn, true)
 
-    // Read messages function created by Brayan  
     conn.ev.on('messages.upsert', async (m) => {
         if (m.messages && m.messages[0] && m.messages[0].key && m.messages[0].key.remoteJid) {
             const jid = m.messages[0].key.remoteJid;
-            await conn.sendPresenceUpdate('composing', jid);
+            const config = global.presenceConfig.get(jid)
+            if (!config?.ghost) await conn.sendPresenceUpdate('composing', jid);
             await conn.handler(m);
             await conn.readMessages([m.messages[0].key]);
-            await conn.sendPresenceUpdate('paused', jid);
+            if (!config?.ghost) await conn.sendPresenceUpdate('paused', jid);
         }
     });
 
@@ -302,15 +299,14 @@ global.reloadHandler = async function(restatConn) {
     return true
 };
 
-
 global.rutaJadiBot = join(__dirname, '../núcleo•clover/blackJadiBot')
 
 if (global.blackJadibts) {
     if (!existsSync(global.rutaJadiBot)) {
-        mkdirSync(global.rutaJadiBot, { recursive: true }) 
-        console.log(chalk.bold.cyan(`La carpeta: ${jadi} se creó correctamente.`))
+        mkdirSync(global.rutaJadiBot, { recursive: true })
+        console.log(chalk.bold.cyan(`La carpeta: ${global.sessions} se creó correctamente.`))
     } else {
-        console.log(chalk.bold.cyan(`La carpeta: ${jadi} ya está creada.`)) 
+        console.log(chalk.bold.cyan(`La carpeta: ${global.sessions} ya está creada.`))
     }
 
     const readRutaJadiBot = readdirSync(global.rutaJadiBot)
@@ -387,7 +383,7 @@ async function _quickTest() {
         return Promise.race([
             new Promise((resolve) => {
                 p.on('close', (code) => {
-                    resolve(code !== 127);
+                    resolve(code!== 127);
                 });
             }),
             new Promise((resolve) => {
@@ -408,9 +404,7 @@ function clearTmp() {
         const filePath = join(tmpDir, file)
         try {
            unlinkSync(filePath)
-        } catch (e) {
-           // Ignorar errores si no puede borrar
-        }
+        } catch (e) {}
     })
 }
 
@@ -418,13 +412,13 @@ function purgeSession() {
     let prekey = []
     let directorio = readdirSync(`./${global.sessions}`)
     let filesFolderPreKeys = directorio.filter(file => file.startsWith('pre-key-'))
-    prekey = [...prekey, ...filesFolderPreKeys]
+    prekey = [...prekey,...filesFolderPreKeys]
     filesFolderPreKeys.forEach(files => {
         try {
             unlinkSync(`./${global.sessions}/${files}`)
         } catch (e) {}
     })
-} 
+}
 
 function purgeSessionSB() {
     try {
@@ -433,7 +427,7 @@ function purgeSessionSB() {
             if (statSync(join(global.rutaJadiBot, directorio)).isDirectory()) {
                 const DSBPreKeys = readdirSync(join(global.rutaJadiBot, directorio)).filter(fileInDir => fileInDir.startsWith('pre-key-'))
                 DSBPreKeys.forEach(fileInDir => {
-                    if (fileInDir !== 'creds.json') {
+                    if (fileInDir!== 'creds.json') {
                          try {
                            unlinkSync(join(global.rutaJadiBot, directorio, fileInDir))
                          } catch (e) {}
@@ -451,96 +445,189 @@ function purgeOldFiles() {
     directories.forEach(dir => {
         try {
             readdirSync(dir).forEach(file => {
-                if (file !== 'creds.json') {
+                if (file!== 'creds.json') {
                     try {
                        unlinkSync(join(dir, file))
-                       console.log(chalk.bold.cyanBright(`\n╭» ❍ ARCHIVOS ❍\n│→ ${file} ELIMINADO\n╰― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ⌫ ♻`))
+                       console.log(chalk.bold.cyanBright(`\n╭» ❍ ARCHIVOS ❍\n│→ ${file} ELIMINADO\n╰― ― ― ― ⌫ ♻`))
                     } catch (e) {}
                 }
             })
         } catch (err) {
-            console.log(chalk.bold.red(`\n╭» ❍ ERROR ❍\n│→ No se pudo eliminar archivos en ${dir}\n╰― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ⌫ ✘\n` + err))
+            console.log(chalk.bold.red(`\n╭» ❍ ERROR ❍\n│→ No se pudo eliminar archivos en ${dir}\n╰― ― ― ― ― ― ⌫ ✘\n` + err))
         }
     })
 }
 
-if (!opts['test']) {
-    if (global.db) {
-        setInterval(async () => {
-            try {
-                if (global.db.data) await global.db.write()
-                if (opts['autocleartmp'] && (global.support || {}).find) {
-                    const tmpDirs = [os.tmpdir(), join(process.cwd(), 'tmp'), `${jadi}`]
-                    tmpDirs.forEach(dir => cp.spawn('find', [dir, '-amin', '3', '-type', 'f', '-delete']))
-                }
-            } catch (e) {
-                console.error(e)
-            }
-        }, 30000)
+global.backupcreds = async function() {
+    const backupPath = join(process.cwd(), 'backup_creds')
+    if (!existsSync(backupPath)) mkdirSync(backupPath)
+    const credsPath = `./${global.sessions}/creds.json`
+    if (existsSync(credsPath)) {
+        const timestamp = Date.now()
+        fs.copyFileSync(credsPath, join(backupPath, `creds_${timestamp}.json`))
+        console.log(chalk.greenBright(`Backup creado: creds_${timestamp}.json`))
+        return true
     }
+    return false
 }
 
-setInterval(async () => {
-    if (stopped === 'close' || !conn || !conn.user) return
-    await clearTmp()
-    console.log(chalk.bold.cyanBright(`\n╭» ❍ MULTIMEDIA ❍\n│→ ARCHIVOS DE LA CARPETA TMP ELIMINADOS\n╰― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ⌫ ♻`))
-}, 1000 * 60 * 4)
-
-setInterval(async () => {
-    if (stopped === 'close' || !conn || !conn.user) return
-    await purgeSession()
-    console.log(chalk.bold.cyanBright(`\n╭» ❍ ${global.sessions} ❍\n│→ SESIONES NO ESENCIALES ELIMINADAS\n╰― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ⌫ ♻`))
-}, 1000 * 60 * 10)
-
-setInterval(async () => {
-    if (stopped === 'close' || !conn || !conn.user) return
-    await purgeSessionSB()
-}, 1000 * 60 * 10)
-
-setInterval(async () => {
-    if (stopped === 'close' || !conn || !conn.user) return
-    await purgeOldFiles()
-}, 1000 * 60 * 10)
-
-_quickTest().then(() => conn.logger.info(chalk.bold(`✞ H E C H O\n`.trim()))).catch(console.error)
-
-let stopped
-
-setInterval(async () => {
-    if (stopped === 'close' || !conn || !conn?.user) return
-    const _uptime = process.uptime() * 1000
-    const uptime = clockString(_uptime)
-    const bio = `🦠 Black-clover-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`
-    await conn?.updateProfileStatus(bio).catch(_ => _)
-    if (global.rutaJadiBot) {
-        const bots = readdirSync(global.rutaJadiBot)
-        for (const bot of bots) {
-            const credsPath = join(global.rutaJadiBot, bot, 'creds.json')
-            if (existsSync(credsPath)) {
-                try {
-                    await conn?.updateProfileStatus(bio).catch(_ => _)
-                } catch {}
-            }
-        }
-    }
-}, 60000)
-
-function clockString(ms) {
-    const d = isNaN(ms) ? '--' : Math.floor(ms / 86400000)
-    const h = isNaN(ms) ? '--' : Math.floor(ms / 3600000) % 24
-    const m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-    const s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
-    return [d, 'd ', h, 'h ', m, 'm ', s, 's '].map((v) => v.toString().padStart(2, 0)).join('')
-}
-
-async function isValidPhoneNumber(number) {
+global.clearsubs = function() {
     try {
-        number = number.replace(/\s+/g, '')
-        if (number.startsWith('+521')) number = number.replace('+521', '+52')
-        else if (number.startsWith('+52') && number[4] === '1') number = number.replace('+52 1', '+52')
-        const parsedNumber = phoneUtil.parseAndKeepRawInput(number)
-        return phoneUtil.isValidNumber(parsedNumber)
+        rmSync(global.rutaJadiBot, { recursive: true, force: true })
+        mkdirSync(global.rutaJadiBot, { recursive: true })
+        console.log(chalk.greenBright(`Todos los Sub-Bots eliminados`))
+        return true
     } catch {
         return false
+    }
+}
+
+global.pingbot = function() {
+    const start = global.timestamp.start
+    const now = new Date()
+    const uptime = process.uptime() * 1000
+    return { ping: Date.now() - start, uptime: uptime }
+}
+
+global.autoReconnectV2 = async function() {
+    if (global.reconnectAttempts >= 5) {
+        console.log(chalk.red.bold('Maximo de reconexiones alcanzado'))
+        return false
+    }
+    global.reconnectAttempts++
+    await new Promise(r => setTimeout(r, 3000 * global.reconnectAttempts))
+    return await global.reloadHandler(true)
+}
+
+global.smartPresence = function(jid, type = 'composing', enabled = true) {
+    global.presenceConfig.set(jid, { ghost:!enabled, presence: type })
+    return enabled
+}
+
+global.antiBanQueue = async function(jid, message, priority = false) {
+    const queue = global.msgQueue.get(jid) || []
+    if (queue.length > 0 &&!priority) {
+        return new Promise((resolve) => {
+            queue.push({ pesanfull: message, resolve, options: {} })
+            global.msgQueue.set(jid, queue)
+        })
+    }
+    return true
+}
+
+global.backupSession = async function() {
+    const backupDir = join(process.cwd(), 'backup_sessions')
+    if (!existsSync(backupDir)) mkdirSync(backupDir, { recursive: true })
+
+    const sessionDir = `./${global.sessions}`
+
+    if (existsSync(sessionDir)) {
+        const timestamp = Date.now()
+        const target = join(backupDir, `session_${timestamp}`)
+
+        mkdirSync(target, { recursive: true })
+
+        readdirSync(sessionDir).forEach(file => {
+            fs.copyFileSync(join(sessionDir, file), join(target, file))
+        })
+
+        console.log(chalk.greenBright(`Backup sesión: session_${timestamp}`))
+        return true
+    }
+
+    return false
+}
+
+let isCleaning = false
+
+async function runCleanup(task) {
+    if (
+        stopped === true ||
+        global.stopped === 'close' ||
+        !global.conn ||
+        !global.conn.user ||
+        isCleaning
+    ) return
+
+    isCleaning = true
+
+    try {
+        await task()
+    } catch (e) {
+        console.error(e)
+    }
+
+    isCleaning = false
+}
+
+setInterval(() => runCleanup(async () => {
+    await clearTmp()
+    console.log(chalk.bold.cyanBright(`\n╭» ❍ MULTIMEDIA ❍\n│→ ARCHIVOS TMP ELIMINADOS\n╰― ― ― ― ― ― ― ⌫ ♻`))
+}), 1000 * 60 * 4)
+
+setInterval(() => runCleanup(async () => {
+    await purgeSession()
+    console.log(chalk.bold.cyanBright(`\n╭» ❍ ${global.sessions} ❍\n│→ SESIONES ELIMINADAS\n╰― ― ― ― ― ― ― ⌫ ♻`))
+}), 1000 * 60 * 10)
+
+setInterval(() => runCleanup(async () => {
+    await purgeSessionSB()
+}), 1000 * 60 * 10)
+
+setInterval(() => runCleanup(async () => {
+    await purgeOldFiles()
+}), 1000 * 60 * 10)
+
+_quickTest()
+    .then(() => conn.logger.info(chalk.bold(`✞ H E C H O`)))
+    .catch(console.error)
+
+setInterval(async () => {
+    if (
+        stopped === true ||
+        global.stopped === 'close' ||
+        !global.conn ||
+        !global.conn.user
+    ) return
+
+    const seconds = Math.floor(process.uptime())
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const secs = seconds % 60
+
+    const uptime =
+        String(hours).padStart(2, '0') + ':' +
+        String(minutes).padStart(2, '0') + ':' +
+        String(secs).padStart(2, '0')
+
+    const bio = `🦠 Black-clover-MD |「🕒」Activo: ${uptime}`
+
+    try {
+        await global.conn.updateProfileStatus(bio)
+    } catch {}
+}, 60000)
+
+global.healthcheck = function() {
+    const mem = process.memoryUsage()
+
+    const subs =
+        global.conns?.filter(
+            c => c.user && c.ws?.socket?.readyState !== ws.CLOSED
+        ).length || 0
+
+    const seconds = Math.floor(process.uptime())
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const secs = seconds % 60
+
+    return {
+        ram: `${(mem.rss / 1024 / 1024).toFixed(2)} MB`,
+        heap: `${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`,
+        uptime:
+            String(hours).padStart(2, '0') + ':' +
+            String(minutes).padStart(2, '0') + ':' +
+            String(secs).padStart(2, '0'),
+        subbots: subs,
+        status: global.conn?.user ? 'online' : 'offline'
     }
 }
