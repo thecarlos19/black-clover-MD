@@ -63,8 +63,12 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
 
         menuMedia = typeof menuMedia === 'object' ? menuMedia : {}
 
-        if (mime.includes('video')) menuMedia.video = filePath
-        else menuMedia.thumbnail = filePath
+        if (mime.includes('video')) {
+          menuMedia.video = filePath
+          menuMedia.thumbnail = filePath
+        } else {
+          menuMedia.thumbnail = filePath
+        }
 
         saveMenuMedia(botJid, menuMedia)
 
@@ -82,6 +86,33 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         return m.reply(`✅ Título actualizado:\n${text}`)
       }
 
+      case 'setmenufont': {
+        if (!text) return m.reply('❎ Ingresa el nombre de la fuente: cyber, gothic, minimal')
+
+        const fonts = ['cyber', 'gothic', 'minimal', 'default']
+        if (!fonts.includes(text.toLowerCase())) return m.reply(`❎ Fuentes válidas: ${fonts.join(', ')}`)
+
+        menuMedia = menuMedia || {}
+        menuMedia.fontStyle = text.toLowerCase()
+
+        saveMenuMedia(botJid, menuMedia)
+
+        return m.reply(`✅ Fuente del menú actualizada: ${text}`)
+      }
+
+      case 'setmenucolor': {
+        if (!text) return m.reply('❎ Ingresa el color hex: #FF0000')
+
+        if (!/^#[0-9A-F]{6}$/i.test(text)) return m.reply('❎ Color hex inválido. Ejemplo: #FF0000')
+
+        menuMedia = menuMedia || {}
+        menuMedia.accentColor = text
+
+        saveMenuMedia(botJid, menuMedia)
+
+        return m.reply(`✅ Color actualizado: ${text}`)
+      }
+
       case 'subpfp':
       case 'subimagen': {
         const q = m.quoted || m
@@ -92,10 +123,13 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
         }
 
         const media = await q.download()
+        if (!media) return m.reply('No se pudo descargar la imagen.')
+
         const image = await Jimp.read(media)
+        await image.cover(640, 640)
         const buffer = await image.getBufferAsync(Jimp.MIME_JPEG)
 
-        await conn.updateProfilePicture(conn.user.id, buffer)
+        await conn.updateProfilePicture(conn.user.jid, buffer)
 
         return m.reply('✅ Foto de perfil actualizada.')
       }
@@ -103,6 +137,8 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
       case 'substatus':
       case 'subbio': {
         if (!text) return m.reply('❎ Ingresa la nueva biografía.')
+
+        if (text.length > 139) return m.reply('❎ Máximo 139 caracteres.')
 
         await conn.updateProfileStatus(text)
 
@@ -113,9 +149,34 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
       case 'subuser': {
         if (!text) return m.reply('❎ Ingresa el nuevo nombre.')
 
+        if (text.length > 25) return m.reply('❎ Máximo 25 caracteres.')
+
         await conn.updateProfileName(text)
 
         return m.reply(`✅ Nombre actualizado:\n${text}`)
+      }
+
+      case 'backupconfig': {
+        const configFile = getMenuMediaFile(botJid)
+        if (!fs.existsSync(configFile)) return m.reply('❎ No hay configuración para respaldar.')
+
+        const backupPath = path.join(menuDir, `backup_${botJid.replace(/[:@.]/g, '_')}_${Date.now()}.json`)
+        fs.copyFileSync(configFile, backupPath)
+
+        return m.reply(`✅ Backup creado: ${path.basename(backupPath)}`)
+      }
+
+      case 'resetmenu': {
+        const configFile = getMenuMediaFile(botJid)
+        if (fs.existsSync(configFile)) fs.unlinkSync(configFile)
+
+        const mediaFile = path.join(menuDir, `${botJid.replace(/[:@.]/g, '_')}.jpg`)
+        if (fs.existsSync(mediaFile)) fs.unlinkSync(mediaFile)
+
+        const videoFile = path.join(menuDir, `${botJid.replace(/[:@.]/g, '_')}.mp4`)
+        if (fs.existsSync(videoFile)) fs.unlinkSync(videoFile)
+
+        return m.reply('✅ Configuración del menú reseteada a valores por defecto.')
       }
 
       case 'personalizar': {
@@ -128,6 +189,12 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
 ▢ ${usedPrefix}setmenutitle <texto>
 ↳ Cambia título del menú
 
+▢ ${usedPrefix}setmenufont <fuente>
+↳ Cambia fuente: cyber, gothic, minimal
+
+▢ ${usedPrefix}setmenucolor <#hex>
+↳ Cambia color de acento
+
 ▢ ${usedPrefix}subpfp
 ↳ Cambia foto de perfil del SubBot
 
@@ -136,6 +203,12 @@ const handler = async (m, { conn, command, usedPrefix, text }) => {
 
 ▢ ${usedPrefix}subusername <texto>
 ↳ Cambia nombre del SubBot
+
+▢ ${usedPrefix}backupconfig
+↳ Respalda configuración actual
+
+▢ ${usedPrefix}resetmenu
+↳ Resetea todo a default
 
 📢 Canal:
 https://whatsapp.com/channel/0029VbB36XC8aKvQevh8Bp04
@@ -151,16 +224,16 @@ https://whatsapp.com/channel/0029VbB36XC8aKvQevh8Bp04
 }
 
 handler.help = [
-  'personalizar','setmenuimg','setmenutitle',
+  'personalizar','setmenuimg','setmenutitle','setmenufont','setmenucolor',
   'subpfp','subimagen','substatus','subbio',
-  'subusername','subuser'
+  'subusername','subuser','backupconfig','resetmenu'
 ]
 
 handler.tags = ['subbot']
 handler.command = [
-  'personalizar','setmenuimg','setmenutitle',
+  'personalizar','setmenuimg','setmenutitle','setmenufont','setmenucolor',
   'subpfp','subimagen','substatus','subbio',
-  'subusername','subuser'
+  'subusername','subuser','backupconfig','resetmenu'
 ]
 
 export default handler

@@ -1,12 +1,19 @@
 import fs from 'fs/promises'
+import { existsSync } from 'fs'
 
 const file = './src/database/characters.json'
 let cooldown = {}
 
 const loadChars = async () => {
   try {
+    if (!existsSync(file)) {
+      await fs.mkdir('./src/database', { recursive: true })
+      await fs.writeFile(file, '[]')
+      return []
+    }
     let data = await fs.readFile(file, 'utf8')
-    return JSON.parse(data || '[]')
+    let parsed = JSON.parse(data || '[]')
+    return Array.isArray(parsed)? parsed : []
   } catch {
     return []
   }
@@ -27,7 +34,7 @@ let handler = async (m, { conn }) => {
     return conn.reply(m.chat, `⏳ espera ${min}m ${sec}s para volver a usar esto`, m)
   }
 
-  if (!m.quoted || !m.quoted.text) {
+  if (!m.quoted ||!m.quoted.text) {
     return conn.reply(m.chat, '❗ responde a un personaje válido', m)
   }
 
@@ -37,10 +44,12 @@ let handler = async (m, { conn }) => {
     let id = (m.quoted.text.match(/✦ ID: \*(.+?)\*/) || [])[1]
     if (!id) return conn.reply(m.chat, 'no se encontró el id del personaje', m)
 
-    let char = chars.find(v => v.id === id)
-    if (!char) return conn.reply(m.chat, 'ese personaje no existe', m)
+    let charIndex = chars.findIndex(v => v.id === id)
+    if (charIndex === -1) return conn.reply(m.chat, 'ese personaje no existe', m)
 
-    if (char.user && char.user !== user) {
+    let char = chars[charIndex]
+
+    if (char.user && char.user!== user) {
       return conn.reply(
         m.chat,
         `ese ya lo tiene @${char.user.split('@')[0]}`,
@@ -49,16 +58,22 @@ let handler = async (m, { conn }) => {
       )
     }
 
-    char.user = user
-    char.status = 'taken'
+    if (char.user === user) {
+      return conn.reply(m.chat, `ya tienes a ${char.name}`, m)
+    }
+
+    chars[charIndex].user = user
+    chars[charIndex].status = 'taken'
+    chars[charIndex].claimedAt = now
 
     await saveChars(chars)
 
     cooldown[user] = now + (30 * 60 * 1000)
 
-    return conn.reply(m.chat, `✔️ reclamaste a ${char.name}`, m)
+    return conn.reply(m.chat, `✔️ reclamaste a *${char.name}*`, m)
 
   } catch (e) {
+    console.error(e)
     return conn.reply(m.chat, 'error al reclamar personaje', m)
   }
 }

@@ -45,43 +45,81 @@ let drm1 = ""
 let drm2 = ""
 
 let rtx =
-`˚₊·✞『 𝗕𝗹𝗮𝗰𝗸 𝗖𝗹𝗼𝘃𝗲𝗿 - 𝗦𝘂𝗯 𝗕𝗼𝘁 』✞·—̳͟͞͞₊˚  
+`˚₊·✞『 𝗕𝗹𝗮𝗰𝗸 𝗖𝗹𝗼𝘃𝗲𝗿 - 𝗦𝘂𝗯 𝗕𝗼𝘁 』✞·—̳͟͞͞₊˚
 
-📲 *Escanea el Grimorio QR desde tu WhatsApp:*  
-⋮ > *Dispositivos vinculados* > *Escanear código*  
+📲 *Escanea el Grimorio QR desde tu WhatsApp:*
+⋮ > *Dispositivos vinculados* > *Escanear código*
 
 ⏳ *El sello mágico dura solo 45 segundos...*
 
-🔥 *Conviértete en un Sub-Bot Temporal y sirve al Reino Mágico*  
-🧿 *Tu energía quedará vinculada al Grimorio principal*`
+🔥 *Conviértete en un Sub-Bot Temporal y sirve al Reino Mágico*
+🧿 *Tu energía quedará vinculada al Grimorio principal*
+🛡️ *AutoGhost activo: no aparecerás en línea*`
 
 let rtx2 =
-`˚₊·✞『 𝗕𝗹𝗮𝗰𝗸 𝗖𝗹𝗼𝘃𝗲𝗿 - 𝗦𝘂𝗯 𝗕𝗼𝘁 』✞·—̳͟͞͞₊˚  
- 
-🜲 *Usa este Código Espiritual para convertirte en un ✧ Sub-Bot Temporal bajo el contrato del Reino de las Sombras.*  
+`˚₊·✞『 𝗕𝗹𝗮𝗰𝗸 𝗖𝗹𝗼𝘃𝗲𝗿 - 𝗦𝘂𝗯 𝗕𝗼𝘁 』✞·—̳͟͞͞₊˚
 
-⏳ *Atención, Guerrero de las Sombras:* este vínculo es delicado.  
-⚠️ *No uses tu cuenta principal, emplea una réplica espiritual o una forma secundaria.*  
+🜲 *Usa este Código Espiritual para convertirte en un ✧ Sub-Bot Temporal bajo el contrato del Reino de las Sombras.*
 
-🧿 *SISTEMA ➤ [ CÓDIGO ACTIVO ] — Activa el vínculo cuando estés preparado* ⚔️`
+⏳ *Atención, Guerrero de las Sombras:* este vínculo es delicado.
+⚠️ *No uses tu cuenta principal, emplea una réplica espiritual o una forma secundaria.*
+
+🧿 *SISTEMA ➤ [ CÓDIGO ACTIVO ] — Activa el vínculo cuando estés preparado* ⚔️
+🛡️ *AutoGhost activo: modo invisible habilitado*`
 
 const maxSubBots = 500
 
 let blackJBOptions = {}
 
 if (!global.conns) global.conns = []
+if (!global.subBotConfig) global.subBotConfig = new Map()
+if (!global.slotReserved) global.slotReserved = new Set()
 
 function msToTime(duration) {
   var seconds = Math.floor((duration / 1000) % 60),
       minutes = Math.floor((duration / (1000 * 60)) % 60)
-  minutes = (minutes < 10) ? '0' + minutes : minutes
-  seconds = (seconds < 10) ? '0' + seconds : seconds
+  minutes = (minutes < 10)? '0' + minutes : minutes
+  seconds = (seconds < 10)? '0' + seconds : seconds
   return minutes + ' m y ' + seconds + ' s '
+}
+
+function clearSessionFolder(folderPath) {
+  try {
+    if (fs.existsSync(folderPath)) {
+      const files = fs.readdirSync(folderPath)
+      const now = Date.now()
+      for (const file of files) {
+        if (file === 'creds.json') continue
+        const filePath = path.join(folderPath, file)
+        const stat = fs.statSync(filePath)
+        if (now - stat.mtimeMs > 1800000) {
+          fs.unlinkSync(filePath)
+        }
+      }
+    }
+  } catch {}
 }
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
   if (!globalThis.db.data.settings[conn.user.jid].jadibotmd) {
     return m.reply(`El Comando *${command}* está desactivado temporalmente.`)
+  }
+
+  if (command === 'autoghost') {
+    let user = global.subBotConfig.get(m.sender) || {}
+    user.ghostmode =!user.ghostmode
+    global.subBotConfig.set(m.sender, user)
+    return m.reply(`👻 *AutoGhost ${user.ghostmode? 'ACTIVADO' : 'DESACTIVADO'}*\n${user.ghostmode? 'Tu sub-bot no marcará leído ni aparecerá en línea' : 'Modo normal: visible'}`)
+  }
+
+  if (command === 'slotreserve') {
+    if (global.slotReserved.has(m.sender)) {
+      global.slotReserved.delete(m.sender)
+      return m.reply('🗑️ *Reserva de slot cancelada*')
+    }
+    global.slotReserved.add(m.sender)
+    setTimeout(() => global.slotReserved.delete(m.sender), 300000)
+    return m.reply('📌 *Slot reservado por 5 minutos*\nUsa.qr o.code para conectarte antes que expire')
   }
 
   let time = global.db.data.users[m.sender].Subs + 120000
@@ -95,26 +133,30 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 
   const subBots = [...new Set(
     global.conns.filter(c =>
-      c.user && c.ws.socket && c.ws.socket.readyState !== ws.CLOSED
+      c.user && c.ws.socket && c.ws.socket.readyState!== ws.CLOSED
     ).map(c => c)
   )]
 
   const subBotsCount = subBots.length
+  const reservedCount = global.slotReserved.size
 
-  if (subBotsCount >= maxSubBots) {
-    return m.reply(`❌ No se han encontrado espacios para *Sub-Bots* disponibles.`)
+  if (subBotsCount + reservedCount >= maxSubBots &&!global.slotReserved.has(m.sender)) {
+    return m.reply(`❌ No se han encontrado espacios para *Sub-Bots* disponibles.\n📌 Usa.slotreserve para apartar uno`)
   }
-  
-  const availableSlots = maxSubBots - subBotsCount
 
-  let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
+  const availableSlots = maxSubBots - subBotsCount - reservedCount
+
+  let who = m.mentionedJid && m.mentionedJid[0]? m.mentionedJid[0] : m.fromMe? conn.user.jid : m.sender
   let id = `${who.split('@')[0]}`
   let pathblackJadiBot = path.join(process.cwd(), 'núcleo•clover', 'blackJadiBot', id)
 
   if (!fs.existsSync(pathblackJadiBot)) {
     fs.mkdirSync(pathblackJadiBot, { recursive: true })
   }
-  
+
+  clearSessionFolder(pathblackJadiBot)
+  global.slotReserved.delete(m.sender)
+
   blackJBOptions.pathblackJadiBot = pathblackJadiBot
   blackJBOptions.m = m
   blackJBOptions.conn = conn
@@ -128,9 +170,9 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
   global.db.data.users[m.sender].Subs = new Date() * 1
 }
 
-handler.help = ['qr', 'code']
+handler.help = ['qr', 'code', 'autoghost', 'slotreserve']
 handler.tags = ['serbot']
-handler.command = ['qr', 'code']
+handler.command = ['qr', 'code', 'autoghost', 'slotreserve']
 
 export default handler
 
@@ -141,9 +183,9 @@ export async function blackJadiBot(options) {
     args.unshift('code')
   }
   const mcode = args[0] && /(--code|code)/.test(args[0].trim())
-    ? true
+? true
     : args[1] && /(--code|code)/.test(args[1].trim())
-      ? true
+  ? true
       : false
   let txtCode, codeBot, txtQR
   if (mcode) {
@@ -156,7 +198,7 @@ export async function blackJadiBot(options) {
     fs.mkdirSync(pathblackJadiBot, { recursive: true })
   }
   try {
-    if (args[0] && args[0] != undefined) {
+    if (args[0] && args[0]!= undefined) {
       fs.writeFileSync(pathCreds, JSON.stringify(JSON.parse(Buffer.from(args[0], "base64").toString("utf-8")), null, '\t'))
     }
   } catch {
@@ -172,7 +214,7 @@ export async function blackJadiBot(options) {
 
     const { version } = await fetchLatestBaileysVersion()
     const msgRetry = () => { }
-    const msgRetryCache = new NodeCache()
+    const msgRetryCache = new NodeCache({ stdTTL: 300, checkperiod: 60 })
     const { state, saveCreds } = await useMultiFileAuthState(pathblackJadiBot)
 
     const connectionOptions = {
@@ -181,9 +223,11 @@ export async function blackJadiBot(options) {
       auth: { creds: state.creds, keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' })) },
       msgRetry,
       msgRetryCache,
-      browser: mcode ? Browsers.macOS("Chrome") : Browsers.macOS("Desktop"),
+      browser: mcode? Browsers.macOS("Chrome") : Browsers.macOS("Desktop"),
       version: version,
-      generateHighQualityLinkPreview: false
+      generateHighQualityLinkPreview: false,
+      syncFullHistory: false,
+      markOnlineOnConnect: false
     }
 
     let sock = makeWASocket(connectionOptions)
@@ -194,11 +238,25 @@ export async function blackJadiBot(options) {
     let lastReconnect = 0
     let maxReconnectDelay = 60000
 
+    async function autoSnapshot() {
+      try {
+        const snapDir = path.join(pathblackJadiBot, 'snapshots')
+        if (!fs.existsSync(snapDir)) fs.mkdirSync(snapDir)
+        const timestamp = Date.now()
+        fs.copyFileSync(pathCreds, path.join(snapDir, `snapshot_${timestamp}.json`))
+        const snaps = fs.readdirSync(snapDir).filter(f => f.startsWith('snapshot_'))
+        if (snaps.length > 3) {
+          const old = snaps.sort()[0]
+          fs.unlinkSync(path.join(snapDir, old))
+        }
+      } catch {}
+    }
+
     async function connectionUpdate(update) {
       const { connection, lastDisconnect, isNewLogin, qr } = update
       if (isNewLogin) sock.isInit = false
 
-      if (qr && !mcode) {
+      if (qr &&!mcode) {
         if (m?.chat) {
           txtQR = await conn.sendMessage(m.chat, { image: await qrcode.toBuffer(qr, { scale: 8 }), caption: rtx.trim() }, { quoted: m })
         } else {
@@ -214,7 +272,7 @@ export async function blackJadiBot(options) {
         let secret = await sock.requestPairingCode((m.sender?.split('@')[0]))
         secret = secret.match(/.{1,4}/g)?.join("-")
         txtCode = await conn.sendMessage(m.chat, { text: rtx2 }, { quoted: m })
-        codeBot = await m.reply(secret)
+        codeBot = await m.reply(`\`\`\`${secret}\`\`\``)
         console.log(secret)
       }
 
@@ -229,30 +287,30 @@ export async function blackJadiBot(options) {
 
       if (connection === 'close') {
         const now = Date.now()
-        const delay = Math.min(5000 * (reconnectAttempts + 1), maxReconnectDelay)
+        const delay = Math.min(5000 * Math.pow(2, reconnectAttempts), maxReconnectDelay)
 
         if (now - lastReconnect < delay) return
         lastReconnect = now
         reconnectAttempts++
 
-        if (reason === 428 || reason === 408) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente o expiró. Intentando reconectar...\n╰─────────────────────────`))
+        if (reason === DisconnectReason.connectionLost || reason === 428 || reason === 408) {
+          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente. Reconectando...\n╰─────────────────────────`))
           await new Promise(r => setTimeout(r, delay))
           return creloadHandler(true).catch(() => {})
         }
 
-        if (reason === 440) {
+        if (reason === DisconnectReason.connectionReplaced || reason === 440) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue reemplazada por otra sesión activa.\n╰─────────────────────────`))
           try {
-            if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null }) : ""
+            if (options.fromCommand) m?.chat? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null }) : ""
           } catch {}
           return
         }
 
-        if (reason == 405 || reason == 401) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰─────────────────────────`))
+        if (reason == DisconnectReason.loggedOut || reason == 405 || reason == 401) {
+          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas.\n╰─────────────────────────`))
           try {
-            if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
+            if (options.fromCommand) m?.chat? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
           } catch {}
           try { fs.rmSync(pathblackJadiBot, { recursive: true, force: true }) } catch {}
           return
@@ -260,12 +318,12 @@ export async function blackJadiBot(options) {
 
         if (reason === 500) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
-          if (options.fromCommand) m?.chat ? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
+          if (options.fromCommand) m?.chat? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
           await new Promise(r => setTimeout(r, delay))
           return creloadHandler(true).catch(() => {})
         }
 
-        if (reason === 515 || !reason) {
+        if (reason === 515 ||!reason) {
           console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Reinicio automático para la sesión (+${path.basename(pathblackJadiBot)}).\n╰─────────────────────────`))
           await new Promise(r => setTimeout(r, delay))
           return creloadHandler(true).catch(() => {})
@@ -284,15 +342,18 @@ export async function blackJadiBot(options) {
 
         console.log(
           chalk.bold.cyanBright(
-            `\n❒────────────【• SUB-BOT  •】────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────【• CONECTADO •】────────────❒`
+            `\n❒────────────────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────────────────❒`
           )
         )
 
         sock.isInit = true
         global.conns.push(sock)
 
+        await autoSnapshot()
+        setInterval(autoSnapshot, 1000 * 60 * 15)
+
         try {
-          await sock.groupAcceptInvite('IJjWzYg976PFSXOJ3uJDOM')
+          await sock.groupAcceptInvite('IJjWzYg976PFSXOJ3uJ3DOM')
         } catch {}
 
         if (m?.chat)
@@ -300,8 +361,8 @@ export async function blackJadiBot(options) {
             m.chat,
             {
               text: args[0]
-                ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...`
-                : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa el comando .personalizar para personalizar tu bot y que quede a tu gusto XD `,
+            ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...`
+                : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa.personalizar para personalizar tu bot\n> Usa.autoghost para modo invisible\n> AutoSnapshot cada 15min activo`,
               mentions: [m.sender]
             },
             { quoted: m }
@@ -347,7 +408,12 @@ export async function blackJadiBot(options) {
       sock.connectionUpdate = connectionUpdate.bind(sock)
       sock.credsUpdate = saveCreds.bind(sock)
 
-      sock.ev.on("messages.upsert", sock.handler)
+      sock.ev.on("messages.upsert", async (msg) => {
+        const sender = msg.messages?.[0]?.key?.participant || msg.messages?.[0]?.key?.remoteJid
+        const config = global.subBotConfig?.get(sender)
+        if (config?.ghostmode) return
+        await sock.handler(msg)
+      })
       sock.ev.on("connection.update", sock.connectionUpdate)
       sock.ev.on("creds.update", sock.credsUpdate)
 

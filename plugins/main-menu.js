@@ -4,7 +4,7 @@ import path from 'path'
 import fetch from 'node-fetch'
 
 const charset = { a:'ᴀ',b:'ʙ',c:'ᴄ',d:'ᴅ',e:'ᴇ',f:'ꜰ',g:'ɢ',h:'ʜ',i:'ɪ',j:'ᴊ',k:'ᴋ',l:'ʟ',m:'ᴍ',n:'ɴ',o:'ᴏ',p:'ᴘ',q:'ǫ',r:'ʀ',s:'ꜱ',t:'ᴛ',u:'ᴜ',v:'ᴠ',w:'ᴡ',x:'x',y:'ʏ',z:'ᴢ' }
-const textCyberpunk = t => t.toLowerCase().replace(/[a-z]/g, c => charset[c])
+const textCyberpunk = t => t.replace(/[a-z]/gi, c => charset[c.toLowerCase()] || c)
 
 const tags = {
   main: textCyberpunk('sistema'),
@@ -14,18 +14,18 @@ const tags = {
 
 const defaultMenu = {
   before: `
-—͟͟͞͞ ♱   *Registro Clover MD* »
-> 🪐 𝙉𝙤𝙢𝙗𝙧𝙚   » %name
-> ⚙️ 𝙉𝙞𝙫𝙚𝙡     » %level
-> ⚡ 𝙀𝙭𝙥        » %exp / %maxexp
-> 🌐 𝙈𝙤𝙙𝙤      » %mode
-> ⏳ 𝘼𝙘𝙩𝙞𝙫𝙤   » %muptime
+—͟͟͞͞ ♱ *Registro Clover MD* »
+> 🪐 𝙉𝙤𝙢𝙗𝙧𝙚 » %name
+> ⚡ 𝙀𝙭𝙥 » %exp / %maxexp
+> 🌐 𝙈𝙤𝙙𝙤 » %mode
+> ⏳ 𝘼𝙘𝙩𝙞𝙫𝙤 » %muptime
 > 👥 𝙐𝙨𝙪𝙖𝙧𝙞𝙤𝙨 » %totalreg
 
-🤖 » 𝐌𝐄𝐍𝐔 𝐁𝐋𝐀𝐂𝐊 𝐂𝐋𝐎𝐕𝐄𝐑 «
-👑 » 𝗢𝗽𝗲𝗿𝗮𝗱𝗼𝗿:—͟͟͞͞ 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 𖣘 «
+> Repositorio oficial del bot 
+https://github.com/thecarlos19/black-clover-MD
+
 %readmore
-`.trimStart(),
+`.trim(),
   header: '\n⧼⋆꙳•〔 ♱ %category 〕⋆꙳•⧽',
   body: '> 𖣘 %cmd',
   footer: '╰⋆꙳•❅‧*₊⋆꙳︎‧*❆₊⋆╯',
@@ -39,16 +39,14 @@ const getMenuMediaFile = jid =>
   path.join(menuDir, `menuMedia_${jid.replace(/[:@.]/g, '_')}.json`)
 
 const loadMenuMedia = jid => {
-  const file = getMenuMediaFile(jid)
-  if (!fs.existsSync(file)) return {}
-  try { return JSON.parse(fs.readFileSync(file)) } catch { return {} }
+  try {
+    return JSON.parse(fs.readFileSync(getMenuMediaFile(jid)))
+  } catch { return {} }
 }
 
-const fetchBuffer = async url =>
-  Buffer.from(await (await fetch(url)).arrayBuffer())
+const fetchBuffer = url => fetch(url).then(r => r.arrayBuffer()).then(b => Buffer.from(b))
 
-const defaultThumb = await fetchBuffer('https://raw.githubusercontent.com/JTxs00/uploads/main/1776302012214.jpeg')
-const defaultVideo = await fetchBuffer('https://raw.githubusercontent.com/JTxs00/uploads/main/1776311203328.mp4')
+const defaultThumb = await fetchBuffer('https://raw.githubusercontent.com/JTxs00/uploads/main/1780717405556.jpeg')
 
 let handler = async (m, { conn, usedPrefix }) => {
   await conn.sendMessage(m.chat, { react: { text: '⚔️', key: m.key } })
@@ -71,17 +69,17 @@ let handler = async (m, { conn, usedPrefix }) => {
     readmore: String.fromCharCode(8206).repeat(4001)
   }
 
-  const help = Object.values(global.plugins || {})
-    .filter(p => !p.disabled)
-    .map(p => ({
-      help: [].concat(p.help || []),
-      tags: [].concat(p.tags || []),
-      prefix: 'customPrefix' in p
-    }))
+  const plugins = Object.values(global.plugins || {}).filter(p => !p.disabled)
 
-  for (const { tags: tg } of help)
-    for (const t of tg)
-      if (t && !tags[t]) tags[t] = textCyberpunk(t)
+  const help = plugins.map(p => ({
+    help: [].concat(p.help || []),
+    tags: [].concat(p.tags || []),
+    prefix: 'customPrefix' in p
+  }))
+
+  help.forEach(({ tags: tg }) =>
+    tg.forEach(t => t && !tags[t] && (tags[t] = textCyberpunk(t)))
+  )
 
   const text = [
     menu.before,
@@ -100,33 +98,22 @@ let handler = async (m, { conn, usedPrefix }) => {
     ? fs.readFileSync(menuMedia.thumbnail)
     : defaultThumb
 
-  const video = menuMedia.video && fs.existsSync(menuMedia.video)
-    ? fs.readFileSync(menuMedia.video)
-    : defaultVideo
-
-  const uniqueThumb = Buffer.concat([thumb, Buffer.from(botJid)])
-
   await conn.sendMessage(m.chat, {
-    video,
-    gifPlayback: true,
-    jpegThumbnail: uniqueThumb,
+    image: thumb,
     caption: text,
     footer: '🧠 BLACK CLOVER SYSTEM ☘️',
     buttons: [
-      { buttonId: `${usedPrefix}menurpg`, buttonText: { displayText: '🏛️ M E N U R P G' }, type: 1 },
-      { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🕹 ＳＥＲＢＯＴ' }, type: 1 }
-    ],
-    contextInfo: {
-      externalAdReply: {
-        title: menuMedia.menuTitle || '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | 𝕳𝖆𝖐 v777 🥷🏻',
-        body: 'ִ┊࣪ ˖𝐃𝐞𝐯 • 𝐓𝐡𝐞 𝐂𝐚𝐫𝐥𝐨𝐬 ♱',
-        thumbnail: uniqueThumb,
-        sourceUrl: 'https://github.com/thecarlos19/black-clover-MD',
-        mediaType: 1,
-        renderLargerThumbnail: true
+      {
+        buttonId: `${usedPrefix}menurpg`,
+        buttonText: { displayText: '🏛️ M E N U R P G' }
+      },
+      {
+        buttonId: `${usedPrefix}code`,
+        buttonText: { displayText: '🕹 ＳＥＲＢＯＴ' }
       }
-    }
-  }, { quoted: m })
+    ],
+    headerType: 4
+  })
 }
 
 handler.help = ['menu', 'menú']

@@ -13,143 +13,141 @@ let handler = async (m, { conn, usedPrefix }) => {
   const salud = user.health || 100
 
   const tituloEspecial = esReyMago
-    ? '\n👑 REY MAGO SUPREMO 👑\n'
+  ? '\n👑 ◜REY MAGO SUPREMO◞ 👑\n'
     : ''
 
+  const readMore = String.fromCharCode(8206).repeat(4001)
+
   const texto = `
-   *MENÚ RPG BLACK CLOVER*
+╔═══ ≪ °❈° ≫ ════╗
+ *⚜️ GRIMORIO RPG ⚜️*
+    *BLACK CLOVER*
+╚═══ ≪ °❈° ≫ ════╝
 
-> 👤 Usuario: @${m.sender.split('@')[0]}
-> 🔝 Nivel: ${nivel}
-> ✨ Exp: ${exp}
-> 🪙 Monedas: ${monedas}
-> 💎 Diamantes: ${diamantes}
-> 🔮 Fragmentos: ${fragmentos}
-> 🎴 Personajes: ${personajes}
-> ❤️ Salud: ${salud}
+◈ Usuario: @${m.sender.split('@')[0]}
+◈ Nivel: ${nivel}
+◈ Exp: ${exp}
+◈ Monedas: ${monedas}
+◈ Diamantes: ${diamantes}
+◈ Fragmentos: ${fragmentos}
+◈ Grimorios: ${personajes}
+◈ Vitalidad: ${salud}
 
-╰━━━━━━━━━━━━━━━━━⬣
+╰▣━━━━━━━━━━━━━━━━━▣╯
 
-⚔️ AVENTURA Y RPG
+${readMore}
 
-> ⛏️ ${usedPrefix}minar
-> 🏹 ${usedPrefix}cazar
-> 🌌 ${usedPrefix}explorar
-> 🧟 ${usedPrefix}invasionzombie
-> 🔨 ${usedPrefix}trabajar
-> 🎁 ${usedPrefix}daily
-> 🎲 ${usedPrefix}cajamisteriosa
-> ⚡ ${usedPrefix}cambiarexp
-> 🧩 ${usedPrefix}claim
-> 🎯 ${usedPrefix}hunt
-> 💼 ${usedPrefix}work
-> 🧪 ${usedPrefix}adventure
-> 🏆 ${usedPrefix}reinado
-> ⚔️ ${usedPrefix}duelo
-> ❓ ${usedPrefix}acertijo
-> ➕ ${usedPrefix}math easy
-> ➕ ${usedPrefix}math medium
-> ➕ ${usedPrefix}math hard
+『⚔️』*AVENTURA Y RPG*
 
-💰 ECONOMÍA
+▸ ⛏️ ${usedPrefix}minar
+▸ 🏹 ${usedPrefix}cazar
+▸ 🌌 ${usedPrefix}explorar
+▸ 🧟 ${usedPrefix}invasionzombie
+▸ 🔨 ${usedPrefix}trabajar
+▸ 🎁 ${usedPrefix}daily
+▸ 🎲 ${usedPrefix}cajamisteriosa
+▸ ⚡ ${usedPrefix}cambiarexp
+▸ 🧩 ${usedPrefix}claim
+▸ 🎯 ${usedPrefix}hunt
+▸ 💼 ${usedPrefix}work
+▸ 🧪 ${usedPrefix}adventure
+▸ 🏆 ${usedPrefix}reinado
+▸ ⚔️ ${usedPrefix}duelo
+▸ ❓ ${usedPrefix}acertijo
+▸ ➕ ${usedPrefix}math easy
+▸ ➕ ${usedPrefix}math medium
+▸ ➕ ${usedPrefix}math hard
 
-> 💳 ${usedPrefix}transferir
-> 💸 ${usedPrefix}enviar
-> 🎁 ${usedPrefix}dar
-> 🏦 ${usedPrefix}miestatus
-> 🪙 ${usedPrefix}mismonedas
-> ✨ ${usedPrefix}miexp
-> 🏧 ${usedPrefix}banco
-> 💹 ${usedPrefix}depositar
-> 💵 ${usedPrefix}retirar
-> 📊 ${usedPrefix}balance
+『💰』*ECONOMÍA*
 
-🎴 PERSONAJES
+▸ 💳 ${usedPrefix}transferir
+▸ 💸 ${usedPrefix}enviar
+▸ 🎁 ${usedPrefix}dar
+▸ 🏦 ${usedPrefix}miestatus
+▸ 🪙 ${usedPrefix}mismonedas
+▸ ✨ ${usedPrefix}miexp
+▸ 🏧 ${usedPrefix}banco
+▸ 💹 ${usedPrefix}depositar
+▸ 💵 ${usedPrefix}retirar
+▸ 📊 ${usedPrefix}balance
 
-> 📜 ${usedPrefix}listarpersonajes
-> 🧩 ${usedPrefix}mispersonajes
-> 🔮 ${usedPrefix}invocacion
-> 💀 ${usedPrefix}sacrificar
-> 🏆 ${usedPrefix}toppersonajes
-> 🛒 ${usedPrefix}comprar
-> 🎟️ ${usedPrefix}inventario
-> 🎭 ${usedPrefix}chars
-> 👑 ${usedPrefix}topchars
+『🎴』*GRIMORIOS*
 
-🥷 ROBOS Y PVP
+▸ 📜 ${usedPrefix}listarpersonajes
+▸ 🧩 ${usedPrefix}mispersonajes
+▸ 🔮 ${usedPrefix}invocacion
+▸ 💀 ${usedPrefix}sacrificar
+▸ 🏆 ${usedPrefix}toppersonajes
+▸ 🛒 ${usedPrefix}comprar
+▸ 🎟️ ${usedPrefix}inventario
+▸ 🎭 ${usedPrefix}chars
+▸ 👑 ${usedPrefix}topchars
 
-> 🗡️ ${usedPrefix}rob
-> 💰 ${usedPrefix}rob2
-> 🫶 ${usedPrefix}robarwaifu
-> ⚔️ ${usedPrefix}batalla
-> ☠️ ${usedPrefix}raid
-> 🥷 ${usedPrefix}asaltar
+『🥷』*ROBOS Y PVP*
 
-💖 WAIFUS
+▸ 🗡️ ${usedPrefix}rob
+▸ 💰 ${usedPrefix}rob2
+▸ 🫶 ${usedPrefix}robarwaifu
+▸ ⚔️ ${usedPrefix}batalla
+▸ ☠️ ${usedPrefix}raid
+▸ 🥷 ${usedPrefix}asaltar
 
-> 💘 ${usedPrefix}rw
-> 🎁 ${usedPrefix}c
-> 💖 ${usedPrefix}miswaifus
-> 📖 ${usedPrefix}listawaifus
-> 🥇 ${usedPrefix}topwaifus
-> 💍 ${usedPrefix}casar
-> 💔 ${usedPrefix}divorcio
+『💖』*WAIFUS*
 
-🛡️ PROTECCIÓN
+▸ 💘 ${usedPrefix}rw
+▸ 🎁 ${usedPrefix}c
+▸ 💖 ${usedPrefix}miswaifus
+▸ 📖 ${usedPrefix}listawaifus
+▸ 🥇 ${usedPrefix}topwaifus
+▸ 💍 ${usedPrefix}casar
+▸ 💔 ${usedPrefix}divorcio
 
-> 🛡️ ${usedPrefix}escudo
-> 🔓 ${usedPrefix}desbloquear
-> 🚫 ${usedPrefix}antirobo
-> 🔒 ${usedPrefix}lock
+『🛡️』*PROTECCIÓN*
 
-👑 PREMIUM
+▸ 🛡️ ${usedPrefix}escudo
+▸ 🔓 ${usedPrefix}desbloquear
+▸ 🚫 ${usedPrefix}antirobo
+▸ 🔒 ${usedPrefix}lock
 
-> 🌟 ${usedPrefix}listavip
-> 💎 ${usedPrefix}premium
-> 👑 ${usedPrefix}viplist
+『👑』*PREMIUM*
 
-🎮 JUEGOS
+▸ 🌟 ${usedPrefix}listavip
+▸ 💎 ${usedPrefix}premium
+▸ 👑 ${usedPrefix}viplist
 
-> 🎰 ${usedPrefix}slot
-> 🎲 ${usedPrefix}dado
-> 🃏 ${usedPrefix}casino
-> 🎯 ${usedPrefix}apostar
-> 🧠 ${usedPrefix}ttt
-> 🎮 ${usedPrefix}pvp
-> 🎳 ${usedPrefix}ruleta
+『🎮』*JUEGOS*
+
+▸ 🎰 ${usedPrefix}slot
+▸ 🎲 ${usedPrefix}dado
+▸ 🃏 ${usedPrefix}casino
+▸ 🎯 ${usedPrefix}apostar
+▸ 🧠 ${usedPrefix}ttt
+▸ 🎮 ${usedPrefix}pvp
+▸ 🎳 ${usedPrefix}ruleta
 
 ${tituloEspecial}
 
-🌠 Conviértete en el mago más poderoso del reino.
-⚡ Usa tus monedas sabiamente y domina el universo RPG.
+◜🌠◞ Forja tu destino como el mago más poderoso.
+◜⚡◞ Administra tu poder y conquista el reino.
 `.trim()
 
   const img = 'https://raw.githubusercontent.com/JTxs00/uploads/main/1776310123337.jpeg'
+
+  const buttons = [
+    { buttonId: `${usedPrefix}invocacion`, buttonText: { displayText: '🔮 INVOCAR' }, type: 1 },
+    { buttonId: `${usedPrefix}daily`, buttonText: { displayText: '🎁 DAILY' }, type: 1 },
+    { buttonId: `${usedPrefix}menu`, buttonText: { displayText: '📜 MENU' }, type: 1 }
+  ]
 
   await conn.sendMessage(
     m.chat,
     {
       image: { url: img },
       caption: texto,
-      mentions: [m.sender],
-      footer: 'Black Clover RPG',
-      buttons: [
-        {
-          buttonId: `${usedPrefix}menu`,
-          buttonText: {
-            displayText: '📜 MENU'
-          },
-          type: 1
-        },
-        {
-          buttonId: `${usedPrefix}owner`,
-          buttonText: {
-            displayText: '👑 OWNER'
-          },
-          type: 1
-        }
-      ],
+      footer: '⚔️ Black Clover MD • The Carlos ⚔️',
+      buttons: buttons,
       headerType: 4,
+      mentions: [m.sender],
       contextInfo: {
         mentionedJid: [m.sender]
       }

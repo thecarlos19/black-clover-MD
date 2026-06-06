@@ -41,7 +41,6 @@ ${usedPrefix + command} antiprivado`
 
   const isEnable = /true|enable|(turn)?on|1/i.test(command)
   const chat = global.db.data.chats[m.chat]
-  const user = global.db.data.users[m.sender]
   const bot = global.db.data.settings[conn.user.jid] || {}
   const type = (args[0] || '').toLowerCase()
   let isAll = false
@@ -140,7 +139,7 @@ ${usedPrefix + command} antiprivado`
       validateGroupAdmin()
       chat.autosticker = isEnable
       break
-    case 'reaction': case 'reaccion': case 'emojis': case 'antiemojis': case 'reacciones': case 'reaciones':
+    case 'reaction': case 'reaccion': case 'emojis': case 'reacciones':
       validateGroupAdmin()
       chat.reaction = isEnable
       break
@@ -156,68 +155,35 @@ ${usedPrefix + command} antiprivado`
       validateGroupAdmin()
       chat.modoadmin = isEnable
       break
-    case 'antifake': case 'antifalsos': case 'antiextranjeros': case 'antiinternacional':
+    case 'antifake': case 'antiextranjeros': case 'antiinternacional':
       validateGroupAdmin()
       chat.antifake = isEnable
       break
-    case 'serbot': case 'jadibot': case 'modoserbot':
+    case 'serbot': case 'jadibot':
       isAll = true
       validateROwner()
       bot.jadibotmd = isEnable
       break
-    case 'restrict': case 'restringir':
+    case 'restrict':
       isAll = true
       validateOwner()
       bot.restrict = isEnable
       break
-    case 'autoread': case 'autovisto':
+    case 'autoread':
       isAll = true
       validateROwner()
       bot.autoread2 = isEnable
       global.opts['autoread'] = isEnable
       break
-    case 'antiprivado': case 'antiprivate': case 'privado':
+    case 'antiprivado':
       isAll = true
       validateROwner()
       bot.antiPrivate = isEnable
-      break
-    case 'anticall': case 'antillamar':
-      isAll = true
-      validateROwner()
-      bot.antiCall = isEnable
       break
     case 'antispam':
       isAll = true
       validateOwner()
       bot.antiSpam = isEnable
-      break
-    case 'antispam2':
-      isAll = true
-      validateOwner()
-      bot.antiSpam2 = isEnable
-      break
-    case 'pconly': case 'privateonly': case 'soloprivados':
-      isAll = true
-      validateROwner()
-      global.opts['pconly'] = isEnable
-      break
-    case 'gconly': case 'grouponly': case 'sologrupos':
-      isAll = true
-      validateROwner()
-      global.opts['gconly'] = isEnable
-      break
-    case 'swonly': case 'statusonly':
-      isAll = true
-      validateROwner()
-      global.opts['swonly'] = isEnable
-      break
-    case 'antitrabas': case 'antitraba': case 'antilag':
-      validateGroupAdmin()
-      chat.antiTraba = isEnable
-      break
-    case 'simi': case 'chatbot':
-      validateGroupAdmin()
-      chat.simi = isEnable
       break
     default:
       if (!/[01]/.test(command)) {
@@ -225,16 +191,20 @@ ${usedPrefix + command} antiprivado`
           m.chat,
           {
             text: miniopcion,
-            contextInfo: {
-              externalAdReply: {
-                showAdAttribution: false,
-                title: `⚔️ Centro de Configuración`,
-                body: `✡︎ Powered By • The Carlos`,
-                mediaType: 2,
-                sourceUrl: global.redes || '',
-                thumbnail: global.icons || null
+            buttonText: "📋 Menú",
+            footer: "⚙️ Centro de Configuración",
+            sections: [
+              {
+                title: "⚔️ Opciones disponibles",
+                rows: [
+                  { title: "Welcome", rowId: `${usedPrefix + command} welcome` },
+                  { title: "Antilink", rowId: `${usedPrefix + command} antilink` },
+                  { title: "Antidelete", rowId: `${usedPrefix + command} antidelete` },
+                  { title: "NSFW", rowId: `${usedPrefix + command} nsfw` },
+                  { title: "Antibot", rowId: `${usedPrefix + command} antibot` }
+                ]
               }
-            }
+            ]
           },
           { quoted: fkontak }
         )
@@ -245,17 +215,7 @@ ${usedPrefix + command} antiprivado`
   return conn.sendMessage(
     m.chat,
     {
-      text: `⚔️ *La función "${type}" ha sido ${isEnable ? 'activada' : 'desactivada'} ${isAll ? 'en todo el bot' : 'en este chat'}.*`,
-      contextInfo: {
-        externalAdReply: {
-          showAdAttribution: false,
-          title: `⚙️ Configuración`,
-          body: `✡︎ Black-clover-MD • The Carlos`,
-          mediaType: 2,
-          sourceUrl: global.redes || '',
-          thumbnail: global.icons || null
-        }
-      }
+      text: `⚔️ *La función "${type}" ha sido ${isEnable ? 'activada' : 'desactivada'} ${isAll ? 'en todo el bot' : 'en este chat'}.*`
     },
     { quoted: fkontak }
   )

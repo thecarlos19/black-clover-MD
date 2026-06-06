@@ -19,45 +19,30 @@ export async function before(m, { participants, conn }) {
 
     if (areJidsSameUser(mainJid, thisJid)) return
 
-    const groupMetadata =
-      conn.chats?.[m.chat]?.metadata ||
-      await conn.groupMetadata?.(m.chat).catch(() => null)
+    const list = Array.isArray(participants) && participants.length
+     ? participants
+      : (await conn.groupMetadata(m.chat).catch(() => null))?.participants || []
 
-    const list =
-      Array.isArray(participants) && participants.length
-        ? participants
-        : groupMetadata?.participants || []
-
-    const isBotPresent = list.some(p => {
-      const pid = p?.id || p?.jid
-      if (!pid) return false
-
-      return (
-        areJidsSameUser(pid, mainJid) ||
-        areJidsSameUser(pid, thisJid)
-      )
-    })
-
-    if (!isBotPresent) return
+    const isMainBotPresent = list.some(p => areJidsSameUser(p?.id, mainJid))
+    if (!isMainBotPresent) return
 
     chat.__antiBot2Leaving = true
 
-    await conn.reply(
-      m.chat,
-      '✦ bot principal detectado en el grupo.\nMe retiro para evitar espam.',
-      m
-    )
+    await conn.sendMessage(m.chat, {
+      text: '✦ Bot principal detectado.\nMe retiro para evitar conflicto.'
+    }).catch(() => {})
 
-    await conn.groupLeave(m.chat).catch(() => {})
+    setTimeout(async () => {
+      try {
+        await conn.groupLeave(m.chat)
+      } catch {} finally {
+        if (chat) chat.__antiBot2Leaving = false
+      }
+    }, 3000)
 
   } catch (err) {
     console.error('antiBot2 error:', err)
-
     const chat = global?.db?.data?.chats?.[m.chat]
-    if (chat) {
-      setTimeout(() => {
-        chat.__antiBot2Leaving = false
-      }, 5000)
-    }
+    if (chat) chat.__antiBot2Leaving = false
   }
 }

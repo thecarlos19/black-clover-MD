@@ -38,7 +38,6 @@ export async function before(m, { conn }) {
 
     const participants = metadata?.participants || []
 
-    // ✅ FIX: nunca devuelve undefined
     const getName = async (id) => {
       const jid = safeId(id)
       if (!jid) return 'Usuario'
@@ -57,7 +56,6 @@ export async function before(m, { conn }) {
       )
     }
 
-    // 🔥 SOLO MENCIÓN (como pediste)
     const usuario = `@${senderId.split('@')[0]}`
 
     const params = Array.isArray(m.messageStubParameters)
@@ -119,14 +117,7 @@ export async function before(m, { conn }) {
     if (!mensaje) return
 
     const contextInfo = {
-      externalAdReply: {
-        showAdAttribution: false,
-        title: '⚙️ Eventos del Grupo',
-        body: 'Black Clover MD • The Carlos',
-        mediaType: 2,
-        sourceUrl: global.redes || '',
-        thumbnailUrl: pp
-      }
+      mentionedJid: []
     }
 
     const mentions = [senderId]
@@ -135,6 +126,8 @@ export async function before(m, { conn }) {
       const id = safeId(p)
       if (id) mentions.push(id)
     }
+
+    contextInfo.mentionedJid = mentions
 
     const msgOptions = {
       mentions,

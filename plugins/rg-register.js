@@ -44,7 +44,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const sigue = await verificaInstagram(igUser)
     if (!sigue) {
       user.followed = false
-      return conn.sendMessage(m.chat, { text: `⚠️ Has dejado de seguir a mi creador en Instagram.\nPor favor síguelo nuevamente:\n👉 https://www.instagram.com/_carlitos.zx\n\nLuego escribe:\n*${usedPrefix + command} ${followKey}*` }, { quoted: m })
+      return conn.sendMessage(m.chat, {
+        text: `⚠️ Has dejado de seguir a mi creador en Instagram.\nPor favor síguelo nuevamente:\n👉 https://www.instagram.com/_carlitos.zx\n\nLuego escribe:\n*${usedPrefix + command} ${followKey}*`
+      }, { quoted: m })
     }
   }
 
@@ -53,22 +55,32 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       const igUser = (m.pushName || '').replace(/\s+/g, '').toLowerCase()
       const sigue = await verificaInstagram(igUser)
       if (!sigue) {
-        return conn.sendMessage(m.chat, { text: `❌ No detecto que sigas a mi creador\n\n👉 https://www.instagram.com/_carlitos.zx\n\nCuando lo sigas escribe:\n*${usedPrefix + command} ${followKey}*` }, { quoted: m })
+        return conn.sendMessage(m.chat, {
+          text: `❌ No detecto que sigas a mi creador\n\n👉 https://www.instagram.com/_carlitos.zx\n\nCuando lo sigas escribe:\n*${usedPrefix + command} ${followKey}*`
+        }, { quoted: m })
       }
       user.followed = true
-      return conn.sendMessage(m.chat, { text: `✅ ¡Perfecto! Verificado que sigues a TheCarlosZX.\nAhora puedes usar *${usedPrefix + command} Nombre.Edad* para registrarte.` }, { quoted: m })
+      return conn.sendMessage(m.chat, {
+        text: `✅ ¡Perfecto! Verificado que sigues a TheCarlosZX.\nAhora puedes usar *${usedPrefix + command} Nombre.Edad* para registrarte.`
+      }, { quoted: m })
     }
 
-    return conn.sendMessage(m.chat, { text: `⚠️ Para poder usar el bot primero debes seguir a mi creador en Instagram:\n\n👉 https://www.instagram.com/_carlitos.zx\n\nDespués de seguirlo, escribe:\n\n*${usedPrefix + command} ${followKey}*` }, { quoted: m })
+    return conn.sendMessage(m.chat, {
+      text: `⚠️ Para poder usar el bot primero debes seguir a mi creador en Instagram:\n\n👉 https://www.instagram.com/_carlitos.zx\n\nDespués de seguirlo, escribe:\n\n*${usedPrefix + command} ${followKey}*`
+    }, { quoted: m })
   }
 
   if (user.registered === true) {
-    return conn.sendMessage(m.chat, { text: `⚠️ Ya estás registrado.\nUsa *${usedPrefix}perfil* para ver tu grimorio.` }, { quoted: m })
+    return conn.sendMessage(m.chat, {
+      text: `⚠️ Ya estás registrado.\nUsa *${usedPrefix}perfil* para ver tu grimorio.`
+    }, { quoted: m })
   }
 
   const regex = /^([a-zA-ZÀ-ÿñÑ\s]+)\.(\d{1,2})$/i
   if (!regex.test(text)) {
-    return conn.sendMessage(m.chat, { text: `⚠️ Formato incorrecto. Usa:\n*${usedPrefix + command} Nombre.Edad*\n\nEjemplo:\n*${usedPrefix + command} Asta.18*` }, { quoted: m })
+    return conn.sendMessage(m.chat, {
+      text: `⚠️ Formato incorrecto. Usa:\n*${usedPrefix + command} Nombre.Edad*\n\nEjemplo:\n*${usedPrefix + command} Asta.18*`
+    }, { quoted: m })
   }
 
   let match = text.match(regex)
@@ -76,7 +88,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   let age = parseInt(match[2])
 
   if (age < 5 || age > 100) {
-    return conn.sendMessage(m.chat, { text: `⚠️ Edad no válida (entre 5 y 100 años).` }, { quoted: m })
+    return conn.sendMessage(m.chat, {
+      text: `⚠️ Edad no válida (entre 5 y 100 años).`
+    }, { quoted: m })
   }
 
   const paises = ['Clover', 'Diamond', 'Spade', 'Heart']
@@ -99,22 +113,22 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
     profilePic = await conn.profilePictureUrl(m.sender, 'image')
   } catch {
-    profilePic = 'https://raw.githubusercontent.com/JTxs00/uploads/main/1776310123337.jpeg'
+    profilePic = 'https://qu.ax/AfutJ.jpg'
   }
 
   const registroImg = await ensureImage('perfil.jpg', profilePic)
-  const thumbnailBuffer = fs.readFileSync(await ensureImage('registro_completo.jpg', 'https://raw.githubusercontent.com/JTxs00/uploads/main/1776310123337.jpeg'))
+  const thumbnailBuffer = fs.readFileSync(await ensureImage('registro_completo.jpg', 'https://qu.ax/AfutJ.jpg'))
 
   let responseMessage = `> *🌿!**R E G I S T R O  M Á G I C O*\n\n`
   responseMessage += `> *!* ✧──『 ⚜️ 𝗗𝗔𝗧𝗢𝗦 ⚜️ 』\n`
   responseMessage += `> *!* 🧙‍♂️ *Nombre:* ${name}\n`
-  responseMessage += `> *!* 🎂 *Edad:* ${age} años\n`
+  responseMessage += `> *!* 🎂 *Edad:* ${age}\n`
   responseMessage += `> *!* 🌍 *Reino:* ${country}\n`
   responseMessage += `> *!* 🌌 *Afinidad:* ${afinidad}\n`
   responseMessage += `> *!* 💠 *Nivel Mágico:* ${nivelMagico}\n`
   responseMessage += `> *!* 📖 *Grimorio:* ${grimorioColor}\n`
   responseMessage += `> *!* ✧────────────────✧\n\n`
-  responseMessage += `> *!* 🕯️ 𝑬𝒍 𝒗í𝒏𝒄𝒖𝒍𝒐 𝒎á𝒈𝒊𝒄𝒐 𝒔𝒆 𝒉⟮ 𝒆𝒔𝒕𝒂𝒃𝒍𝒆𝒄𝒊𝒅𝒐.\n`
+  responseMessage += `> *!* 🕯️ 𝑬𝒍 𝒗í𝒏𝒄𝒖𝒍𝒐 𝒎á𝒈𝒊𝒄𝒐 𝒔𝒆 𝒉𝒂 𝒆𝒔𝒕𝒂𝒃𝒍𝒆𝒄𝒊𝒅𝒐.\n`
   responseMessage += `> *🌿!* ⚔️ 𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐, *${name.toUpperCase()}* 𝒅𝒆𝒍 𝑹𝒆𝒊𝒏𝒐 ${country}.\n`
   responseMessage += `> *!* ☘️ ¡𝑬𝒍 𝒅𝒆𝒔𝒕𝒊𝒏𝒐 𝒕𝒆 𝒂𝒈𝒖𝒂𝒓𝒅𝒂!`
 
@@ -128,14 +142,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       newsletterJid: newsletterId,
       newsletterName: newsletterName,
       serverMessageId: 100
-    },
-    externalAdReply: {
-      showAdAttribution: false,
-      title: `📜 Registro clover`,
-      body: `✡︎ Black-clover-MD • The Carlos`,
-      mediaType: 2,
-      sourceUrl: global.redes || '',
-      thumbnail: global.icons || thumbnailBuffer
     }
   }
 
