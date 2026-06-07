@@ -1,4 +1,4 @@
-const handler = async (m, { conn }) => {
+const handler = async (m, { conn, usedPrefix, participants }) => {
   if (!global.db.data.users[m.sender]) {
     global.db.data.users[m.sender] = {}
   }
@@ -11,6 +11,12 @@ const handler = async (m, { conn }) => {
   user.fragmentos = Number(user.fragmentos || 0)
   user.diamond = Number(user.diamond || 0)
   user.personajes = user.personajes || []
+  user.health = Number(user.health || 100)
+  user.mp = Number(user.mp || 100)
+  user.atq = Number(user.atq || 50)
+  user.def = Number(user.def || 50)
+  user.bank = Number(user.bank || 0)
+  user.joincount = Number(user.joincount || 0)
 
   const monedas = user.monedas
   const xp = user.exp
@@ -18,90 +24,106 @@ const handler = async (m, { conn }) => {
   const fragmentos = user.fragmentos
   const diamantes = user.diamond
   const personajes = user.personajes.length
+  const vida = user.health
+  const mana = user.mp
+  const ataque = user.atq
+  const defensa = user.def
+  const banco = user.bank
+  const tokens = user.joincount
 
   function obtenerRango(level) {
-    if (level >= 100) return '👑 Rey Mago'
-    if (level >= 80) return '⚜️ Emperador Arcano'
-    if (level >= 60) return '🛡️ Capitán Supremo'
-    if (level >= 40) return '🔮 Gran Hechicero'
-    if (level >= 25) return '⚔️ Caballero Mágico'
-    if (level >= 15) return '✨ Mago Avanzado'
-    if (level >= 5) return '📘 Aprendiz'
+    if (level >= 200) return '🔱 Dios Arcano'
+    if (level >= 150) return '👑 Rey Mago'
+    if (level >= 100) return '⚜️ Emperador Arcano'
+    if (level >= 80) return '🛡️ Capitán Supremo'
+    if (level >= 60) return '🔮 Gran Hechicero'
+    if (level >= 40) return '⚔️ Caballero Mágico'
+    if (level >= 25) return '✨ Mago Avanzado'
+    if (level >= 10) return '📘 Aprendiz'
     return '🌱 Novato'
   }
 
-  function barra(valor, max, tamaño = 10) {
+  function barra(valor, max, tamaño = 12, icono = '█') {
     const progreso = Math.min(valor / max, 1)
     const llenos = Math.round(progreso * tamaño)
     const vacios = tamaño - llenos
-    return '█'.repeat(llenos) + '░'.repeat(vacios)
+    return icono.repeat(llenos) + '░'.repeat(vacios)
   }
 
-  const xpActual = xp % 1000
-  const xpNecesaria = 1000
+  function xpParaSiguiente(level) {
+    return 1000 + (level * 100)
+  }
 
-  const barraXp = barra(xpActual, xpNecesaria)
+  const xpNecesaria = xpParaSiguiente(nivel)
+  const xpActual = xp
+  const porcentaje = ((xpActual / xpNecesaria) * 100).toFixed(1)
+
+  const barraXp = barra(xpActual, xpNecesaria, 12, '🟩')
+  const barraVida = barra(vida, 100, 10, '❤️')
+  const barraMana = barra(mana, 100, 10, '💙')
 
   const rango = obtenerRango(nivel)
+  const totalRiqueza = monedas + banco + (diamantes * 100)
 
-  const mensaje = `
-╔══════════════════════╗
-      📊 PERFIL RPG 📊
-╚══════════════════════╝
+  const rank = Object.entries(global.db.data.users)
+   .sort((a, b) => b[1].level - a[1].level)
+   .findIndex(([id]) => id === m.sender) + 1
 
-👤 Usuario:
-➤ @${m.sender.split('@')[0]}
+  let texto = `╔══════════════╗\n`
+  texto += ` 📊 PERFIL RPG 📊\n`
+  texto += ` ╚══════════════╝\n\n`
+  texto += `👤 *Usuario:*\n`
+  texto += `➤ @${m.sender.split('@')[0]}\n`
+  texto += `➤ Rango: ${rango}\n`
+  texto += `➤ Top: #${rank}\n\n`
+  texto += `━━━━━━━━━━━━━━━━━━\n\n`
+  texto += `💰 *ECONOMÍA*\n`
+  texto += `➤ Monedas: ${monedas.toLocaleString()}\n`
+  texto += `➤ Banco: ${banco.toLocaleString()}\n`
+  texto += `➤ Diamantes: ${diamantes.toLocaleString()}\n`
+  texto += `➤ Tokens: ${tokens.toLocaleString()}\n`
+  texto += `➤ Total: ${totalRiqueza.toLocaleString()}\n\n`
+  texto += `━━━━━━━━━━━━━━━━━━\n\n`
+  texto += `⚔️ *STATS COMBATE*\n`
+  texto += `➤ Nivel: ${nivel}\n`
+  texto += `➤ Vida: ${vida}/100\n${barraVida}\n`
+  texto += `➤ Mana: ${mana}/100\n${barraMana}\n`
+  texto += `➤ Ataque: ${ataque}\n`
+  texto += `➤ Defensa: ${defensa}\n\n`
+  texto += `━━━━━━━━━━━━━━━━━━\n\n`
+  texto += `🎴 *COLECCIÓN*\n`
+  texto += `➤ Personajes: ${personajes}\n`
+  texto += `➤ Fragmentos: ${fragmentos.toLocaleString()}\n\n`
+  texto += `━━━━━━━━━━━━━━━━━━\n\n`
+  texto += `📚 *PROGRESO*\n`
+  texto += `${barraXp}\n`
+  texto += `➤ ${xpActual.toLocaleString()}/${xpNecesaria.toLocaleString()} XP (${porcentaje}%)\n\n`
+  texto += `━━━━━━━━━━━━━━━━━━\n\n`
+  texto += `🌟 Sigue avanzando para desbloquear\n`
+  texto += `nuevos rangos y recompensas.`
 
-━━━━━━━━━━━━━━━━━━
-
-🪙 Monedas:
-➤ ${monedas.toLocaleString()}
-
-✨ Experiencia:
-➤ ${xp.toLocaleString()}
-
-📈 Nivel:
-➤ ${nivel.toLocaleString()}
-
-🎖️ Rango:
-➤ ${rango}
-
-💎 Diamantes:
-➤ ${diamantes.toLocaleString()}
-
-🧩 Fragmentos:
-➤ ${fragmentos.toLocaleString()}
-
-🎴 Personajes:
-➤ ${personajes}
-
-━━━━━━━━━━━━━━━━━━
-
-📚 Progreso de nivel
-
-${barraXp}
-
-➤ ${xpActual}/${xpNecesaria} XP
-
-━━━━━━━━━━━━━━━━━━
-
-🌟 Sigue avanzando para desbloquear
-nuevos rangos y recompensas.
-`.trim()
+  const buttons = [
+    { buttonId: `${usedPrefix}inventario`, buttonText: { displayText: '🎒 Inventario' }, type: 1 },
+    { buttonId: `${usedPrefix}banco3`, buttonText: { displayText: '🏦 Banco' }, type: 1 },
+    { buttonId: `${usedPrefix}top`, buttonText: { displayText: '🏆 Top' }, type: 1 }
+  ]
 
   return conn.sendMessage(
     m.chat,
     {
-      text: mensaje,
+      text: texto,
+      footer: 'Black Clover RPG 2026',
+      buttons: buttons,
+      headerType: 1,
       mentions: [m.sender]
     },
     { quoted: m }
   )
 }
 
-handler.help = ['miestatus', 'mimonedas', 'miexp', 'perfil']
-handler.tags = ['rpg', 'economia']
-handler.command = ['miestatus', 'mismonedas', 'miexp', 'perfil']
+handler.help = ['miestatus', 'mimonedas', 'miexp']
+handler.tags = ['rpg', 'economia','Inventario','banco3','top']
+handler.command = ['miestatus', 'mismonedas', 'miexp','balance','Inventario','banco3','top']
 handler.register = true
 
 export default handler

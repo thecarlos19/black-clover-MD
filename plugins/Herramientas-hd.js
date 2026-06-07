@@ -1,13 +1,19 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 
-let handler = async (m, { conn, usedPrefix, command }) => {
-  const quoted = m.quoted ? m.quoted : m
+let handler = async (m, { conn, usedPrefix, command, args }) => {
+  const quoted = m.quoted? m.quoted : m
   const mime = quoted.mimetype || quoted.msg?.mimetype || ''
 
-  if (!/image\/(jpe?g|png)/i.test(mime)) {
+  if (!/image\/(jpe?g|png|webp)/i.test(mime)) {
     await conn.sendMessage(m.chat, { react: { text: '❗', key: m.key } })
-    return m.reply(`Error responde o envia una imagen con el comando:\n*${usedPrefix + command}*`)
+    return m.reply(`Responde a una imagen con:\n*${usedPrefix + command}* [2x|4x|8x]\n\nEj: *${usedPrefix + command} 4x*`)
+  }
+
+  const scale = args[0]?.replace('x', '') || '2'
+  const validScales = ['2', '4', '8']
+  if (!validScales.includes(scale)) {
+    return m.reply(`❌ Escala inválida. Usa: 2x, 4x, 8x\n\nEj: *${usedPrefix + command} 4x*`)
   }
 
   try {
@@ -17,43 +23,93 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     const ext = mime.split('/')[1]
     const filename = `upscaled_${Date.now()}.${ext}`
 
-    const form = new FormData()
-    form.append('image', media, { filename, contentType: mime })
-    form.append('scale', '2')
+    let resultBuffer
+    let apiUsed = ''
 
-    const headers = {
-      ...form.getHeaders(),
-      accept: 'application/json',
-      'x-client-version': 'web',
-      'x-locale': 'en'
+    try {
+      const form = new FormData()
+      form.append('image', media, { filename, contentType: mime })
+      form.append('scale', scale)
+
+      const headers = {
+       ...form.getHeaders(),
+        accept: 'application/json',
+        'x-client-version': 'web',
+        'x-locale': 'en'
+      }
+
+      const res = await fetch('https://api2.pixelcut.app/image/upscale/v1', {
+        method: 'POST',
+        headers,
+        body: form,
+        timeout: 30000
+      })
+
+      const json = await res.json()
+      if (!json?.result_url) throw new Error('Pixelcut falló')
+      resultBuffer = await (await fetch(json.result_url)).buffer()
+      apiUsed = 'Pixelcut AI'
+
+    } catch (e) {
+      resultBuffer = await remini(media, 'enhance')
+      apiUsed = 'Remini AI'
     }
 
-    const res = await fetch('https://api2.pixelcut.app/image/upscale/v1', {
-      method: 'POST',
-      headers,
-      body: form
-    })
+    if (!resultBuffer) throw new Error('No se pudo procesar la imagen')
 
-    const json = await res.json()
-    if (!json?.result_url || !json.result_url.startsWith('http')) throw new Error('No se pudo obtener la URL del resultado.')
+    let txt = `✨ *IMAGEN MEJORADA ${scale}X*\n\n`
+    txt += `*» API* : ${apiUsed}\n`
+    txt += `*» Escala* : ${scale}x\n`
+    txt += `*» Tamaño* : ${formatBytes(resultBuffer.length)}\n`
+    txt += `*» Formato* : ${ext.toUpperCase()}\n\n`
+    txt += `> by The Carlos 👑`
 
-    const resultBuffer = await (await fetch(json.result_url)).buffer()
+    const buttons = [
+      { buttonId: `${usedPrefix + command} 4x`, buttonText: { displayText: '⚡ Mejorar 4x' }, type: 1 },
+      { buttonId: `${usedPrefix + command} 8x`, buttonText: { displayText: '🔥 Mejorar 8x' }, type: 1 },
+      { buttonId: `${usedPrefix}hdinfo`, buttonText: { displayText: 'ℹ️ Info HD' }, type: 1 }
+    ]
 
     await conn.sendMessage(m.chat, {
       image: resultBuffer,
-      caption: '✨ Tu imagen ha sido mejorada a una resolución 2x.'
+      caption: txt,
+      footer: 'HD Upscaler 2026',
+      buttons: buttons,
+      headerType: 4
     }, { quoted: m })
 
     await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
+
   } catch (err) {
     await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
     m.reply(`❌ Ocurrió un error:\n${err.message || err}`)
   }
 }
 
-handler.help = ['upscale']
-handler.tags = ['tools', 'image']
-handler.command ='hd', /^(upscale2|hd|remini)$/i
+handler.hdinfo = async (m, { conn }) => {
+  let txt = `乂 *H D - U P S C A L E R* 乂\n\n`
+  txt += `*» APIs* : Pixelcut + Remini\n`
+  txt += `*» Escalas* : 2x, 4x, 8x\n`
+  txt += `*» Formatos* : JPG, PNG, WEBP\n`
+  txt += `*» Límite* : 20MB por imagen\n`
+  txt += `*» Fallback* : Si una API falla usa la otra\n\n`
+  txt += `*Uso:*\n`
+  txt += `• Responde imagen: *.hd 4x*\n`
+  txt += `• Default sin escala: 2x\n\n`
+  txt += `> by The Carlos 👑`
+  await m.reply(txt)
+}
+
+handler.before = async (m, { conn }) => {
+  if (m.text === '.hdinfo') {
+    return handler.hdinfo(m, { conn })
+  }
+}
+
+handler.help = ['hd <2x|4x|8x>', 'upscale']
+handler.tags = ['tools', 'image','hdinfo']
+handler.command = ['upscale','hd','remini','4k',]
+handler.limit = true
 
 export default handler
 
@@ -81,4 +137,11 @@ async function remini(imageData, operation) {
       res.on("error", err => reject(err))
     })
   })
+}
+
+function formatBytes(bytes) {
+  if (bytes === 0) return '0 B'
+  const sizes = ['B', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`
 }

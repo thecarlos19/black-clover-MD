@@ -20,7 +20,7 @@ handler.all = async function (m) {
 
     } else if (/video/g.test(mime)) {
       if ((q.msg || q).seconds > 8)
-        return await m.reply('᥀·࣭࣪̇˖🚩◗  *El video no debe de durar más de 7 segundos, intentalo de nuevo.*')
+        return await m.reply('᥀·࣭࣪̇˖🚩◗ *El video no debe de durar más de 7 segundos, intentalo de nuevo.*')
 
       let vid = await q.download()
       if (!vid) return
@@ -33,25 +33,13 @@ handler.all = async function (m) {
     }
 
     if (stiker) {
-      const contextInfo = {
-        externalAdReply: {
-          showAdAttribution: false,
-          title: `Auto estikers 😈`,
-          body: `✡︎ Black-clover-MD • The Carlos`,
-          mediaType: 2,
-          sourceUrl: global.redes || '',
-          thumbnail: global.icons || null
-        }
-      }
-
       await conn.sendMessage(m.chat, {
-        sticker: stiker,
-        contextInfo
+        sticker: stiker
       }, { quoted: m })
     }
   }
 
-  return !0
+  return!0
 }
 
 export default handler
