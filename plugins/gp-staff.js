@@ -82,9 +82,18 @@ handler.before = async (m, { conn }) => {
   }
 }
 
-handler.help = ['staff', 'admins', 'listadmin','kickinactive','listonline']
+handler.help = ['staff', 'admins', 'listadmin', 'kickinactive', 'listonline']
 handler.tags = ['group']
-handler.command = ['staff','listonline','kickinactive','admins','gplink' 'listadmin']
+
+handler.command = [
+  'staff',
+  'listonline',
+  'kickinactive',
+  'admins',
+  'gplink',
+  'listadmin'
+]
+
 handler.group = true
 handler.admin = false
 
