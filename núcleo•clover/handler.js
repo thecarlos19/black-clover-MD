@@ -115,7 +115,7 @@ export async function handler(chatUpdate) {
 
         const senderNumber = normalizeJid(m.sender)
         const botNumber = normalizeJid(botJid)
-        
+
         const ownerNumbers = [...global.owner.map(([number]) => normalizeJid(number)),...global.mods.map(v => normalizeJid(v))]
         const isROwner = ownerNumbers.includes(senderNumber)
         const isOwner = isROwner || m.fromMe
@@ -269,9 +269,14 @@ export async function handler(chatUpdate) {
                     if (!isPrems) m.monedas = m.monedas || plugin.monedas || false
                 } catch (e) {
                     m.error = e
-                    let text = format(e)
-                    for (const key of Object.values(global.APIKeys || {})) text = text.replace(new RegExp(key, 'g'), 'Administrador')
-                    m.reply(text)
+                    console.log(chalk.red(`[PLUGIN ERROR] ${name}:`), e)
+                    if (!isOwner) {
+                        await this.reply(m.chat, `🛠️ *Comando en mantenimiento*\n\n> El comando *${usedPrefix + command}* no funciona actualmente.\n> Lo estamos actualizando. Disculpa las molestias.`, m)
+                    } else {
+                        let text = format(e)
+                        for (const key of Object.values(global.APIKeys || {})) text = text.replace(new RegExp(key, 'g'), 'Administrador')
+                        m.reply(`❌ *Error detectado:*\n\n${text}`)
+                    }
                 } finally {
                     if (typeof plugin.after === 'function') await plugin.after.call(this, m, extra).catch(console.error)
                     if (m.monedas) this.reply(m.chat, `❮✦❯ Utilizaste ${+m.monedas} ${global.monedas}`, m)
@@ -312,9 +317,8 @@ export async function handler(chatUpdate) {
     }
 }
 
-
 global.dfail = (type, m, conn) => {
-    const msg = {
+        let msg = {
         rowner: `🛑 *ACCESO RESTRINGIDO*\n\n> Solo el *Creador Supremo* puede ejecutar este protocolo.\n\n🧬 Usuario Autorizado: 👑 𝙏𝙃𝙀 𝘾𝘼𝙍𝙇𝙊𝙎`,
         owner: `⚙️🔒 *MÓDULO DEV: ACCESO BLOQUEADO*\n\n> Esta función está anclada a permisos de *𝙳𝙴𝚂𝙰𝚁𝙾𝙻𝙰𝙳𝙾𝚁*.`,
         mods: `🛡️ *SOLO MODERADORES*\n\n> Comando exclusivo para mods del bot.`,
