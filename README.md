@@ -39,14 +39,14 @@
 ℹ️ Información importante
 
 <details>
-<summary><b>📘 ✞ Info Bot 2026</b></summary>
+<summary><b>📘 ✞ Info Bot </b></summary>
 
 * Este proyecto **no está afiliado de ninguna manera** con `WhatsApp`. `WhatsApp` es una marca registrada de `WhatsApp LLC`, y este bot es un **desarrollo independiente** que **no tiene ninguna relación oficial con la compañía**.
 * **Versión 2026**: Adaptado para Baileys 6.7.9+, multi-device y nuevas políticas de WhatsApp.
 </details>
 
 <details>
-<summary><b>⚙️ ✞ Funciones 2026</b></summary>
+<summary><b>⚙️ ✞ Funciones </b></summary>
 
 > El bot está en desarrollo constante. Reporta fallas al creador para fix rápido.
 
