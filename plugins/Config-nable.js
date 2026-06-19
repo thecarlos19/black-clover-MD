@@ -51,7 +51,7 @@ ${usedPrefix + command} antiprivado`
         global.dfail('group', m, conn)
         throw false
       }
-    } else if (!isAdmin && !isOwner) {
+    } else if (!isAdmin &&!isOwner) {
       global.dfail('admin', m, conn)
       throw false
     }
@@ -98,12 +98,12 @@ ${usedPrefix + command} antiprivado`
       break
     case 'antidelete': case 'antieliminar': case 'delete':
       validateGroupAdmin()
-      chat.delete = isEnable
+      chat.antidelete = isEnable
       break
     case 'public': case 'publico':
       isAll = true
       validateROwner()
-      global.opts['self'] = !isEnable
+      global.opts['self'] =!isEnable
       break
     case 'antilink': case 'antienlace':
       validateGroupAdmin()
@@ -215,7 +215,7 @@ ${usedPrefix + command} antiprivado`
   return conn.sendMessage(
     m.chat,
     {
-      text: `⚔️ *La función "${type}" ha sido ${isEnable ? 'activada' : 'desactivada'} ${isAll ? 'en todo el bot' : 'en este chat'}.*`
+      text: `⚔️ *La función "${type}" ha sido ${isEnable? 'activada' : 'desactivada'} ${isAll? 'en todo el bot' : 'en este chat'}.*`
     },
     { quoted: fkontak }
   )

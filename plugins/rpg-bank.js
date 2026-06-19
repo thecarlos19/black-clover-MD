@@ -1,7 +1,4 @@
-
-// Respeten credito xddddd (ratas inmundas)
-
-const img = 'https://files.catbox.moe/d3ynrg.jpg'
+const img = 'https://raw.githubusercontent.com/JTxs00/uploads/main/1780717405556.jpeg'
 
 function obtenerRango(level) {
   if (level >= 100000) return '🌟 Rey Mago'
@@ -17,19 +14,28 @@ function obtenerRango(level) {
 
 let handler = async (m, { conn }) => {
   try {
-    let who = m.mentionedJid?.[0] || m.quoted?.sender || m.sender
+    let who = ''
+    if (m.mentionedJid && m.mentionedJid.length > 0) who = m.mentionedJid[0]
+    else if (m.quoted && m.quoted.sender) who = m.quoted.sender
+    else who = m.sender
 
     if (!who) return
-
-    if (who === conn?.user?.id) return m.react('✖️')
+    if (who === conn.user?.jid || who === conn.user?.id) return m.react('✖️')
 
     global.db.data.users = global.db.data.users || {}
 
     if (!global.db.data.users[who]) {
-      return m.reply('📕 *El grimorio de este usuario aún no ha sido registrado en el Reino Mágico.*')
+      global.db.data.users[who] = {
+        monedas: 0,
+        exp: 0,
+        level: 0
+      }
     }
 
     let user = global.db.data.users[who]
+    user.monedas = Number(user.monedas || 0)
+    user.exp = Number(user.exp || 0)
+    user.level = Number(user.level || 0)
 
     let name = ''
     try {
@@ -38,30 +44,25 @@ let handler = async (m, { conn }) => {
       name = who.split('@')[0]
     }
 
-    let rangoMagico = obtenerRango(Number(user.level || 0))
+    let rangoMagico = obtenerRango(user.level)
 
-    let nombreParaMostrar =
-      who === m.sender
-        ? name
-        : '@' + who.split('@')[0]
+    let nombreParaMostrar = who === m.sender? name : '@' + who.split('@')[0]
 
-    let txt = `
-𝙂𝙍𝙄𝙈𝙊𝙍𝙄𝙊 𝙁𝙄𝙉𝘼𝙉𝘾𝙄𝙀𝙍𝙊 👑
+    let txt = `𝙂𝙍𝙄𝙈𝙊𝙍𝙄𝙊 𝙁𝙄𝙉𝘼𝙉𝘾𝙄𝙀𝙍𝙊 👑
 🧙‍♂️ ᴍᴀɢᴏ: ${nombreParaMostrar}
-🪙 ᴍᴏɴᴇᴅᴀs: *${Number(user.monedas || 0).toLocaleString()}*
-📚 ᴇxᴘᴇʀɪᴇɴᴄɪᴀ ᴀᴄᴜᴍᴜʟᴀᴅᴀ: *${Number(user.exp || 0).toLocaleString()}*
-📈 ɴɪᴠᴇʟ ᴅᴇ ᴍᴀɢɪᴀ: *${Number(user.level || 0).toLocaleString()}*
+🪙 ᴍᴏɴᴇᴅᴀs: *${user.monedas.toLocaleString()}*
+📚 ᴇxᴘᴇʀɪᴇɴᴄɪᴀ ᴀᴄᴜᴍᴜʟᴀᴅᴀ: *${user.exp.toLocaleString()}*
+📈 ɴɪᴠᴇʟ ᴅᴇ ᴍᴀɢɪᴀ: *${user.level.toLocaleString()}*
 🎖️ ʀᴀɴɢᴏ ᴍáɢɪᴄᴏ: *${rangoMagico}*
-🕰️ ꜰᴇᴄʜᴀ: *${new Date().toLocaleString('es-ES')}*
-📘━━━━━━━━━━━━━━━━📘
-`.trim()
+🕰️ ꜰᴇᴄʜᴀ: *${new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })}*
+📘━━━━━━━━━━━━━━━━📘`.trim()
 
     await conn.sendMessage(
       m.chat,
       {
         image: { url: img },
         caption: txt,
-        mentions: [who]
+        mentions: who!== m.sender? [who] : []
       },
       { quoted: m }
     )

@@ -9,27 +9,23 @@ const handler = async (m, { conn, usedPrefix, participants }) => {
   user.exp = Number(user.exp || 0)
   user.level = Number(user.level || 0)
   user.fragmentos = Number(user.fragmentos || 0)
-  user.diamond = Number(user.diamond || 0)
   user.personajes = user.personajes || []
   user.health = Number(user.health || 100)
   user.mp = Number(user.mp || 100)
   user.atq = Number(user.atq || 50)
   user.def = Number(user.def || 50)
   user.bank = Number(user.bank || 0)
-  user.joincount = Number(user.joincount || 0)
 
   const monedas = user.monedas
   const xp = user.exp
   const nivel = user.level
   const fragmentos = user.fragmentos
-  const diamantes = user.diamond
   const personajes = user.personajes.length
   const vida = user.health
   const mana = user.mp
   const ataque = user.atq
   const defensa = user.def
   const banco = user.bank
-  const tokens = user.joincount
 
   function obtenerRango(level) {
     if (level >= 200) return '🔱 Dios Arcano'
@@ -63,15 +59,15 @@ const handler = async (m, { conn, usedPrefix, participants }) => {
   const barraMana = barra(mana, 100, 10, '💙')
 
   const rango = obtenerRango(nivel)
-  const totalRiqueza = monedas + banco + (diamantes * 100)
+  const totalRiqueza = monedas + banco
 
   const rank = Object.entries(global.db.data.users)
-   .sort((a, b) => b[1].level - a[1].level)
-   .findIndex(([id]) => id === m.sender) + 1
+  .sort((a, b) => b[1].level - a[1].level)
+  .findIndex(([id]) => id === m.sender) + 1
 
-  let texto = `╔══════════════╗\n`
+  let texto = `╔═════════╗\n`
   texto += ` 📊 PERFIL RPG 📊\n`
-  texto += ` ╚══════════════╝\n\n`
+  texto += ` ╚══════════╝\n\n`
   texto += `👤 *Usuario:*\n`
   texto += `➤ @${m.sender.split('@')[0]}\n`
   texto += `➤ Rango: ${rango}\n`
@@ -80,8 +76,6 @@ const handler = async (m, { conn, usedPrefix, participants }) => {
   texto += `💰 *ECONOMÍA*\n`
   texto += `➤ Monedas: ${monedas.toLocaleString()}\n`
   texto += `➤ Banco: ${banco.toLocaleString()}\n`
-  texto += `➤ Diamantes: ${diamantes.toLocaleString()}\n`
-  texto += `➤ Tokens: ${tokens.toLocaleString()}\n`
   texto += `➤ Total: ${totalRiqueza.toLocaleString()}\n\n`
   texto += `━━━━━━━━━━━━━━━━━━\n\n`
   texto += `⚔️ *STATS COMBATE*\n`

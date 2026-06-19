@@ -22,8 +22,12 @@ try {
 
 const getRandomImage = () => {
     if (images.length === 0) return null
-    const randomImage = images[Math.floor(Math.random() * images.length)]
-    return fs.readFileSync(path.join(imgDir, randomImage))
+    try {
+        const randomImage = images[Math.floor(Math.random() * images.length)]
+        return fs.readFileSync(path.join(imgDir, randomImage))
+    } catch {
+        return null
+    }
 }
 
 var handler = async (m, { conn }) => {
@@ -35,34 +39,25 @@ var handler = async (m, { conn }) => {
 
     let chats = Object.entries(conn.chats).filter(([id, data]) => id && data.isChats)
     let groups = Object.entries(conn.chats)
-        .filter(([jid, chat]) => jid.endsWith('@g.us') && chat.isChats && !chat.metadata?.read_only && !chat.metadata?.announce)
-        .map(v => v[0])
+       .filter(([jid, chat]) => jid.endsWith('@g.us') && chat.isChats &&!chat.metadata?.read_only &&!chat.metadata?.announce)
+       .map(v => v[0])
+
+    let subBots = global.conns?.filter(c => c.user && c.ws?.socket?.readyState === 1).length || 0
 
     let texto = `˚₊·—̳͟͞͞✞ *Ping del Bot*\n\n` +
                 `✞ Velocidad:\n> ⤿ ${latensi.toFixed(4)} ms\n\n` +
                 `✞ Actividad:\n> ⤿ ${muptime}\n\n` +
-                `✞ Chats:\n> ⤿ ${chats.length} Chats privados\n> ⤿ ${groups.length} Grupos\n\n` +
-                `✞ Servidor:\n> ⤿ RAM: ${format(totalmem() - freemem())} / ${format(totalmem())}\n\n` +
+                `✞ Conexiones:\n> ⤿ ${chats.length} Chats privados\n> ⤿ ${groups.length} Grupos\n> ⤿ ${subBots} Sub-Bots activos\n\n` +
+                `✞ Servidor:\n> ⤿ RAM: ${format(totalmem() - freemem())} / ${format(totalmem())}\n> ⤿ Node: ${process.version}\n\n` +
                 `ᥫ᭡ Información en tiempo real`
 
     const thumbnailBuffer = getRandomImage()
 
-    conn.sendMessage(
-        m.chat,
-        {
-            text: texto,
-            contextInfo: {
-                externalAdReply: {
-                    title: "⏱ Ping del Bot",
-                    body: "Información en tiempo real",
-                    thumbnail: thumbnailBuffer,
-                    mediaType: 1,
-                    renderLargerThumbnail: false,
-                    sourceUrl: "https://wa.me/" + m.sender.split('@')[0]
-                }
-            }
-        }
-    )
+    if (thumbnailBuffer) {
+        await conn.sendMessage(m.chat, { image: thumbnailBuffer, caption: texto }, { quoted: m })
+    } else {
+        await conn.sendMessage(m.chat, { text: texto }, { quoted: m })
+    }
 }
 
 handler.help = ['ping']
@@ -73,8 +68,8 @@ handler.register = true
 export default handler
 
 function clockString(ms) {
-    let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
-    let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-    let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
+    let h = isNaN(ms)? '--' : Math.floor(ms / 3600000)
+    let m = isNaN(ms)? '--' : Math.floor(ms / 60000) % 60
+    let s = isNaN(ms)? '--' : Math.floor(ms / 1000) % 60
     return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':')
 }

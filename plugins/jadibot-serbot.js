@@ -185,7 +185,7 @@ export async function blackJadiBot(options) {
   const mcode = args[0] && /(--code|code)/.test(args[0].trim())
 ? true
     : args[1] && /(--code|code)/.test(args[1].trim())
-  ? true
+ ? true
       : false
   let txtCode, codeBot, txtQR
   if (mcode) {
@@ -211,7 +211,6 @@ export async function blackJadiBot(options) {
   global.conns = global.conns || []
 
   exec(comb.toString("utf-8"), async () => {
-
     const { version } = await fetchLatestBaileysVersion()
     const msgRetry = () => { }
     const msgRetryCache = new NodeCache({ stdTTL: 300, checkperiod: 60 })
@@ -227,7 +226,13 @@ export async function blackJadiBot(options) {
       version: version,
       generateHighQualityLinkPreview: false,
       syncFullHistory: false,
-      markOnlineOnConnect: false
+      markOnlineOnConnect: false,
+      keepAliveIntervalMs: 10000,
+      connectTimeoutMs: 60000,
+      defaultQueryTimeoutMs: 60000,
+      emitOwnEvents: false,
+      fireInitQueries: true,
+      shouldIgnoreJid: jid => jid?.endsWith('@broadcast') || jid === 'status@broadcast'
     }
 
     let sock = makeWASocket(connectionOptions)
@@ -236,20 +241,54 @@ export async function blackJadiBot(options) {
 
     let reconnectAttempts = 0
     let lastReconnect = 0
-    let maxReconnectDelay = 60000
+    let maxReconnectDelay = 120000
+    let keepAliveInterval = null
+    let watchdogInterval = null
+    let snapshotInterval = null
 
     async function autoSnapshot() {
       try {
         const snapDir = path.join(pathblackJadiBot, 'snapshots')
         if (!fs.existsSync(snapDir)) fs.mkdirSync(snapDir)
         const timestamp = Date.now()
-        fs.copyFileSync(pathCreds, path.join(snapDir, `snapshot_${timestamp}.json`))
-        const snaps = fs.readdirSync(snapDir).filter(f => f.startsWith('snapshot_'))
-        if (snaps.length > 3) {
-          const old = snaps.sort()[0]
-          fs.unlinkSync(path.join(snapDir, old))
+        if (fs.existsSync(pathCreds)) {
+          fs.copyFileSync(pathCreds, path.join(snapDir, `snapshot_${timestamp}.json`))
+          const snaps = fs.readdirSync(snapDir).filter(f => f.startsWith('snapshot_')).sort()
+          if (snaps.length > 5) {
+            fs.unlinkSync(path.join(snapDir, snaps[0]))
+          }
         }
       } catch {}
+    }
+
+    function startKeepAlive() {
+      if (keepAliveInterval) clearInterval(keepAliveInterval)
+      keepAliveInterval = setInterval(() => {
+        try {
+          if (sock?.ws?.socket?.readyState === ws.OPEN && sock?.ws?.socket?.ping) {
+            sock.ws.socket.ping()
+            sock.sendPresenceUpdate('available').catch(() => {})
+          }
+        } catch {}
+      }, 10000)
+    }
+
+    function startWatchdog() {
+      if (watchdogInterval) clearInterval(watchdogInterval)
+      watchdogInterval = setInterval(() => {
+        try {
+          if (sock?.ws?.socket?.readyState === CONNECTING) {
+            const connectTime = sock.ws.socket?.connectTime || Date.now()
+            if (Date.now() - connectTime > 60000) {
+              try { sock.ws.close() } catch {}
+              creloadHandler(true).catch(() => {})
+            }
+          }
+          if (!sock?.ws?.socket || sock.ws.socket.readyState === ws.CLOSED || sock.ws.socket.readyState === ws.CLOSING) {
+            creloadHandler(true).catch(() => {})
+          }
+        } catch {}
+      }, 15000)
     }
 
     async function connectionUpdate(update) {
@@ -273,7 +312,6 @@ export async function blackJadiBot(options) {
         secret = secret.match(/.{1,4}/g)?.join("-")
         txtCode = await conn.sendMessage(m.chat, { text: rtx2 }, { quoted: m })
         codeBot = await m.reply(`\`\`\`${secret}\`\`\``)
-        console.log(secret)
       }
 
       if (txtCode && txtCode.key) {
@@ -287,70 +325,56 @@ export async function blackJadiBot(options) {
 
       if (connection === 'close') {
         const now = Date.now()
-        const delay = Math.min(5000 * Math.pow(2, reconnectAttempts), maxReconnectDelay)
+        const jitter = Math.random() * 2000
+        const delay = Math.min(3000 * Math.pow(2, reconnectAttempts) + jitter, maxReconnectDelay)
 
-        if (now - lastReconnect < delay) return
+        if (now - lastReconnect < 3000) return
         lastReconnect = now
         reconnectAttempts++
 
-        if (reason === DisconnectReason.connectionLost || reason === 428 || reason === 408) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue cerrada inesperadamente. Reconectando...\n╰─────────────────────────`))
+        if (reason === DisconnectReason.connectionLost || reason === 428 || reason === 408 || reason === 515 ||!reason) {
           await new Promise(r => setTimeout(r, delay))
           return creloadHandler(true).catch(() => {})
         }
 
         if (reason === DisconnectReason.connectionReplaced || reason === 440) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La conexión (+${path.basename(pathblackJadiBot)}) fue reemplazada por otra sesión activa.\n╰─────────────────────────`))
           try {
-            if (options.fromCommand) m?.chat? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null }) : ""
+            if (options.fromCommand && m?.chat) await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR\n\n> SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE' }, { quoted: m || null })
           } catch {}
           return
         }
 
-        if (reason == DisconnectReason.loggedOut || reason == 405 || reason == 401) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ La sesión (+${path.basename(pathblackJadiBot)}) fue cerrada. Credenciales no válidas.\n╰─────────────────────────`))
+        if (reason == DisconnectReason.loggedOut || reason == 405 || reason == 401 || reason == 403) {
           try {
-            if (options.fromCommand) m?.chat? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
+            if (options.fromCommand && m?.chat) await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'SESIÓN PENDIENTE\n\n> INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null })
           } catch {}
           try { fs.rmSync(pathblackJadiBot, { recursive: true, force: true }) } catch {}
           return
         }
 
         if (reason === 500) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Conexión perdida en la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
-          if (options.fromCommand) m?.chat? await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null }) : ""
+          if (options.fromCommand && m?.chat) await conn.sendMessage(`${path.basename(pathblackJadiBot)}@s.whatsapp.net`, { text: 'CONEXIÓN PÉRDIDA\n\n> INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT' }, { quoted: m || null })
           await new Promise(r => setTimeout(r, delay))
           return creloadHandler(true).catch(() => {})
         }
 
-        if (reason === 515 ||!reason) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Reinicio automático para la sesión (+${path.basename(pathblackJadiBot)}).\n╰─────────────────────────`))
-          await new Promise(r => setTimeout(r, delay))
-          return creloadHandler(true).catch(() => {})
-        }
-
-        if (reason === 403) {
-          console.log(chalk.bold.magentaBright(`\n╭─────────────────────────\n│ Sesión cerrada o cuenta en soporte para la sesión (+${path.basename(pathblackJadiBot)})\n╰─────────────────────────`))
-          try { fs.rmSync(pathblackJadiBot, { recursive: true, force: true }) } catch {}
-          return
-        }
+        await new Promise(r => setTimeout(r, delay))
+        return creloadHandler(true).catch(() => {})
       }
 
       if (connection === 'open') {
         reconnectAttempts = 0
         let userName = sock.authState.creds.me?.name || 'Anónimo'
 
-        console.log(
-          chalk.bold.cyanBright(
-            `\n❒────────────────────────❒\n│\n│ 🟢 ${userName} (+${path.basename(pathblackJadiBot)}) conectado exitosamente.\n│\n❒────────────────────────❒`
-          )
-        )
-
         sock.isInit = true
+        global.conns = global.conns.filter(c => c.user?.jid!== sock.user?.jid)
         global.conns.push(sock)
 
         await autoSnapshot()
-        setInterval(autoSnapshot, 1000 * 60 * 15)
+        if (snapshotInterval) clearInterval(snapshotInterval)
+        snapshotInterval = setInterval(autoSnapshot, 1000 * 60 * 10)
+        startKeepAlive()
+        startWatchdog()
 
         try {
           await sock.groupAcceptInvite('IJjWzYg976PFSXOJ3uJ3DOM')
@@ -361,8 +385,8 @@ export async function blackJadiBot(options) {
             m.chat,
             {
               text: args[0]
-            ? `@${m.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...`
-                : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa.personalizar para personalizar tu bot\n> Usa.autoghost para modo invisible\n> AutoSnapshot cada 15min activo`,
+           ? `@${m.sender.split('@')[0]}, ya estás conectado,leyendo mensajes entrantes...`
+                : `@${m.sender.split('@')[0]}, *genial ya eres parte de nuestra familia black-clover Sub-Bots.*\n> Usa.personalizar para personalizar tu bot\n> Usa.autoghost para modo invisible\n> AutoSnapshot cada 10min activo\n> KeepAlive 24/7 activo\n> Watchdog anti-caídas activo`,
               mentions: [m.sender]
             },
             { quoted: m }
@@ -377,6 +401,9 @@ export async function blackJadiBot(options) {
           try { sock.ev.removeAllListeners() } catch {}
           let i = global.conns.indexOf(sock)
           if (i >= 0) global.conns.splice(i, 1)
+          if (keepAliveInterval) clearInterval(keepAliveInterval)
+          if (watchdogInterval) clearInterval(watchdogInterval)
+          if (snapshotInterval) clearInterval(snapshotInterval)
         }
       } catch {}
     }, 60000)
@@ -391,10 +418,16 @@ export async function blackJadiBot(options) {
 
       if (restatConn) {
         const oldChats = sock?.chats || {}
+        const oldContacts = sock?.contacts || {}
+        const oldPresences = sock?.presences || {}
         try { sock.ws?.close() } catch {}
         try { sock.ev.removeAllListeners() } catch {}
+        if (keepAliveInterval) clearInterval(keepAliveInterval)
+        if (watchdogInterval) clearInterval(watchdogInterval)
         sock = makeWASocket(connectionOptions)
         sock.chats = oldChats
+        sock.contacts = oldContacts
+        sock.presences = oldPresences
         isInit = true
       }
 
@@ -409,10 +442,12 @@ export async function blackJadiBot(options) {
       sock.credsUpdate = saveCreds.bind(sock)
 
       sock.ev.on("messages.upsert", async (msg) => {
-        const sender = msg.messages?.[0]?.key?.participant || msg.messages?.[0]?.key?.remoteJid
-        const config = global.subBotConfig?.get(sender)
-        if (config?.ghostmode) return
-        await sock.handler(msg)
+        try {
+          const sender = msg.messages?.[0]?.key?.participant || msg.messages?.[0]?.key?.remoteJid
+          const config = global.subBotConfig?.get(sender)
+          if (config?.ghostmode) return
+          await sock.handler(msg)
+        } catch {}
       })
       sock.ev.on("connection.update", sock.connectionUpdate)
       sock.ev.on("creds.update", sock.credsUpdate)

@@ -47,47 +47,46 @@ let handler = async (m, { conn, usedPrefix }) => {
   let user = m.sender
   let now = Date.now()
 
-  if (cd && cd > now) {
-    let t = Math.ceil((cd - now) / 1000)
+  if (cd[user] && cd[user] > now) {
+    let t = Math.ceil((cd[user] - now) / 1000)
     let mnt = Math.floor(t / 60)
     let sec = t % 60
     return conn.sendMessage(m.chat, {
-      text: `espera ${mnt}m ${sec}s para volver a usar esto`
+      text: `⏳ Espera ${mnt}m ${sec}s para volver a rolear`
     }, { quoted: m })
   }
 
   try {
     let chars = await loadChars()
-    if (!chars.length) return conn.reply(m.chat, 'no hay personajes', m)
+    if (!chars.length) return conn.reply(m.chat, '📕 No hay personajes registrados en el grimorio', m)
 
     let r = chars[Math.floor(Math.random() * chars.length)]
-    if (!r ||!r.id ||!r.name) return conn.reply(m.chat, 'error al elegir personaje', m)
+    if (!r ||!r.id ||!r.name) return conn.reply(m.chat, '❌ Error al elegir personaje', m)
 
-    let img = Array.isArray(r.img) && r.img.length ? r.img[Math.floor(Math.random() * r.img.length)] : r.img
-    if (!img) return conn.reply(m.chat, 'personaje sin imagen', m)
+    let img = Array.isArray(r.img) && r.img.length? r.img[Math.floor(Math.random() * r.img.length)] : r.img
+    if (!img) return conn.reply(m.chat, '⚠️ Personaje sin imagen', m)
 
     let harem = await loadHarem()
     let inHarem = harem.find(v => v.characterId === r.id)
 
-    let status = 'libre'
+    let status = 'Libre ✅'
     let mentions = []
     let isTaken = false
-    
+
     if (r.user) {
-      status = `reclamado por @${r.user.split('@')[0]}`
+      status = `Reclamado por @${r.user.split('@')[0]}`
       mentions.push(r.user)
       isTaken = true
     } else if (inHarem?.userId) {
-      status = `reclamado por @${inHarem.userId.split('@')[0]}`
+      status = `Reclamado por @${inHarem.userId.split('@')[0]}`
       mentions.push(inHarem.userId)
       isTaken = true
     }
 
-    let text =
-`✦ *${r.name}*
+    let text = `✦ *${r.name}*
 
 ✦ Género: *${r.gender || 'N/A'}*
-✦ Valor: *${r.value || 'N/A'}*
+✦ Valor: *${Number(r.value || 0).toLocaleString()}*
 ✦ Estado: ${status}
 ✦ ID: *${r.id}*`
 
@@ -102,17 +101,17 @@ let handler = async (m, { conn, usedPrefix }) => {
     await conn.sendMessage(m.chat, {
       image: { url: img },
       caption: text,
-      footer: 'Black-clover-MD Gacha',
+      footer: 'Black Clover RPG 2026',
       buttons: buttons,
       headerType: 4,
       mentions
     }, { quoted: m })
 
-    cd = now + (15 * 60 * 1000)
+    cd[user] = now + (2 * 60 * 1000)
 
   } catch (e) {
     console.error(e)
-    return conn.reply(m.chat, 'error al sacar personaje', m)
+    return conn.reply(m.chat, '❎ Error al sacar personaje del grimorio', m)
   }
 }
 
