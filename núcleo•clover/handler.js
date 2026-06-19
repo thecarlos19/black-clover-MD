@@ -16,6 +16,8 @@ const lidCache = new Map()
 const metadataCache = new Map()
 const normalizeJid = jid => jid?.split('@')[0]?.replace(/\D/g, '')
 
+const emojiList = ['❤️','😂','😍','🔥','😎','👍','😭','🥵','😳','🙏','💀','🤡','✨','💯','🌚','😈','🤙','🥶','🤔','😴']
+
 export async function handler(chatUpdate) {
     this.msgqueque ||= []
     this.uptime ||= Date.now()
@@ -93,7 +95,9 @@ export async function handler(chatUpdate) {
             nsfw: 'nsfw' in chat? chat.nsfw : false,
             antifake: 'antifake' in chat? chat.antifake : false,
             delete: 'delete' in chat? chat.delete : false,
-            expired: isNumber(chat.expired)? chat.expired : 0
+            antidelete: 'antidelete' in chat? chat.antidelete : false,
+            expired: isNumber(chat.expired)? chat.expired : 0,
+            lastReact: isNumber(chat.lastReact)? chat.lastReact : 0
         })
 
         const botJid = this.user?.id || this.user?.jid
@@ -133,6 +137,45 @@ export async function handler(chatUpdate) {
         }
 
         if (m.isBaileys) return
+
+        global.db.data.antidelete = global.db.data.antidelete || {}
+        global.db.data.antidelete[m.chat] = global.db.data.antidelete[m.chat] || {}
+
+        if (m.message &&!m.message?.protocolMessage) {
+            global.db.data.antidelete[m.chat][m.id] = {
+                msg: m,
+                type: Object.keys(m.message)[0],
+                timestamp: Date.now()
+            }
+        }
+
+        if (m.message?.protocolMessage?.type === 0) {
+            let deletedMsg = global.db.data.antidelete[m.chat]?.[m.message.protocolMessage.key.id]
+            if (deletedMsg && chat.antidelete &&!m.fromMe) {
+                let msg = deletedMsg.msg
+                let txt = `🗑️ *ANTIDELETE*\n\n👤 *Usuario:* @${msg.sender.split('@')[0]}\n📝 *Tipo:* ${deletedMsg.type.replace('Message', '')}\n⏰ *Enviado:* ${new Date(deletedMsg.timestamp).toLocaleString('es-MX')}\n\n`
+                if (msg.text) txt += `💬 *Mensaje:* ${msg.text}`
+                await this.reply(m.chat, txt, msg, { mentions: [msg.sender] })
+                if (msg.message?.imageMessage) {
+                    let media = await msg.download()
+                    await this.sendFile(m.chat, media, 'antidelete.jpg', '', msg)
+                }
+                if (msg.message?.videoMessage) {
+                    let media = await msg.download()
+                    await this.sendFile(m.chat, media, 'antidelete.mp4', '', msg)
+                }
+                if (msg.message?.stickerMessage) {
+                    let media = await msg.download()
+                    await this.sendFile(m.chat, media, 'antidelete.webp', '', msg)
+                }
+                if (msg.message?.audioMessage) {
+                    let media = await msg.download()
+                    await this.sendFile(m.chat, media, 'antidelete.mp3', '', msg, true)
+                }
+            }
+            return
+        }
+
         m.exp += Math.ceil(Math.random() * 10)
         let usedPrefix
 
@@ -185,6 +228,17 @@ export async function handler(chatUpdate) {
         const isBotAdmin =!!botParticipant.admin
 
         const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), './plugins')
+
+        if (chat?.reaction &&!m.fromMe && m.message && m.isGroup &&!m.key.remoteJid.endsWith('status@broadcast')) {
+            try {
+                let now = new Date() * 1
+                if (now - (chat.lastReact || 0) > 3000) {
+                    let emoji = emojiList[Math.floor(Math.random() * emojiList.length)]
+                    await this.sendMessage(m.chat, { react: { text: emoji, key: m.key } })
+                    chat.lastReact = now
+                }
+            } catch {}
+        }
 
         for (const name in global.plugins) {
             const plugin = global.plugins[name]
@@ -316,6 +370,7 @@ export async function handler(chatUpdate) {
         if (opts['autoread']) await this.readMessages([m.key])
     }
 }
+
 
 global.dfail = (type, m, conn) => {
         let msg = {
