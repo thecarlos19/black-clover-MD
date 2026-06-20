@@ -15,11 +15,10 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const authorUrl = videoInfo.author?.url || videoInfo.url
 
-    const body = `Hola @${m.sender.split('@')[0]} 👋
-
-> Te invito a seguirme en Instagram:
-https://www.instagram.com/_carlitos.zx
-
+    const greeting = getGreeting()
+const body = `${greeting} @${m.sender.split('@')[0]} 👋\n\n` +
+             `> Te invito a seguirme en Instagram:\n` +
+             `https://www.instagram.com/_carlitos.zx\n\n
 📌 *Selecciona una de las opciones:*`
 
     const { imageMessage } = await generateWAMessageContent(
