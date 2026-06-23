@@ -203,52 +203,65 @@ if (!opts['test']) {
 }
 
 async function connectionUpdate(update) {
-    const { connection, lastDisconnect, isNewLogin, qr } = update;
-    const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-    global.stopped = connection;
+  const { connection, lastDisconnect, isNewLogin, qr } = update
+  const reason = new Boom(lastDisconnect?.error)?.output?.statusCode
 
-    if (isNewLogin) conn.isInit = true;
-    if (!global.db.data) loadDatabase();
+  global.stopped = connection
 
-    if ((qr && qr!== '0') || methodCodeQR) {
-        if (opcion === '1' || methodCodeQR) {
-            console.log(chalk.bold.yellow(`\n❐ ESCANEA EL CÓDIGO QR - EXPIRA EN 45 SEGUNDOS`));
-        }
+  if (isNewLogin) conn.isInit = true
+
+  if (!global.db.data) loadDatabase()
+
+  if ((qr && qr !== '0') || methodCodeQR) {
+    if (opcion === '1' || methodCodeQR) {
+      console.log(chalk.bold.yellow(`\n❐ ESCANEA EL CÓDIGO QR - EXPIRA EN 45 SEGUNDOS`))
+    }
+  }
+
+  if (connection === 'open') {
+    console.log(chalk.bold.green('\n🧙‍♂️ BLACK CLOVER BOT CONECTADO ✞'))
+  }
+
+  if (connection === 'close') {
+    switch (reason) {
+      case DisconnectReason.badSession:
+      case DisconnectReason.loggedOut:
+        console.log(chalk.bold.redBright(`\n⚠︎ SESIÓN INVÁLIDA O CERRADA, BORRA LA CARPETA ${global.sessions} Y ESCANEA EL CÓDIGO QR ⚠︎`))
+        break
+
+      case DisconnectReason.connectionClosed:
+        console.log(chalk.bold.magentaBright(`\n⚠︎ CONEXIÓN CERRADA, REINICIANDO...`))
+        break
+
+      case DisconnectReason.connectionLost:
+        console.log(chalk.bold.blueBright(`\n⚠︎ CONEXIÓN PERDIDA, RECONECTANDO...`))
+        break
+
+      case DisconnectReason.connectionReplaced:
+        console.log(chalk.bold.yellowBright(`\n⚠︎ CONEXIÓN REEMPLAZADA, OTRA SESIÓN INICIADA`))
+        return 
+
+      case DisconnectReason.restartRequired:
+        console.log(chalk.bold.cyanBright(`\n☑ REINICIANDO SESIÓN...`))
+        break
+
+      case DisconnectReason.timedOut:
+        console.log(chalk.bold.yellowBright(`\n⚠︎ TIEMPO AGOTADO, REINTENTANDO CONEXIÓN...`))
+        break
+
+      default:
+        console.log(chalk.bold.redBright(`\n⚠︎ DESCONEXIÓN DESCONOCIDA (${reason || 'Desconocido'})`))
+        break
     }
 
-    if (connection === 'open') {
-        console.log(chalk.bold.green('\n🧙‍♂️ BLACK CLOVER BOT CONECTADO ✞'));
-        global.reconnectAttempts = 0
-        clearTmp()
-        purgeSession()
+    // Si el websocket está cerrado, intenta reconectar
+    if (conn?.ws?.socket === null) {
+      await global.reloadHandler(true).catch(console.error)
+      global.timestamp.connect = new Date()
     }
-
-    if (connection === 'close') {
-        const shouldReconnect = reason!== DisconnectReason.loggedOut && reason!== DisconnectReason.badSession && reason!== 403
-        if (shouldReconnect && global.reconnectAttempts < 5) {
-            global.reconnectAttempts++
-            console.log(chalk.bold.yellowBright(`\n⚠︎ RECONECTANDO... MOTIVO: ${reason} INTENTO: ${global.reconnectAttempts}`))
-            await new Promise(r => setTimeout(r, 5000 * global.reconnectAttempts))
-            await global.reloadHandler(true).catch(console.error)
-        } else {
-            console.log(chalk.bold.redBright(`\n⚠︎ SESIÓN CERRADA PERMANENTE. BORRA ${global.sessions} Y RECONECTA`))
-            if (reason === DisconnectReason.loggedOut) {
-                rmSync(`./${global.sessions}`, { recursive: true, force: true })
-            }
-        }
-    }
+  }
 }
-
-process.on('uncaughtException', (err) => {
-    if (err.code === 'ENAMETOOLONG') {
-        console.error(chalk.red.bold(`✘ ERROR (ENAMETOOLONG): ${err.message}.`));
-    } else {
-        console.error(chalk.red.bold('✘ ERROR CRÍTICO CAPTURADO:'), err);
-    }
-});
-process.on('unhandledRejection', (reason, promise) => {
-    console.error(chalk.red.bold('✘ RECHAZO NO MANEJADO:'), reason);
-});
+process.on('uncaughtException', console.error)
 
 let isInit = true;
 let handler = await import('./handler.js')
@@ -359,7 +372,7 @@ global.reload = async (_ev, filename) => {
                 const module = (await import(`${global.__filename(dir)}?update=${Date.now()}`));
                 global.plugins[filename] = module.default || module;
             } catch (e) {
-                conn.logger.error(`error require plugin '${filename}\n${format(e)}`)
+                conn.logger.error(`error require plugin '${filename}\n${format(e)}'`)
             } finally {
                 global.plugins = Object.fromEntries(Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)))
             }
@@ -544,8 +557,8 @@ async function runCleanup(task) {
     if (
         stopped === true ||
         global.stopped === 'close' ||
-        !global.conn ||
-        !global.conn.user ||
+       !global.conn ||
+       !global.conn.user ||
         isCleaning
     ) return
 
@@ -579,15 +592,15 @@ setInterval(() => runCleanup(async () => {
 }), 1000 * 60 * 10)
 
 _quickTest()
-    .then(() => conn.logger.info(chalk.bold(`✞ H E C H O`)))
-    .catch(console.error)
+   .then(() => conn.logger.info(chalk.bold(`✞ H E C H O`)))
+   .catch(console.error)
 
 setInterval(async () => {
     if (
         stopped === true ||
         global.stopped === 'close' ||
-        !global.conn ||
-        !global.conn.user
+       !global.conn ||
+       !global.conn.user
     ) return
 
     const seconds = Math.floor(process.uptime())
@@ -612,7 +625,7 @@ global.healthcheck = function() {
 
     const subs =
         global.conns?.filter(
-            c => c.user && c.ws?.socket?.readyState !== ws.CLOSED
+            c => c.user && c.ws?.socket?.readyState!== ws.CLOSED
         ).length || 0
 
     const seconds = Math.floor(process.uptime())
@@ -628,6 +641,6 @@ global.healthcheck = function() {
             String(minutes).padStart(2, '0') + ':' +
             String(secs).padStart(2, '0'),
         subbots: subs,
-        status: global.conn?.user ? 'online' : 'offline'
+        status: global.conn?.user? 'online' : 'offline'
     }
 }
