@@ -97,7 +97,8 @@
     "ws": "^8.18.3",
     "yargs": "^17.3.1",
     "yt-search": "^2.10.3",
-    "openai": "^3.3.0"
+    "openai": "^3.3.0",
+    "http": "latest"
   },
   "optionalDependencies": {
     "wa-sticker-formatter": "^4.3.2",
