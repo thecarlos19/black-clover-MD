@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Legends & Stellar · Black Clover</title>
+  <title>The Legends · Black Clover</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   <meta property="og:image" content="/favicon.ico" />
-  <meta property="og:title" content="The Legends & Stellar · Black Clover" />
+  <meta property="og:title" content="The Legends · Black Clover" />
   <meta property="og:description" content="Sub-Bot · Vinculación" />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,184 +14,177 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
-    :root {
-      --bg-primary: #0a0000;
-      --bg-secondary: #150303;
-      --bg-card: #1a0505;
-      --bg-card-hover: #2a0a0a;
-      --bg-input: #0f0202;
-      --text-primary: #f5ecec;
-      --text-secondary: #d4b0b0;
-      --text-dim: #8a5a5a;
-      --red-400: #f87171;
-      --red-500: #ef4444;
-      --red-600: #dc2626;
-      --red-glow: rgba(239, 68, 68, 0.18);
-      --red-glow-strong: rgba(239, 68, 68, 0.35);
-      --success: #6ee7b7;
-      --error: #fca5a5;
-      --border-subtle: rgba(180, 60, 60, 0.08);
-      --border-glow: rgba(180, 60, 60, 0.15);
-      --radius: 24px;
-      --radius-sm: 14px;
-      --radius-xl: 32px;
-      --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.8);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      background: #0b0101;
+      color: #f2e7e7;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px 14px;
-      background-image: 
-        radial-gradient(ellipse at 20% 10%, rgba(239, 68, 68, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 90%, rgba(239, 68, 68, 0.04) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(180, 60, 60, 0.02) 0%, transparent 70%);
+      padding: 24px 16px;
+      background-image:
+        radial-gradient(ellipse at 15% 20%, rgba(200, 40, 40, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 80%, rgba(180, 30, 30, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(120, 20, 20, 0.02) 0%, transparent 70%);
     }
+
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 540px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
+
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 24px;
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      border: 1px solid var(--border-glow);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-card);
+      padding: 14px 22px;
+      background: #160404;
+      border-radius: 30px;
+      border: 1px solid rgba(200, 70, 70, 0.12);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
     }
-    .header-brand {
+
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    .header-logo {
+
+    .logo {
       width: 46px;
       height: 46px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--red-500), var(--red-600));
+      background: linear-gradient(145deg, #dc2626, #b91c1c);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
       font-weight: 900;
       color: #fff;
-      box-shadow: 0 0 40px var(--red-glow-strong);
+      box-shadow: 0 0 32px rgba(220, 38, 38, 0.3);
     }
-    .header-name {
+
+    .brand-name {
       font-weight: 800;
       font-size: 17px;
-      letter-spacing: -0.2px;
+      letter-spacing: -0.3px;
     }
-    .header-name .highlight {
-      background: linear-gradient(135deg, var(--red-400), var(--red-500));
+    .brand-name .highlight {
+      background: linear-gradient(135deg, #f87171, #dc2626);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .header-status {
+
+    .status-badge {
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 6px 16px;
-      background: rgba(110, 231, 183, 0.07);
-      border-radius: 30px;
-      border: 1px solid rgba(110, 231, 183, 0.12);
+      background: rgba(110, 231, 183, 0.06);
+      border-radius: 40px;
+      border: 1px solid rgba(110, 231, 183, 0.08);
       font-size: 11px;
       font-weight: 600;
-      color: var(--success);
+      color: #6ee7b7;
     }
-    .status-dot {
+    .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--success);
-      animation: pulse-dot 2.2s ease-in-out infinite;
+      background: #6ee7b7;
+      animation: pulse-dot 2.4s ease-in-out infinite;
     }
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.25; transform: scale(0.6); }
+      50% { opacity: 0.2; transform: scale(0.6); }
     }
+
     .main-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-xl);
-      padding: 36px 28px;
-      border: 1px solid var(--border-glow);
-      box-shadow: var(--shadow-card);
+      background: #160404;
+      border-radius: 34px;
+      padding: 36px 28px 30px;
+      border: 1px solid rgba(200, 70, 70, 0.08);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
       position: relative;
       overflow: hidden;
     }
     .main-card::before {
       content: '';
       position: absolute;
-      top: -30%;
+      top: -20%;
       right: -20%;
-      width: 340px;
-      height: 340px;
+      width: 300px;
+      height: 300px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(239, 68, 68, 0.04) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(200, 40, 40, 0.05) 0%, transparent 70%);
       pointer-events: none;
     }
     .main-card::after {
       content: '';
       position: absolute;
-      bottom: -40%;
+      bottom: -30%;
       left: -20%;
-      width: 280px;
-      height: 280px;
+      width: 250px;
+      height: 250px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(180, 60, 60, 0.03) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(160, 30, 30, 0.04) 0%, transparent 70%);
       pointer-events: none;
     }
-    .card-badge {
+
+    .badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 6px 18px;
-      background: rgba(239, 68, 68, 0.10);
+      background: rgba(220, 38, 38, 0.10);
       border-radius: 40px;
-      border: 1px solid rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(220, 38, 38, 0.12);
       font-size: 11px;
       font-weight: 700;
-      color: var(--red-400);
-      margin-bottom: 16px;
+      color: #f87171;
+      margin-bottom: 18px;
+      letter-spacing: 0.4px;
       position: relative;
       z-index: 1;
-      letter-spacing: 0.3px;
     }
-    .card-badge i {
+    .badge i {
       font-size: 13px;
     }
-    .card-title {
-      font-size: 30px;
+
+    .title {
+      font-size: 32px;
       font-weight: 900;
       letter-spacing: -0.8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       position: relative;
       z-index: 1;
     }
-    .card-title .highlight {
-      background: linear-gradient(135deg, var(--red-400), var(--red-500));
+    .title .highlight {
+      background: linear-gradient(135deg, #f87171, #dc2626);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .card-subtitle {
+
+    .subtitle {
       font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 30px;
+      color: #d4b0b0;
+      margin-bottom: 28px;
       position: relative;
       z-index: 1;
       line-height: 1.6;
     }
+
     .form-group {
       display: flex;
       flex-direction: column;
@@ -199,20 +192,22 @@
       position: relative;
       z-index: 1;
     }
+
     .form-label {
       font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      color: var(--text-secondary);
+      color: #d4b0b0;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .form-label i {
-      color: var(--red-400);
+      color: #f87171;
       font-size: 14px;
     }
+
     .input-wrapper {
       position: relative;
     }
@@ -221,20 +216,21 @@
       left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-dim);
+      color: #8a5a5a;
       font-size: 16px;
       transition: all 0.3s ease;
     }
     .input-wrapper:focus-within i {
-      color: var(--red-400);
+      color: #f87171;
     }
+
     .input-field {
       width: 100%;
       padding: 17px 16px 17px 50px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
+      background: #0f0202;
+      border: 1px solid rgba(180, 60, 60, 0.08);
+      border-radius: 14px;
+      color: #f2e7e7;
       font-size: 16px;
       font-weight: 500;
       font-family: 'Inter', sans-serif;
@@ -242,25 +238,26 @@
       transition: all 0.3s ease;
     }
     .input-field::placeholder {
-      color: var(--text-dim);
+      color: #8a5a5a;
       font-weight: 400;
       font-size: 14px;
     }
     .input-field:focus {
-      border-color: var(--red-500);
-      box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.08);
-      background: var(--bg-card-hover);
+      border-color: #dc2626;
+      box-shadow: 0 0 0 5px rgba(220, 38, 38, 0.08);
+      background: #1a0505;
     }
     .input-field:disabled {
       opacity: 0.3;
       cursor: not-allowed;
     }
+
     .btn-primary {
       width: 100%;
       padding: 18px;
-      background: linear-gradient(135deg, var(--red-500), var(--red-600));
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
       border: none;
-      border-radius: var(--radius-sm);
+      border-radius: 14px;
       color: #fff;
       font-size: 15px;
       font-weight: 700;
@@ -271,13 +268,13 @@
       justify-content: center;
       gap: 10px;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 6px 30px var(--red-glow-strong);
+      box-shadow: 0 6px 30px rgba(220, 38, 38, 0.25);
       position: relative;
       z-index: 1;
     }
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 12px 50px rgba(239, 68, 68, 0.35);
+      box-shadow: 0 12px 50px rgba(220, 38, 38, 0.35);
     }
     .btn-primary:active:not(:disabled) {
       transform: translateY(0);
@@ -288,12 +285,13 @@
       transform: none;
       box-shadow: none;
     }
+
     .status-panel {
       margin-top: 22px;
       padding: 16px 22px;
-      background: var(--bg-input);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
+      background: #0f0202;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 60, 60, 0.08);
       display: flex;
       align-items: flex-start;
       gap: 16px;
@@ -308,37 +306,39 @@
       flex-shrink: 0;
       transition: all 0.3s ease;
     }
-    .status-icon.idle { background: var(--text-dim); }
-    .status-icon.loading { background: var(--red-400); animation: pulse-dot 0.6s ease-in-out infinite; }
-    .status-icon.success { background: var(--success); box-shadow: 0 0 25px rgba(110, 231, 183, 0.3); }
-    .status-icon.error { background: var(--error); box-shadow: 0 0 25px rgba(252, 165, 165, 0.3); }
+    .status-icon.idle { background: #8a5a5a; }
+    .status-icon.loading { background: #f87171; animation: pulse-dot 0.6s ease-in-out infinite; }
+    .status-icon.success { background: #6ee7b7; box-shadow: 0 0 25px rgba(110, 231, 183, 0.3); }
+    .status-icon.error { background: #fca5a5; box-shadow: 0 0 25px rgba(252, 165, 165, 0.3); }
+
     .status-content { flex: 1; }
     .status-label {
       font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      color: var(--text-dim);
+      color: #8a5a5a;
       margin-bottom: 3px;
     }
     .status-message {
       font-size: 14px;
       font-weight: 500;
-      color: var(--text-secondary);
+      color: #d4b0b0;
     }
-    .status-message.success { color: var(--success); }
-    .status-message.error { color: var(--error); }
+    .status-message.success { color: #6ee7b7; }
+    .status-message.error { color: #fca5a5; }
     .status-hint {
       font-size: 12px;
-      color: var(--text-dim);
+      color: #8a5a5a;
       margin-top: 5px;
     }
+
     .code-section {
       margin-top: 18px;
       padding: 16px 22px;
-      background: var(--bg-input);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
+      background: #0f0202;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 60, 60, 0.08);
       position: relative;
       z-index: 1;
     }
@@ -354,17 +354,17 @@
       gap: 8px;
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: #d4b0b0;
     }
     .code-label i {
-      color: var(--red-400);
+      color: #f87171;
     }
     .btn-copy {
       padding: 6px 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: var(--text-secondary);
+      background: #160404;
+      border: 1px solid rgba(180, 60, 60, 0.08);
+      border-radius: 14px;
+      color: #d4b0b0;
       font-size: 12px;
       font-weight: 600;
       font-family: 'Inter', sans-serif;
@@ -375,9 +375,9 @@
       transition: all 0.2s ease;
     }
     .btn-copy:hover:not(:disabled) {
-      background: var(--bg-card-hover);
-      border-color: var(--red-400);
-      color: var(--text-primary);
+      background: #1a0505;
+      border-color: #f87171;
+      color: #f2e7e7;
     }
     .btn-copy:disabled {
       opacity: 0.3;
@@ -386,16 +386,16 @@
     .code-display {
       margin-top: 14px;
       padding: 20px;
-      background: var(--bg-primary);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
+      background: #0b0101;
+      border-radius: 14px;
+      border: 1px solid rgba(180, 60, 60, 0.08);
       font-family: 'Inter', monospace;
       font-size: 32px;
       font-weight: 800;
       text-align: center;
       letter-spacing: 12px;
-      color: var(--red-400);
-      text-shadow: 0 0 50px rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      text-shadow: 0 0 50px rgba(220, 38, 38, 0.2);
       min-height: 72px;
       display: flex;
       align-items: center;
@@ -404,34 +404,75 @@
       word-break: break-all;
     }
     .code-display.empty {
-      color: var(--text-dim);
+      color: #8a5a5a;
       font-weight: 400;
       font-size: 14px;
       letter-spacing: 0;
       text-shadow: none;
     }
+
+    .health-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+    .health-card {
+      background: #0f0202;
+      border-radius: 14px;
+      padding: 16px 12px;
+      border: 1px solid rgba(180, 60, 60, 0.06);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .health-card:hover {
+      border-color: rgba(220, 38, 38, 0.15);
+      background: #160404;
+    }
+    .health-card .value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #f2e7e7;
+      letter-spacing: -0.3px;
+    }
+    .health-card .label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #8a5a5a;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .health-card .value.online { color: #6ee7b7; }
+    .health-card .value.offline { color: #fca5a5; }
+    .health-card .value.bots { color: #f87171; }
+    .health-card .value.sessions { color: #fbbf24; }
+    .health-card .value.uptime { color: #60a5fa; }
+
     .faq-card {
-      background: var(--bg-card);
-      border-radius: var(--radius);
+      background: #160404;
+      border-radius: 30px;
       padding: 26px 28px;
-      border: 1px solid var(--border-glow);
-      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(200, 70, 70, 0.06);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     }
     .faq-title {
       font-size: 14px;
       font-weight: 700;
-      color: var(--text-secondary);
+      color: #d4b0b0;
       margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
     .faq-title i {
-      color: var(--red-400);
+      color: #f87171;
       font-size: 17px;
     }
     .faq-item {
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid rgba(180, 60, 60, 0.06);
       padding: 14px 0;
     }
     .faq-item:last-child {
@@ -444,20 +485,19 @@
       gap: 12px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #f2e7e7;
       cursor: pointer;
       user-select: none;
     }
-    .faq-question i {
-      color: var(--red-400);
+    .faq-question i:first-child {
+      color: #f87171;
       font-size: 14px;
       width: 20px;
       text-align: center;
-      transition: transform 0.3s ease;
     }
     .faq-question .fa-chevron-down {
       margin-left: auto;
-      color: var(--text-dim);
+      color: #8a5a5a;
       font-size: 12px;
       transition: transform 0.3s ease;
     }
@@ -466,7 +506,7 @@
     }
     .faq-answer {
       font-size: 13px;
-      color: var(--text-secondary);
+      color: #d4b0b0;
       line-height: 1.7;
       max-height: 0;
       overflow: hidden;
@@ -478,74 +518,85 @@
       padding-top: 10px;
     }
     .faq-answer strong {
-      color: var(--text-primary);
+      color: #f2e7e7;
     }
     .faq-answer a {
-      color: var(--red-400);
+      color: #f87171;
       text-decoration: none;
       border-bottom: 1px solid transparent;
       transition: border-color 0.2s ease;
     }
     .faq-answer a:hover {
-      border-color: var(--red-400);
+      border-color: #f87171;
     }
+
     .footer {
       text-align: center;
-      padding: 14px 0 6px;
-      font-size: 12px;
+      padding: 16px 0 4px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--text-dim);
-      letter-spacing: 0.4px;
+      color: #8a5a5a;
+      letter-spacing: 0.3px;
+      line-height: 1.6;
     }
-    .footer span {
-      background: linear-gradient(135deg, var(--red-400), var(--red-500));
+    .footer .brand-footer {
+      background: linear-gradient(135deg, #f87171, #dc2626);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-weight: 700;
     }
+    .footer .creator {
+      color: #d4b0b0;
+      font-weight: 600;
+    }
+
     @media (max-width: 480px) {
-      .main-card { padding: 24px 18px; border-radius: var(--radius); }
-      .card-title { font-size: 26px; }
-      .header { padding: 12px 16px; border-radius: var(--radius-sm); }
-      .header-name { font-size: 14px; }
-      .header-status { font-size: 10px; padding: 4px 12px; }
-      .header-logo { width: 40px; height: 40px; font-size: 14px; }
+      .main-card { padding: 24px 18px; border-radius: 26px; }
+      .title { font-size: 26px; }
+      .header { padding: 12px 16px; border-radius: 24px; }
+      .brand-name { font-size: 14px; }
+      .status-badge { font-size: 10px; padding: 4px 12px; }
+      .logo { width: 40px; height: 40px; font-size: 14px; }
       .code-display { font-size: 26px; letter-spacing: 8px; padding: 16px; min-height: 60px; }
-      .faq-card { padding: 20px 16px; border-radius: var(--radius-sm); }
+      .faq-card { padding: 20px 16px; border-radius: 24px; }
+      .health-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+      .health-card .value { font-size: 18px; }
     }
     @media (max-width: 380px) {
-      .card-title { font-size: 22px; }
+      .title { font-size: 22px; }
       .input-field { font-size: 14px; padding: 14px 14px 14px 42px; }
       .code-display { font-size: 20px; letter-spacing: 4px; padding: 12px; min-height: 50px; }
       .faq-question { font-size: 12px; }
+      .health-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header class="header">
-      <div class="header-brand">
-        <div class="header-logo">L&S</div>
-        <div class="header-name">
-          The <span class="highlight">Legends</span> &amp; Stellar
+      <div class="brand">
+        <div class="logo">TL</div>
+        <div class="brand-name">
+          The <span class="highlight">Legends</span>
         </div>
       </div>
-      <div class="header-status">
-        <span class="status-dot"></span>
+      <div class="status-badge">
+        <span class="dot"></span>
         Online
       </div>
     </header>
 
     <main class="main-card">
-      <div class="card-badge">
+      <div class="badge">
         <i class="fa-solid fa-star"></i>
         Sub-Bot · Vinculación
       </div>
 
-      <h1 class="card-title">
+      <h1 class="title">
         Conecta tu <span class="highlight">Sub-Bot</span>
       </h1>
-      <p class="card-subtitle">
-        The Legends &amp; Stellar · Genera tu código de 8 dígitos.
+      <p class="subtitle">
+        The Legends · Genera tu código de 8 dígitos.
       </p>
 
       <div class="form-group">
@@ -592,6 +643,25 @@
         </div>
         <div class="code-display empty" id="codeDisplay">--</div>
       </div>
+
+      <div class="health-grid" id="healthGrid">
+        <div class="health-card">
+          <div class="value online" id="healthStatus">-</div>
+          <div class="label">Estado</div>
+        </div>
+        <div class="health-card">
+          <div class="value bots" id="healthBots">-</div>
+          <div class="label">Bots</div>
+        </div>
+        <div class="health-card">
+          <div class="value sessions" id="healthSessions">-</div>
+          <div class="label">Sesiones</div>
+        </div>
+        <div class="health-card" style="grid-column: 1 / -1;">
+          <div class="value uptime" id="healthUptime">-</div>
+          <div class="label">Tiempo activo</div>
+        </div>
+      </div>
     </main>
 
     <section class="faq-card">
@@ -606,7 +676,7 @@
           <i class="fa-solid fa-chevron-down"></i>
         </div>
         <div class="faq-answer">
-          Sí, The Legends &amp; Stellar trabaja constantemente en mejorar la experiencia, rendimiento y diseño. La web evoluciona con la comunidad.
+          Sí, The Legends trabaja constantemente en mejorar la experiencia, rendimiento y diseño. La web evoluciona con la comunidad.
         </div>
       </div>
       <div class="faq-item">
@@ -642,165 +712,199 @@
     </section>
 
     <div class="footer">
-      &copy; 2026 <span>The Legends &amp; Stellar</span> · Todos los derechos reservados.
+      <div>The <span class="brand-footer">Legends</span></div>
+      <div class="creator">Creado por I'm Diego &amp; Equipo Stellar</div>
     </div>
   </div>
 
   <script>
-    (function() {
-      const phoneInput = document.getElementById('phoneInput');
-      const generateBtn = document.getElementById('generateBtn');
-      const statusIcon = document.getElementById('statusIcon');
-      const statusMessage = document.getElementById('statusMessage');
-      const statusHint = document.getElementById('statusHint');
-      const codeDisplay = document.getElementById('codeDisplay');
-      const codeLabel = document.getElementById('codeLabel');
-      const copyBtn = document.getElementById('copyBtn');
+    function toggleFaq(el) {
+      const item = el.closest('.faq-item');
+      if (item) item.classList.toggle('open');
+    }
+    window.toggleFaq = toggleFaq;
 
-      let isGenerating = false;
+    const phoneInput = document.getElementById('phoneInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusHint = document.getElementById('statusHint');
+    const codeDisplay = document.getElementById('codeDisplay');
+    const codeLabel = document.getElementById('codeLabel');
+    const copyBtn = document.getElementById('copyBtn');
 
-      function toggleFaq(el) {
-        const item = el.closest('.faq-item');
-        if (item) item.classList.toggle('open');
+    let isGenerating = false;
+
+    function setStatus(type, message, hint = '') {
+      statusIcon.className = 'status-icon ' + type;
+      statusMessage.className = 'status-message' + (type === 'success' ? ' success' : '') + (type === 'error' ? ' error' : '');
+      statusMessage.textContent = message;
+      statusHint.textContent = hint || '';
+    }
+
+    function setCode(code = '') {
+      if (code && code.trim() && code !== '✓ Conectado') {
+        codeDisplay.textContent = code.trim();
+        codeDisplay.className = 'code-display';
+        codeLabel.textContent = 'Código generado';
+        copyBtn.disabled = false;
+      } else if (code === '✓ Conectado') {
+        codeDisplay.textContent = code;
+        codeDisplay.className = 'code-display';
+        codeLabel.textContent = 'Conectado';
+        copyBtn.disabled = true;
+      } else {
+        codeDisplay.textContent = '--';
+        codeDisplay.className = 'code-display empty';
+        codeLabel.textContent = 'Código de vinculación';
+        copyBtn.disabled = true;
       }
-      window.toggleFaq = toggleFaq;
+    }
 
-      function setStatus(type, message, hint = '') {
-        statusIcon.className = 'status-icon ' + type;
-        statusMessage.className = 'status-message' + (type === 'success' ? ' success' : '') + (type === 'error' ? ' error' : '');
-        statusMessage.textContent = message;
-        statusHint.textContent = hint || '';
+    function normalizePhoneForPairing(raw) {
+      let s = String(raw).replace(/\D/g, '');
+      if (!s) return '';
+      if (s.startsWith('0')) s = s.replace(/^0+/, '');
+      if (s.length === 10 && s.startsWith('3')) s = '57' + s;
+      if (s.startsWith('52') && !s.startsWith('521') && s.length >= 12) s = '521' + s.slice(2);
+      if (s.startsWith('54') && !s.startsWith('549') && s.length >= 11) s = '549' + s.slice(2);
+      return s;
+    }
+
+    phoneInput.addEventListener('input', function() {
+      let raw = this.value.replace(/\D/g, '');
+      this.value = raw;
+      const normalized = normalizePhoneForPairing(raw);
+      if (raw.length > 0 && normalized) {
+        setStatus('idle', 'Número válido', 'Presiona "Generar código"');
+      } else if (raw.length > 0) {
+        setStatus('error', 'Número incompleto', 'Verifica el formato');
+      } else {
+        setStatus('idle', 'Esperando número...', 'Ingresa tu número');
       }
-
-      function setCode(code = '') {
-        if (code && code.trim() && code !== '✓ Conectado') {
-          codeDisplay.textContent = code.trim();
-          codeDisplay.className = 'code-display';
-          codeLabel.textContent = 'Código generado';
-          copyBtn.disabled = false;
-        } else if (code === '✓ Conectado') {
-          codeDisplay.textContent = code;
-          codeDisplay.className = 'code-display';
-          codeLabel.textContent = 'Conectado';
-          copyBtn.disabled = true;
-        } else {
-          codeDisplay.textContent = '--';
-          codeDisplay.className = 'code-display empty';
-          codeLabel.textContent = 'Código de vinculación';
-          copyBtn.disabled = true;
-        }
-      }
-
-      function normalizePhoneForPairing(raw) {
-        let s = String(raw).replace(/\D/g, '');
-        if (!s) return '';
-        if (s.startsWith('0')) s = s.replace(/^0+/, '');
-        if (s.length === 10 && s.startsWith('3')) s = '57' + s;
-        if (s.startsWith('52') && !s.startsWith('521') && s.length >= 12) s = '521' + s.slice(2);
-        if (s.startsWith('54') && !s.startsWith('549') && s.length >= 11) s = '549' + s.slice(2);
-        return s;
-      }
-
-      phoneInput.addEventListener('input', function() {
-        let raw = this.value.replace(/\D/g, '');
-        this.value = raw;
-        const normalized = normalizePhoneForPairing(raw);
-        if (raw.length > 0 && normalized) {
-          setStatus('idle', 'Número válido', 'Presiona "Generar código"');
-        } else if (raw.length > 0) {
-          setStatus('error', 'Número incompleto', 'Verifica el formato');
-        } else {
-          setStatus('idle', 'Esperando número...', 'Ingresa tu número');
-        }
-        setCode('');
-      });
-
-      async function requestPairingCode(phoneNumber) {
-        if (isGenerating) return;
-        const raw = phoneNumber.trim();
-        if (!raw) {
-          setStatus('error', 'Número vacío', 'Ingresa un número');
-          return;
-        }
-        const formatted = normalizePhoneForPairing(raw);
-        if (!formatted || formatted.length < 10) {
-          setStatus('error', 'Número inválido', 'Asegúrate de ingresar un número válido con código de país');
-          setCode('');
-          return;
-        }
-
-        isGenerating = true;
-        generateBtn.disabled = true;
-        generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Generando...</span>';
-        setStatus('loading', 'Generando código...', 'Espera un momento');
-
-        try {
-          const payload = { phone: formatted, type: 'code' };
-          const response = await fetch('/pairing', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          if (!response.ok) {
-            const text = await response.text();
-            throw new Error('Error del servidor: ' + response.status);
-          }
-
-          const data = await response.json();
-
-          if (data.ok && data.connected) {
-            setStatus('success', 'Bot conectado', 'Número: ' + data.number);
-            setCode('✓ Conectado');
-          } else if (data.ok && data.code) {
-            setStatus('success', 'Código generado', 'Usa este código en WhatsApp');
-            setCode(data.code);
-          } else if (data.message) {
-            setStatus('error', data.message, 'Intenta nuevamente');
-            setCode('');
-          } else {
-            setStatus('error', 'Error desconocido', 'Revisa tu conexión');
-            setCode('');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          setStatus('error', 'Error de conexión', error.message || 'Revisa tu internet');
-          setCode('');
-        } finally {
-          isGenerating = false;
-          generateBtn.disabled = false;
-          generateBtn.innerHTML = '<i class="fa-solid fa-link"></i><span>Generar código</span>';
-        }
-      }
-
-      generateBtn.addEventListener('click', () => {
-        requestPairingCode(phoneInput.value);
-      });
-
-      phoneInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          generateBtn.click();
-        }
-      });
-
-      copyBtn.addEventListener('click', async () => {
-        const text = codeDisplay.textContent;
-        if (!text || text === '--' || text === '✓ Conectado') return;
-        try {
-          await navigator.clipboard.writeText(text);
-          copyBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>Copiado</span>';
-          setTimeout(() => {
-            copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i><span>Copiar</span>';
-          }, 2000);
-        } catch (err) {
-          console.error('Error al copiar:', err);
-        }
-      });
-
-      setStatus('idle', 'Esperando número...', 'Ingresa tu número para generar el código');
       setCode('');
-    })();
+    });
+
+    async function requestPairingCode(phoneNumber) {
+      if (isGenerating) return;
+      const raw = phoneNumber.trim();
+      if (!raw) {
+        setStatus('error', 'Número vacío', 'Ingresa un número');
+        return;
+      }
+      const formatted = normalizePhoneForPairing(raw);
+      if (!formatted || formatted.length < 10) {
+        setStatus('error', 'Número inválido', 'Asegúrate de ingresar un número válido con código de país');
+        setCode('');
+        return;
+      }
+
+      isGenerating = true;
+      generateBtn.disabled = true;
+      generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Generando...</span>';
+      setStatus('loading', 'Generando código...', 'Espera un momento');
+
+      try {
+        const payload = { phone: formatted, type: 'code' };
+        const response = await fetch('/pairing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error('Error del servidor: ' + response.status);
+        }
+
+        const data = await response.json();
+
+        if (data.ok && data.connected) {
+          setStatus('success', 'Bot conectado', 'Número: ' + data.number);
+          setCode('✓ Conectado');
+        } else if (data.ok && data.code) {
+          setStatus('success', 'Código generado', 'Usa este código en WhatsApp');
+          setCode(data.code);
+        } else if (data.message) {
+          setStatus('error', data.message, 'Intenta nuevamente');
+          setCode('');
+        } else {
+          setStatus('error', 'Error desconocido', 'Revisa tu conexión');
+          setCode('');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setStatus('error', 'Error de conexión', error.message || 'Revisa tu internet');
+        setCode('');
+      } finally {
+        isGenerating = false;
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fa-solid fa-link"></i><span>Generar código</span>';
+      }
+    }
+
+    generateBtn.addEventListener('click', () => {
+      requestPairingCode(phoneInput.value);
+    });
+
+    phoneInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        generateBtn.click();
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = codeDisplay.textContent;
+      if (!text || text === '--' || text === '✓ Conectado') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>Copiado</span>';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i><span>Copiar</span>';
+        }, 2000);
+      } catch (err) {
+        console.error('Error al copiar:', err);
+      }
+    });
+
+    async function fetchHealth() {
+      try {
+        const response = await fetch('/health');
+        if (!response.ok) throw new Error('Health check failed');
+        const data = await response.json();
+
+        document.getElementById('healthStatus').textContent = data.status === 'online' ? '🟢 Online' : '🔴 Offline';
+        document.getElementById('healthStatus').className = 'value ' + (data.status === 'online' ? 'online' : 'offline');
+        document.getElementById('healthBots').textContent = data.bots ?? 0;
+        document.getElementById('healthSessions').textContent = data.sessions ?? 0;
+
+        const uptimeSeconds = data.uptime || 0;
+        const days = Math.floor(uptimeSeconds / 86400);
+        const hours = Math.floor((uptimeSeconds % 86400) / 3600);
+        const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+        const seconds = Math.floor(uptimeSeconds % 60);
+        let uptimeStr = '';
+        if (days > 0) uptimeStr += days + 'd ';
+        if (hours > 0 || days > 0) uptimeStr += hours + 'h ';
+        if (minutes > 0 || hours > 0 || days > 0) uptimeStr += minutes + 'm ';
+        uptimeStr += seconds + 's';
+        document.getElementById('healthUptime').textContent = uptimeStr || '0s';
+      } catch (error) {
+        console.error('Health fetch error:', error);
+        document.getElementById('healthStatus').textContent = '⚠️ Error';
+        document.getElementById('healthStatus').className = 'value offline';
+        document.getElementById('healthBots').textContent = '-';
+        document.getElementById('healthSessions').textContent = '-';
+        document.getElementById('healthUptime').textContent = '--';
+      }
+    }
+
+    fetchHealth();
+    setInterval(fetchHealth, 30000);
+
+    setStatus('idle', 'Esperando número...', 'Ingresa tu número para generar el código');
+    setCode('');
   </script>
 </body>
 </html>
