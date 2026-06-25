@@ -88,5 +88,125 @@
     "genero": "Phonk",
     "duracion": "2:18",
     "url": "https://tmpfiles.org/dl/wiwlWHFWTcdY/file.mpeg"
+  },
+  {
+    "id": 10,
+    "titulo": "SCAR",
+    "artista": "Novulent",
+    "album": "Single",
+    "año": 2023,
+    "genero": "Phonk",
+    "duracion": "1:57",
+    "url": "https://tmpfiles.org/dl/wxw3WqOgbWYa/file.mpeg"
+  },
+  {
+    "id": 11,
+    "titulo": "unknown feelings",
+    "artista": "Novulent",
+    "album": "Single",
+    "año": 2023,
+    "genero": "Phonk",
+    "duracion": "1:57",
+    "url": "https://tmpfiles.org/dl/wjw2WsOn7UfH/file.mpeg"
+  },
+  {
+    "id": 12,
+    "titulo": "savior",
+    "artista": "Novulent",
+    "album": "Single",
+    "año": 2023,
+    "genero": "Phonk",
+    "duracion": "1:57",
+    "url": "https://tmpfiles.org/dl/wBwfWMO3aZge/file.mpeg"
+  },
+  {
+    "id": 13,
+    "titulo": "Ayer Me Llamó Mi Ex",
+    "artista": "KHEA x Prince Royce x Natti Natasha",
+    "album": "Single",
+    "año": 2022,
+    "genero": "Reggaeton",
+    "duracion": "3:19",
+    "url": "https://tmpfiles.org/dl/wDwwWrOG30sf/file.mpeg"
+  },
+  {
+    "id": 14,
+    "titulo": "GANE",
+    "artista": "Victor Mendívil",
+    "album": "Single",
+    "año": 2025,
+    "genero": "Corridos Tumbados",
+    "duracion": "2:41",
+    "url": "https://tmpfiles.org/dl/wFwuWOOh9ODN/file.mpeg"
+  },
+  {
+    "id": 15,
+    "titulo": "MIA",
+    "artista": "Victor Mendívil",
+    "album": "Single",
+    "año": 2023,
+    "genero": "Corridos Tumbados",
+    "duracion": "2:33",
+    "url": "https://tmpfiles.org/dl/wrw1W2OTQVrR/file.mpeg"
+  },
+  {
+    "id": 16,
+    "titulo": "Every Breath You Take",
+    "artista": "The Police",
+    "album": "Synchronicity",
+    "año": 1983,
+    "genero": "Rock",
+    "duracion": "4:13",
+    "url": "https://tmpfiles.org/dl/w7wlWdOgRXYN/file.mpeg"
+  },
+  {
+    "id": 17,
+    "titulo": "Sparks",
+    "artista": "Coldplay",
+    "album": "Parachutes",
+    "año": 2000,
+    "genero": "Alternative",
+    "duracion": "3:47",
+    "url": "https://tmpfiles.org/dl/wGwNWAOeSSBx/file.mpeg"
+  },
+  {
+    "id": 18,
+    "titulo": "Yellow",
+    "artista": "Coldplay",
+    "album": "Parachutes",
+    "año": 2000,
+    "genero": "Alternative",
+    "duracion": "4:29",
+    "url": "https://tmpfiles.org/dl/wfweWBOeBxX2/file.mpeg"
+  },
+  {
+    "id": 19,
+    "titulo": "Mientes",
+    "artista": "Camila",
+    "album": "Dejarte de Amar",
+    "año": 2010,
+    "genero": "Pop Latino",
+    "duracion": "3:23",
+    "url": "https://tmpfiles.org/dl/wZwSWvOlBaZ0/file.mpeg"
+  },
+  {
+    "id": 20,
+    "titulo": "No Surprises",
+    "artista": "Radiohead",
+    "album": "OK Computer",
+    "año": 1997,
+    "genero": "Phonk",
+    "duracion": "2:45",
+    "url": "https://tmpfiles.org/dl/wOwvW9OWFeIc/file.mpeg"
+  },
+  {
+    "id": 21,
+    "titulo": "Tiroteo Remix Slowed",
+    "artista": "Marc Seguí x Rauw Alejandro x Pol Granch",
+    "album": "Single",
+    "año": 2021,
+    "genero": "Pop Slowed",
+    "duracion": "4:10",
+    "url": "https://tmpfiles.org/dl/wlw9WXOfk267/file.mpeg"
   }
 ]
