@@ -639,7 +639,7 @@
       font-weight: 500;
       color: var(--text-dim);
       letter-spacing: 0.3px;
-      line-height: 1.6;
+      line-height: 1.8;
       transition: color 0.4s ease;
     }
     .footer .brand-footer {
@@ -651,6 +651,45 @@
     .footer .creator {
       color: var(--text-secondary);
       font-weight: 600;
+      transition: color 0.4s ease;
+    }
+
+    .social-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .social-links a {
+      color: var(--text-dim);
+      font-size: 22px;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      text-decoration: none;
+    }
+    .social-links a:hover {
+      color: var(--red-400);
+      border-color: var(--red-400);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+    }
+    .social-links .social-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.3px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 4px;
       transition: color 0.4s ease;
     }
 
@@ -666,6 +705,7 @@
       .health-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
       .health-card .value { font-size: 18px; }
       .theme-toggle { width: 34px; height: 34px; font-size: 14px; }
+      .social-links a { width: 38px; height: 38px; font-size: 18px; }
     }
     @media (max-width: 380px) {
       .title { font-size: 22px; }
@@ -821,10 +861,26 @@
       </div>
     </section>
 
-    <div class="footer">
+    <footer class="footer">
       <div>The <span class="brand-footer">Legends</span></div>
       <div class="creator">Creado por I'm Diego &amp; Equipo Stellar</div>
-    </div>
+
+      <div class="social-links">
+        <span class="social-label">Redes del creador (Im.Diego)</span>
+        <a href="https://github.com/DevZyxlJs" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <a href="https://stellarwa.xyz/channel" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="https://stellarwa.xyz/channel/telegram" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+          <i class="fa-brands fa-telegram"></i>
+        </a>
+        <a href="https://api.stellarwa.xyz" target="_blank" rel="noopener noreferrer" aria-label="API">
+          <i class="fa-solid fa-code"></i>
+        </a>
+      </div>
+    </footer>
   </div>
 
   <script>
