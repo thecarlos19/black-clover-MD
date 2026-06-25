@@ -5,8 +5,16 @@ import cluster from 'cluster'
 import { existsSync, writeFileSync, readFileSync } from 'fs'
 import cfonts from 'cfonts'
 import chalk from 'chalk'
+import web from './lib/web.js'
 
 console.log(chalk.bold.hex('#00FFFF')('\n✞─ Iniciando Black Clover IA ─✞'))
+
+try {
+  console.log(chalk.bold.hex('#FFD700')('\n[ INFO ] :: Web Iniciada.'))
+  web(null)
+} catch (e) {
+  console.log(chalk.bold.hex('#FFD700')('\n[ WARN ] :: Error iniciando web.'))
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
