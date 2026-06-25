@@ -561,6 +561,8 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .music-player .player-title {
       display: flex;
@@ -622,23 +624,44 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background: var(--bg-primary);
       border-radius: 14px;
       margin-top: 8px;
       border: 1px solid var(--border-subtle);
     }
     .music-player .now-playing .cover {
-      width: 50px;
-      height: 50px;
+      width: 56px;
+      height: 56px;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--red-500), var(--red-600));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
       color: #fff;
       flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .music-player .now-playing .cover .playing-indicator {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: var(--red-500);
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      color: #fff;
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+    .music-player .now-playing .cover .playing-indicator.active {
+      display: flex;
+      animation: pulse-dot 1.2s ease-in-out infinite;
     }
     .music-player .now-playing .info {
       flex: 1;
@@ -646,7 +669,7 @@
     }
     .music-player .now-playing .info .track-name {
       font-weight: 700;
-      font-size: 14px;
+      font-size: 15px;
       color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
@@ -658,10 +681,28 @@
       color: var(--text-dim);
       transition: color 0.4s ease;
     }
+    .music-player .now-playing .info .track-details {
+      display: flex;
+      gap: 12px;
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 2px;
+      transition: color 0.4s ease;
+      flex-wrap: wrap;
+    }
+    .music-player .now-playing .info .track-details span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .music-player .now-playing .info .track-details i {
+      font-size: 9px;
+      color: var(--red-400);
+    }
     .music-player .now-playing .controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .music-player .now-playing .controls button {
       background: none;
@@ -680,18 +721,18 @@
       transform: scale(1.1);
     }
     .music-player .now-playing .controls button.play-btn {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--red-500), var(--red-600));
       color: #fff;
-      font-size: 16px;
-      box-shadow: 0 0 20px var(--red-glow);
+      font-size: 18px;
+      box-shadow: 0 0 25px var(--red-glow);
       transition: all 0.3s ease;
     }
     .music-player .now-playing .controls button.play-btn:hover {
       transform: scale(1.08);
-      box-shadow: 0 0 30px var(--red-glow);
+      box-shadow: 0 0 35px var(--red-glow);
     }
     .music-player .progress-bar {
       margin-top: 12px;
@@ -721,6 +762,46 @@
       background: linear-gradient(90deg, var(--red-400), var(--red-500));
       border-radius: 4px;
       transition: width 0.1s linear;
+    }
+    .music-player .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 0 4px;
+    }
+    .music-player .volume-control i {
+      color: var(--text-dim);
+      font-size: 13px;
+      transition: color 0.4s ease;
+    }
+    .music-player .volume-control input[type="range"] {
+      flex: 1;
+      height: 3px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border-subtle);
+      border-radius: 3px;
+      outline: none;
+      transition: background 0.4s ease;
+    }
+    .music-player .volume-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--red-500);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+    .music-player .volume-control input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--red-500);
+      cursor: pointer;
+      border: none;
     }
     .music-player .playlist {
       margin-top: 14px;
@@ -776,6 +857,12 @@
     }
     .music-player .playlist-item .p-title.active {
       color: var(--red-400);
+    }
+    .music-player .playlist-item .p-artist {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-right: 8px;
+      transition: color 0.4s ease;
     }
     .music-player .playlist-item .p-duration {
       font-size: 11px;
@@ -951,9 +1038,10 @@
       .theme-toggle { width: 34px; height: 34px; font-size: 14px; }
       .social-links a { width: 38px; height: 38px; font-size: 18px; }
       .music-player .now-playing .controls button { font-size: 15px; }
-      .music-player .now-playing .controls button.play-btn { width: 34px; height: 34px; font-size: 14px; }
+      .music-player .now-playing .controls button.play-btn { width: 38px; height: 38px; font-size: 15px; }
       .music-player .player-search input { min-width: 60px; font-size: 11px; }
       .music-player .playlist-item .p-title { font-size: 12px; }
+      .music-player .now-playing .cover { width: 44px; height: 44px; font-size: 18px; }
     }
     @media (max-width: 380px) {
       .title { font-size: 22px; }
@@ -1063,12 +1151,12 @@
         </div>
       </div>
 
-      <!-- REPRODUCTOR DE MÚSICA -->
       <div class="music-player" id="musicPlayer">
         <div class="player-header">
           <div class="player-title">
             <i class="fa-solid fa-music"></i>
             <span>Reproductor</span>
+            <span style="font-size:10px;font-weight:400;color:var(--text-dim);margin-left:4px;" id="totalSongs">0 canciones</span>
           </div>
           <div class="player-search">
             <input type="text" id="searchInput" placeholder="Buscar canción..." />
@@ -1077,10 +1165,18 @@
         </div>
 
         <div class="now-playing" id="nowPlaying">
-          <div class="cover"><i class="fa-solid fa-headphones-simple"></i></div>
+          <div class="cover" id="coverArt">
+            <i class="fa-solid fa-headphones-simple"></i>
+            <div class="playing-indicator" id="playingIndicator"><i class="fa-solid fa-volume-low"></i></div>
+          </div>
           <div class="info">
             <div class="track-name" id="trackName">Sin selección</div>
             <div class="track-artist" id="trackArtist">The Legends</div>
+            <div class="track-details" id="trackDetails">
+              <span><i class="fa-regular fa-calendar"></i> <span id="trackYear">--</span></span>
+              <span><i class="fa-regular fa-clock"></i> <span id="trackDuration">--</span></span>
+              <span><i class="fa-regular fa-disc"></i> <span id="trackGenre">--</span></span>
+            </div>
           </div>
           <div class="controls">
             <button id="prevBtn"><i class="fa-solid fa-backward-step"></i></button>
@@ -1095,6 +1191,12 @@
             <div class="filled" id="progressFilled"></div>
           </div>
           <span class="time" id="totalTime">0:00</span>
+        </div>
+
+        <div class="volume-control">
+          <i class="fa-solid fa-volume-low" id="volumeIcon"></i>
+          <input type="range" id="volumeSlider" min="0" max="100" value="80" />
+          <i class="fa-solid fa-volume-high"></i>
         </div>
 
         <div class="playlist" id="playlist">
@@ -1367,14 +1469,15 @@
     setCode('');
 
     const musicData = [
-      { title: "Black Rover", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-      { title: "Harukaze", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-      { title: "Grandeur", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-      { title: "Stories", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-      { title: "Sky & Blue", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
-      { title: "Everlasting", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" },
-      { title: "Blaze", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" },
-      { title: "Rising Hope", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }
+      { title: "Haruka Mirai", artist: "Kankaku Piero", album: "Black Clover OP 1", year: "2017", genre: "J-Rock", duration: "3:32", audio: "https://tmpfiles.org/dl/w3wUWbIlp4lx/file.mpeg" },
+      { title: "PAiNT it BLACK", artist: "BiSH", album: "Black Clover OP 2", year: "2018", genre: "J-Rock", duration: "3:53", audio: "https://tmpfiles.org/dl/wjwWWlFCwNBk/file.mpeg" },
+      { title: "Black Catcher", artist: "Vickeblanka", album: "Black Clover OP 10", year: "2020", genre: "J-Rock", duration: "3:12", audio: "https://tmpfiles.org/dl/wNwwW3FwfK6z/file.mpeg" },
+      { title: "Stories", artist: "Snow Man", album: "Black Clover OP 11", year: "2020", genre: "J-Pop", duration: "3:46", audio: "https://tmpfiles.org/dl/wbwJW5Fgg3mE/file.mpeg" },
+      { title: "Everlasting Shine", artist: "TXT", album: "Black Clover OP 12", year: "2020", genre: "J-Pop", duration: "3:13", audio: "https://tmpfiles.org/dl/wbwfWZFoKHld/file.mpeg" },
+      { title: "Grandeur", artist: "Snow Man", album: "Black Clover OP 13", year: "2021", genre: "J-Pop", duration: "3:45", audio: "https://tmpfiles.org/dl/wlw4W6FcnsC4/file.mpeg" },
+      { title: "DOMA", artist: "El Domo", album: "Single", year: "2023", genre: "Phonk", duration: "2:11", audio: "https://tmpfiles.org/dl/w8w0WKFcVoVF/file.mpeg" },
+      { title: "BRAZILIAN DANÇA PHONK", artist: "6YNTHMANE x RXDXVIL", album: "Single", year: "2023", genre: "Brazilian Phonk", duration: "2:05", audio: "https://tmpfiles.org/dl/wKwNWmFtH7sX/file.mpeg" },
+      { title: "PHONKY TOWN", artist: "PlayaPhonk", album: "Single", year: "2022", genre: "Phonk", duration: "2:18", audio: "https://tmpfiles.org/dl/wiwlWHFWTcdY/file.mpeg" }
     ];
 
     let playlist = [...musicData];
@@ -1385,6 +1488,10 @@
     const playlistEl = document.getElementById('playlist');
     const trackNameEl = document.getElementById('trackName');
     const trackArtistEl = document.getElementById('trackArtist');
+    const trackYearEl = document.getElementById('trackYear');
+    const trackDurationEl = document.getElementById('trackDuration');
+    const trackGenreEl = document.getElementById('trackGenre');
+    const totalSongsEl = document.getElementById('totalSongs');
     const playBtn = document.getElementById('playBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -1394,6 +1501,10 @@
     const progressTrack = document.getElementById('progressTrack');
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeIcon = document.getElementById('volumeIcon');
+    const coverArt = document.getElementById('coverArt');
+    const playingIndicator = document.getElementById('playingIndicator');
 
     function formatTime(seconds) {
       if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
@@ -1403,7 +1514,7 @@
     }
 
     function renderPlaylist(filter = '') {
-      const filtered = filter.trim() ? playlist.filter(s => s.title.toLowerCase().includes(filter.toLowerCase())) : playlist;
+      const filtered = filter.trim() ? playlist.filter(s => s.title.toLowerCase().includes(filter.toLowerCase()) || s.artist.toLowerCase().includes(filter.toLowerCase())) : playlist;
       if (filtered.length === 0) {
         playlistEl.innerHTML = '<div class="playlist-empty">No se encontraron canciones</div>';
         return;
@@ -1416,6 +1527,7 @@
           <div class="playlist-item${active}" data-index="${globalIdx}">
             <span class="index">${(idx + 1).toString().padStart(2, '0')}</span>
             <span class="p-title${active}">${song.title}</span>
+            <span class="p-artist">${song.artist || 'Desconocido'}</span>
             <span class="p-duration">${song.duration || '--'}</span>
           </div>
         `;
@@ -1432,6 +1544,18 @@
       });
     }
 
+    function updateTrackInfo() {
+      const song = playlist[currentIndex];
+      if (song) {
+        trackNameEl.textContent = song.title || 'Sin título';
+        trackArtistEl.textContent = song.artist || 'Desconocido';
+        trackYearEl.textContent = song.year || '--';
+        trackDurationEl.textContent = song.duration || '--';
+        trackGenreEl.textContent = song.genre || '--';
+      }
+      totalSongsEl.textContent = playlist.length + ' canciones';
+    }
+
     function playSong(index) {
       if (index < 0 || index >= playlist.length) return;
       currentIndex = index;
@@ -1442,19 +1566,27 @@
       isPlaying = true;
       updateUI();
       renderPlaylist(searchInput.value);
+      updateTrackInfo();
       fetchDuration();
     }
 
     function fetchDuration() {
       if (audio.duration && isFinite(audio.duration)) {
-        playlist[currentIndex].duration = formatTime(audio.duration);
-        totalTimeEl.textContent = formatTime(audio.duration);
+        const duration = formatTime(audio.duration);
+        totalTimeEl.textContent = duration;
+        if (!playlist[currentIndex].duration || playlist[currentIndex].duration === '--') {
+          playlist[currentIndex].duration = duration;
+          renderPlaylist(searchInput.value);
+        }
       } else {
         audio.addEventListener('loadedmetadata', function onMeta() {
           if (audio.duration && isFinite(audio.duration)) {
-            playlist[currentIndex].duration = formatTime(audio.duration);
-            totalTimeEl.textContent = formatTime(audio.duration);
-            renderPlaylist(searchInput.value);
+            const duration = formatTime(audio.duration);
+            totalTimeEl.textContent = duration;
+            if (!playlist[currentIndex].duration || playlist[currentIndex].duration === '--') {
+              playlist[currentIndex].duration = duration;
+              renderPlaylist(searchInput.value);
+            }
           }
           audio.removeEventListener('loadedmetadata', onMeta);
         });
@@ -1464,10 +1596,15 @@
     function updateUI() {
       const song = playlist[currentIndex];
       if (song) {
-        trackNameEl.textContent = song.title;
-        trackArtistEl.textContent = 'The Legends';
+        trackNameEl.textContent = song.title || 'Sin título';
+        trackArtistEl.textContent = song.artist || 'Desconocido';
       }
       playBtn.innerHTML = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
+      if (isPlaying) {
+        playingIndicator.classList.add('active');
+      } else {
+        playingIndicator.classList.remove('active');
+      }
     }
 
     function togglePlay() {
@@ -1498,16 +1635,33 @@
       playSong(prev);
     }
 
+    function setVolume(value) {
+      const vol = parseFloat(value) / 100;
+      audio.volume = vol;
+      const icon = volumeIcon;
+      if (vol === 0) {
+        icon.className = 'fa-solid fa-volume-xmark';
+      } else if (vol < 0.5) {
+        icon.className = 'fa-solid fa-volume-low';
+      } else {
+        icon.className = 'fa-solid fa-volume-high';
+      }
+    }
+
     playBtn.addEventListener('click', togglePlay);
     prevBtn.addEventListener('click', prevSong);
     nextBtn.addEventListener('click', nextSong);
+
+    volumeSlider.addEventListener('input', (e) => {
+      setVolume(e.target.value);
+    });
 
     audio.addEventListener('timeupdate', () => {
       if (audio.duration && isFinite(audio.duration)) {
         const pct = (audio.currentTime / audio.duration) * 100;
         progressFilled.style.width = pct + '%';
         currentTimeEl.textContent = formatTime(audio.currentTime);
-        if (!playlist[currentIndex].duration) {
+        if (!playlist[currentIndex].duration || playlist[currentIndex].duration === '--') {
           playlist[currentIndex].duration = formatTime(audio.duration);
           totalTimeEl.textContent = formatTime(audio.duration);
           renderPlaylist(searchInput.value);
@@ -1540,13 +1694,15 @@
         if (!response.ok) throw new Error('Error al cargar música');
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
-          playlist = data.map(item => ({ ...item, duration: item.duration || '--' }));
+          playlist = data;
           if (playlist.length > 0) {
+            updateTrackInfo();
             playSong(0);
           }
         } else {
           playlist = [...musicData];
           if (playlist.length > 0) {
+            updateTrackInfo();
             playSong(0);
           }
         }
@@ -1554,6 +1710,7 @@
         console.warn('Usando lista local de respaldo:', error);
         playlist = [...musicData];
         if (playlist.length > 0) {
+          updateTrackInfo();
           playSong(0);
         }
       }
@@ -1561,7 +1718,7 @@
     }
 
     loadMusicFromServer();
- document.addEventListener('themeChanged', () => {
+    document.addEventListener('themeChanged', () => {
       renderPlaylist(searchInput.value);
     });
 
