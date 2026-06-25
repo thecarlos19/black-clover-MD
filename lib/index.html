@@ -874,7 +874,7 @@
         if (!response.ok) throw new Error('Health check failed');
         const data = await response.json();
 
-        document.getElementById('healthStatus').textContent = data.status === 'online' ? '🟢 Online' : '🔴 Offline';
+        document.getElementById('healthStatus').textContent = data.status === 'online' ? 'Online' : 'Offline';
         document.getElementById('healthStatus').className = 'value ' + (data.status === 'online' ? 'online' : 'offline');
         document.getElementById('healthBots').textContent = data.bots ?? 0;
         document.getElementById('healthSessions').textContent = data.sessions ?? 0;
