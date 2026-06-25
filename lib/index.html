@@ -1385,7 +1385,7 @@
     </footer>
   </div>
 
-  <div class="floating-player" id="floatingPlayer">
+  <div class="floating-player minimized" id="floatingPlayer">
     <div class="player-expanded" id="playerExpanded">
       <div class="music-player" id="musicPlayer">
         <div class="player-header">
@@ -1444,9 +1444,9 @@
 
     <div class="player-minimized" id="playerMinimized">
       <div class="mini-circle" id="miniCircle">
-        <div class="mini-pulse" id="miniPulse"></div>
+        <div class="mini-pulse paused" id="miniPulse"></div>
         <div class="mini-spin stopped" id="miniSpin"></div>
-        <i class="fa-solid fa-music mini-icon" id="miniIcon"></i>
+        <i class="fa-solid fa-pause mini-icon" id="miniIcon"></i>
       </div>
     </div>
   </div>
@@ -1661,7 +1661,7 @@
     let currentIndex = 0;
     let isPlaying = false;
     let audio = new Audio();
-    let isMinimized = false;
+    let isMinimized = true;
 
     const floatingPlayer = document.getElementById('floatingPlayer');
     const playerExpanded = document.getElementById('playerExpanded');
@@ -1690,26 +1690,26 @@
     const searchBtn = document.getElementById('searchBtn');
     const volumeSlider = document.getElementById('volumeSlider');
     const volumeIcon = document.getElementById('volumeIcon');
-    const coverArt = document.getElementById('coverArt');
     const playingIndicator = document.getElementById('playingIndicator');
+
+    floatingPlayer.classList.add('minimized');
 
     function toggleMinimize() {
       isMinimized = !isMinimized;
       floatingPlayer.classList.toggle('minimized', isMinimized);
-      if (isMinimized) {
-        updateMiniIcon();
+      if (!isMinimized) {
+        updateUI();
       }
     }
 
     function updateMiniIcon() {
-      const icon = miniIcon;
       if (isPlaying) {
-        icon.className = 'fa-solid fa-play mini-icon';
+        miniIcon.className = 'fa-solid fa-play mini-icon';
         miniSpin.className = 'mini-spin';
         miniPulse.className = 'mini-pulse';
         miniCircle.style.borderColor = 'rgba(255,255,255,0.2)';
       } else {
-        icon.className = 'fa-solid fa-pause mini-icon';
+        miniIcon.className = 'fa-solid fa-pause mini-icon';
         miniSpin.className = 'mini-spin stopped';
         miniPulse.className = 'mini-pulse paused';
         miniCircle.style.borderColor = 'rgba(255,255,255,0.05)';
@@ -1775,12 +1775,23 @@
       const song = playlist[currentIndex];
       audio.src = song.audio;
       audio.load();
-      audio.play().catch(err => console.warn('Error al reproducir:', err));
-      isPlaying = true;
-      updateUI();
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isPlaying = true;
+          updateUI();
+          updateMiniIcon();
+        }).catch(err => {
+          console.warn('Error al reproducir automáticamente:', err);
+          isPlaying = false;
+          updateUI();
+          updateMiniIcon();
+        });
+      }
+      
       renderPlaylist(searchInput.value);
       updateTrackInfo();
-      updateMiniIcon();
       fetchDuration();
     }
 
@@ -1816,16 +1827,8 @@
       playBtn.innerHTML = isPlaying ? '<i class="fa-solid fa-pause"></i>' : '<i class="fa-solid fa-play"></i>';
       if (isPlaying) {
         playingIndicator.classList.add('active');
-        miniSpin.className = 'mini-spin';
-        miniPulse.className = 'mini-pulse';
-        miniCircle.style.borderColor = 'rgba(255,255,255,0.2)';
-        miniIcon.className = 'fa-solid fa-play mini-icon';
       } else {
         playingIndicator.classList.remove('active');
-        miniSpin.className = 'mini-spin stopped';
-        miniPulse.className = 'mini-pulse paused';
-        miniCircle.style.borderColor = 'rgba(255,255,255,0.05)';
-        miniIcon.className = 'fa-solid fa-pause mini-icon';
       }
     }
 
@@ -1942,9 +1945,6 @@
     }
 
     loadMusicFromServer();
-    document.addEventListener('themeChanged', () => {
-      renderPlaylist(searchInput.value);
-    });
 
     setTimeout(() => {
       if (playlist.length > 0 && !audio.src) {
