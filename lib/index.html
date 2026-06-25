@@ -561,7 +561,7 @@
             type="tel"
             inputmode="tel"
             autocomplete="off"
-            placeholder="Ej: +52 828 772 7282"
+            placeholder="Ej: 5218287727282"
           />
         </div>
         <button class="btn-primary" id="generateBtn">
@@ -673,11 +673,16 @@
       }
 
       function setCode(code = '') {
-        if (code && code.trim()) {
+        if (code && code.trim() && code !== '✓ Conectado') {
           codeDisplay.textContent = code.trim();
           codeDisplay.className = 'code-display';
           codeLabel.textContent = 'Código generado';
           copyBtn.disabled = false;
+        } else if (code === '✓ Conectado') {
+          codeDisplay.textContent = code;
+          codeDisplay.className = 'code-display';
+          codeLabel.textContent = 'Conectado';
+          copyBtn.disabled = true;
         } else {
           codeDisplay.textContent = '--';
           codeDisplay.className = 'code-display empty';
@@ -698,12 +703,6 @@
 
       phoneInput.addEventListener('input', function() {
         let raw = this.value.replace(/\D/g, '');
-        if (raw.startsWith('52') && raw.length > 2 && !raw.startsWith('521')) {
-          raw = '521' + raw.slice(2);
-        }
-        if (raw.startsWith('54') && raw.length > 2 && !raw.startsWith('549')) {
-          raw = '549' + raw.slice(2);
-        }
         this.value = raw;
         const normalized = normalizePhoneForPairing(raw);
         if (raw.length > 0 && normalized) {
@@ -742,22 +741,29 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
+
+          if (!response.ok) {
+            const text = await response.text();
+            throw new Error('Error del servidor: ' + response.status);
+          }
+
           const data = await response.json();
 
-          if (data.connected) {
-            setStatus('success', 'Bot ya está conectado', 'Número: ' + data.number);
+          if (data.ok && data.connected) {
+            setStatus('success', 'Bot conectado', 'Número: ' + data.number);
             setCode('✓ Conectado');
           } else if (data.ok && data.code) {
             setStatus('success', 'Código generado', 'Usa este código en WhatsApp');
             setCode(data.code);
-          } else if (data.error) {
-            setStatus('error', data.error || 'Error al generar', 'Intenta nuevamente');
+          } else if (data.message) {
+            setStatus('error', data.message, 'Intenta nuevamente');
             setCode('');
           } else {
-            setStatus('error', data.message || 'Error desconocido', 'Revisa tu conexión');
+            setStatus('error', 'Error desconocido', 'Revisa tu conexión');
             setCode('');
           }
         } catch (error) {
+          console.error('Error:', error);
           setStatus('error', 'Error de conexión', error.message || 'Revisa tu internet');
           setCode('');
         } finally {
