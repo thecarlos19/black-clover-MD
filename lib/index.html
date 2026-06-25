@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Black Clover | The Legends</title>
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <meta property="og:image" content="/favicon.ico" />
+  <meta property="og:title" content="Black Clover | The Legends" />
+  <meta property="og:description" content="Powered By The Legends." />
+  <meta property="og:type" content="website" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-deep: #030109;
+      --bg-dark: #0a0618;
+      --bg-card: #0f0a22;
+      --bg-card-hover: #181235;
+      --text-light: #f0ecff;
+      --text-soft: #b8aed6;
+      --text-dim: #6b5f8e;
+      --primary: #6d28d9;
+      --primary-glow: #8b5cf6;
+      --secondary: #f472b6;
+      --accent: #a78bfa;
+      --border-glow: rgba(139, 92, 246, 0.12);
+      --shadow-glow: rgba(109, 40, 217, 0.25);
+      --success: #34d399;
+      --error: #f87171;
+      --radius: 24px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      background-image: 
+        radial-gradient(ellipse at 10% 20%, rgba(109, 40, 217, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 80%, rgba(244, 114, 182, 0.06) 0%, transparent 50%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      backdrop-filter: blur(10px);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 0 20px var(--shadow-glow);
+    }
+
+    .header-name {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.3px;
+    }
+
+    .header-name .highlight {
+      background: linear-gradient(135deg, var(--primary-glow), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(52, 211, 153, 0.08);
+      border-radius: 20px;
+      border: 1px solid rgba(52, 211, 153, 0.12);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--success);
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* ===== MAIN CARD ===== */
+    .main-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 30px 26px;
+      border: 1px solid var(--border-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(109, 40, 217, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title .highlight {
+      background: linear-gradient(135deg, var(--primary-glow), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      line-height: 1.5;
+    }
+
+    /* ===== FORM ===== */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-label i {
+      color: var(--primary-glow);
+      font-size: 14px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .input-wrapper:focus-within i {
+      color: var(--primary-glow);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 15px 16px 15px 46px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-sm);
+      color: var(--text-light);
+      font-size: 16px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .input-field::placeholder {
+      color: var(--text-dim);
+      font-weight: 400;
+      font-size: 14px;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary-glow);
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
+      background: var(--bg-card-hover);
+    }
+
+    .input-field:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-glow));
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 20px var(--shadow-glow);
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(109, 40, 217, 0.4);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ===== STATUS ===== */
+    .status-panel {
+      margin-top: 20px;
+      padding: 16px 18px;
+      background: var(--bg-deep);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .status-icon {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 4px;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .status-icon.idle {
+      background: var(--text-dim);
+    }
+
+    .status-icon.loading {
+      background: var(--primary-glow);
+      animation: pulse-dot 0.8s ease-in-out infinite;
+    }
+
+    .status-icon.success {
+      background: var(--success);
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.3);
+    }
+
+    .status-icon.error {
+      background: var(--error);
+      box-shadow: 0 0 16px rgba(248, 113, 113, 0.3);
+    }
+
+    .status-content {
+      flex: 1;
+    }
+
+    .status-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+
+    .status-message {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-soft);
+    }
+
+    .status-message.success {
+      color: var(--success);
+    }
+
+    .status-message.error {
+      color: var(--error);
+    }
+
+    .status-hint {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ===== CODE DISPLAY ===== */
+    .code-section {
+      margin-top: 16px;
+      padding: 16px 18px;
+      background: var(--bg-deep);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      position: relative;
+      z-index: 1;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .code-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .code-label i {
+      color: var(--primary-glow);
+    }
+
+    .btn-copy {
+      padding: 6px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-sm);
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--primary-glow);
+      color: var(--text-light);
+    }
+
+    .btn-copy:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .code-display {
+      margin-top: 12px;
+      padding: 16px;
+      background: var(--bg-dark);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glow);
+      font-family: 'Inter', monospace;
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 8px;
+      color: var(--primary-glow);
+      text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      word-break: break-all;
+    }
+
+    .code-display.empty {
+      color: var(--text-dim);
+      font-weight: 400;
+      font-size: 14px;
+      letter-spacing: 0;
+      text-shadow: none;
+    }
+
+    /* ===== STEPS ===== */
+    .steps-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 24px 26px;
+      border: 1px solid var(--border-glow);
+    }
+
+    .steps-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-soft);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .steps-title i {
+      color: var(--primary-glow);
+    }
+
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary-glow);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-text strong {
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      text-align: center;
+      padding: 12px 0 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.3px;
+    }
+
+    .footer span {
+      color: var(--primary-glow);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .main-card {
+        padding: 24px 18px;
+      }
+      
+      .card-title {
+        font-size: 22px;
+      }
+      
+      .header {
+        padding: 12px 16px;
+      }
+      
+      .header-name {
+        font-size: 13px;
+      }
+      
+      .header-badge {
+        font-size: 10px;
+        padding: 4px 10px;
+      }
+      
+      .code-display {
+        font-size: 22px;
+        letter-spacing: 6px;
+        padding: 14px;
+      }
+      
+      .steps-card {
+        padding: 20px 18px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .card-title {
+        font-size: 19px;
+      }
+      
+      .header-logo {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+      }
+      
+      .input-field {
+        font-size: 14px;
+        padding: 13px 14px 13px 40px;
+      }
+      
+      .code-display {
+        font-size: 18px;
+        letter-spacing: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="header-logo">BC</div>
+        <div class="header-name">
+          Black <span class="highlight">Clover</span>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        Online
+      </div>
+    </header>
+
+    <!-- MAIN CARD -->
+    <main class="main-card">
+      <h1 class="card-title">
+        The <span class="highlight">Legends</span>
+      </h1>
+      <p class="card-subtitle">
+        Conecta tu número y obtén tu código de vinculación para convertirte en un Sub-Bot.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label" for="phoneInput">
+          <i class="fa-solid fa-phone"></i>
+          Número de WhatsApp
+        </label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-hashtag"></i>
+          <input
+            id="phoneInput"
+            class="input-field"
+            type="tel"
+            inputmode="tel"
+            autocomplete="off"
+            placeholder="Ej: 521234567890"
+          />
+        </div>
+
+        <button class="btn-primary" id="generateBtn">
+          <i class="fa-solid fa-link"></i>
+          <span>Generar código</span>
+        </button>
+      </div>
+
+      <!-- STATUS -->
+      <div class="status-panel">
+        <span class="status-icon idle" id="statusIcon"></span>
+        <div class="status-content">
+          <div class="status-label">Estado</div>
+          <div class="status-message" id="statusMessage">Esperando número...</div>
+          <div class="status-hint" id="statusHint">Ingresa tu número para generar el código</div>
+        </div>
+      </div>
+
+      <!-- CODE DISPLAY -->
+      <div class="code-section">
+        <div class="code-header">
+          <div class="code-label">
+            <i class="fa-solid fa-terminal"></i>
+            <span id="codeLabel">Código de vinculación</span>
+          </div>
+          <button class="btn-copy" id="copyBtn" disabled>
+            <i class="fa-regular fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+        <div class="code-display empty" id="codeDisplay">--</div>
+      </div>
+    </main>
+
+    <!-- STEPS -->
+    <section class="steps-card">
+      <div class="steps-title">
+        <i class="fa-solid fa-compass"></i>
+        Cómo vincular
+      </div>
+      <ul class="steps-list">
+        <li>
+          <span class="step-number">1</span>
+          <span class="step-text">
+            Ingresa tu número de WhatsApp con código de país.
+          </span>
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <span class="step-text">
+            Presiona <strong>Generar código</strong> y espera la respuesta.
+          </span>
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <span class="step-text">
+            Copia el código y ve a <strong>WhatsApp → Dispositivos vinculados → Vincular con número de teléfono</strong>.
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      &copy; 2022-2026 <span>The Legends</span> | Todos los derechos reservados.
+    </div>
+  </div>
+
+  <script>
+    const phoneInput = document.getElementById('phoneInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusHint = document.getElementById('statusHint');
+    const codeDisplay = document.getElementById('codeDisplay');
+    const codeLabel = document.getElementById('codeLabel');
+    const copyBtn = document.getElementById('copyBtn');
+
+    let isGenerating = false;
+
+    const setStatus = (type, message, hint = '') => {
+      statusIcon.className = 'status-icon ' + type;
+      statusMessage.className = 'status-message' + (type === 'success' ? ' success' : '') + (type === 'error' ? ' error' : '');
+      statusMessage.textContent = message;
+      statusHint.textContent = hint || '';
+    };
+
+    const setCode = (code = '') => {
+      if (code && code.trim()) {
+        codeDisplay.textContent = code.trim();
+        codeDisplay.className = 'code-display';
+        codeLabel.textContent = 'Código generado';
+        copyBtn.disabled = false;
+      } else {
+        codeDisplay.textContent = '--';
+        codeDisplay.className = 'code-display empty';
+        codeLabel.textContent = 'Código de vinculación';
+        copyBtn.disabled = true;
+      }
+    };
+
+    const formatPhoneNumber = (value) => {
+      let cleaned = (value || '').replace(/\D/g, '');
+      if (!cleaned) return '';
+      
+      if (cleaned.startsWith('52') && cleaned.length === 12 && !cleaned.startsWith('521')) {
+        cleaned = '521' + cleaned.slice(2);
+      }
+      
+      if (cleaned.length < 10) return '';
+      
+      return cleaned;
+    };
+
+    const requestPairingCode = async (phoneNumber) => {
+      if (isGenerating) return;
+      
+      const formatted = formatPhoneNumber(phoneNumber);
+      if (!formatted) {
+        setStatus('error', 'Número inválido', 'Asegúrate de ingresar un número válido con código de país');
+        setCode('');
+        return;
+      }
+
+      isGenerating = true;
+      generateBtn.disabled = true;
+      generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Generando...</span>';
+      setStatus('loading', 'Generando código...', 'Espera un momento');
+
+      try {
+        const response = await fetch('/pairing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: formatted, type: 'code' })
+        });
+
+        const data = await response.json();
+
+        if (data.ok && data.code) {
+          setStatus('success', 'Código generado correctamente', 'Usa este código en WhatsApp');
+          setCode(data.code);
+        } else if (data.connected) {
+          setStatus('success', 'Bot ya está conectado', 'Número: ' + data.number);
+          setCode('Ya conectado');
+        } else {
+          setStatus('error', data.message || 'Error al generar el código', 'Intenta nuevamente');
+          setCode('');
+        }
+      } catch (error) {
+        setStatus('error', 'Error de conexión', error.message || 'Revisa tu conexión a internet');
+        setCode('');
+      } finally {
+        isGenerating = false;
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fa-solid fa-link"></i><span>Generar código</span>';
+      }
+    };
+
+    generateBtn.addEventListener('click', () => {
+      requestPairingCode(phoneInput.value);
+    });
+
+    phoneInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        generateBtn.click();
+      }
+    });
+
+    phoneInput.addEventListener('input', () => {
+      const formatted = formatPhoneNumber(phoneInput.value);
+      if (formatted) {
+        setStatus('idle', 'Número válido', 'Presiona "Generar código" para continuar');
+      } else if (phoneInput.value.trim()) {
+        setStatus('error', 'Número incompleto', 'Verifica el formato del número');
+      } else {
+        setStatus('idle', 'Esperando número...', 'Ingresa tu número para generar el código');
+      }
+      setCode('');
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = codeDisplay.textContent;
+      if (!text || text === '--' || text === 'Ya conectado') return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>Copiado</span>';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i><span>Copiar</span>';
+        }, 2000);
+      } catch (err) {
+        console.error('Error al copiar:', err);
+      }
+    });
+
+    setStatus('idle', 'Esperando número...', 'Ingresa tu número para generar el código');
+    setCode('');
+  </script>
+</body>
+</html>
