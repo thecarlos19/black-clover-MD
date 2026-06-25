@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "titulo": "Haruka Mirai",
+    "artista": "Kankaku Piero",
+    "album": "Black Clover OP 1",
+    "año": 2017,
+    "genero": "J-Rock",
+    "duracion": "3:32",
+    "url": "https://tmpfiles.org/dl/w3wUWbIlp4lx/file.mpeg"
+  },
+  {
+    "id": 2,
+    "titulo": "PAiNT it BLACK",
+    "artista": "BiSH",
+    "album": "Black Clover OP 2",
+    "año": 2018,
+    "genero": "J-Rock",
+    "duracion": "3:53",
+    "url": "https://tmpfiles.org/dl/wjwWWlFCwNBk/file.mpeg"
+  },
+  {
+    "id": 3,
+    "titulo": "Black Catcher",
+    "artista": "Vickeblanka",
+    "album": "Black Clover OP 10",
+    "año": 2020,
+    "genero": "J-Rock",
+    "duracion": "3:12",
+    "url": "https://tmpfiles.org/dl/wNwwW3FwfK6z/file.mpeg"
+  },
+  {
+    "id": 4,
+    "titulo": "Stories",
+    "artista": "Snow Man",
+    "album": "Black Clover OP 11",
+    "año": 2020,
+    "genero": "J-Pop",
+    "duracion": "3:46",
+    "url": "https://tmpfiles.org/dl/wbwJW5Fgg3mE/file.mpeg"
+  },
+  {
+    "id": 5,
+    "titulo": "Everlasting Shine",
+    "artista": "TXT",
+    "album": "Black Clover OP 12",
+    "año": 2020,
+    "genero": "J-Pop",
+    "duracion": "3:13",
+    "url": "https://tmpfiles.org/dl/wbwfWZFoKHld/file.mpeg"
+  },
+  {
+    "id": 6,
+    "titulo": "Grandeur",
+    "artista": "Snow Man",
+    "album": "Black Clover OP 13",
+    "año": 2021,
+    "genero": "J-Pop",
+    "duracion": "3:45",
+    "url": "https://tmpfiles.org/dl/wlw4W6FcnsC4/file.mpeg"
+  },
+  {
+    "id": 7,
+    "titulo": "DOMA",
+    "artista": "El Domo",
+    "album": "Single",
+    "año": 2023,
+    "genero": "Phonk",
+    "duracion": "2:11",
+    "url": "https://tmpfiles.org/dl/w8w0WKFcVoVF/file.mpeg"
+  },
+  {
+    "id": 8,
+    "titulo": "BRAZILIAN DANÇA PHONK",
+    "artista": "6YNTHMANE x RXDXVIL",
+    "album": "Single",
+    "año": 2023,
+    "genero": "Brazilian Phonk",
+    "duracion": "2:05",
+    "url": "https://tmpfiles.org/dl/wKwNWmFtH7sX/file.mpeg"
+  },
+  {
+    "id": 9,
+    "titulo": "PHONKY TOWN",
+    "artista": "PlayaPhonk",
+    "album": "Single",
+    "año": 2022,
+    "genero": "Phonk",
+    "duracion": "2:18",
+    "url": "https://tmpfiles.org/dl/wiwlWHFWTcdY/file.mpeg"
+  }
+]
