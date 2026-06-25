@@ -15,31 +15,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
     :root {
-      --bg-primary: #0a0515;
-      --bg-secondary: #110722;
-      --bg-card: #180d2b;
-      --bg-card-hover: #24163b;
-      --bg-input: #0f0720;
-      --text-primary: #f0ecff;
-      --text-secondary: #b8a7e6;
-      --text-dim: #6d5399;
-      --pink-400: #f472b6;
-      --pink-500: #ec4899;
-      --pink-600: #db2777;
-      --pink-glow: rgba(236, 72, 153, 0.18);
-      --pink-glow-strong: rgba(236, 72, 153, 0.35);
-      --blue-400: #60a5fa;
-      --blue-500: #3b82f6;
-      --blue-600: #2563eb;
-      --blue-glow: rgba(59, 130, 246, 0.10);
+      --bg-primary: #0a0000;
+      --bg-secondary: #150303;
+      --bg-card: #1a0505;
+      --bg-card-hover: #2a0a0a;
+      --bg-input: #0f0202;
+      --text-primary: #f5ecec;
+      --text-secondary: #d4b0b0;
+      --text-dim: #8a5a5a;
+      --red-400: #f87171;
+      --red-500: #ef4444;
+      --red-600: #dc2626;
+      --red-glow: rgba(239, 68, 68, 0.18);
+      --red-glow-strong: rgba(239, 68, 68, 0.35);
       --success: #6ee7b7;
       --error: #fca5a5;
-      --border-subtle: rgba(180, 130, 255, 0.08);
-      --border-glow: rgba(180, 130, 255, 0.15);
+      --border-subtle: rgba(180, 60, 60, 0.08);
+      --border-glow: rgba(180, 60, 60, 0.15);
       --radius: 24px;
       --radius-sm: 14px;
       --radius-xl: 32px;
-      --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.7);
+      --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.8);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -52,9 +48,9 @@
       justify-content: center;
       padding: 20px 14px;
       background-image: 
-        radial-gradient(ellipse at 20% 10%, rgba(236, 72, 153, 0.07) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 90%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(180, 130, 255, 0.02) 0%, transparent 70%);
+        radial-gradient(ellipse at 20% 10%, rgba(239, 68, 68, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(239, 68, 68, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(180, 60, 60, 0.02) 0%, transparent 70%);
     }
     .container {
       width: 100%;
@@ -83,14 +79,14 @@
       width: 46px;
       height: 46px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--pink-500), var(--blue-500));
+      background: linear-gradient(135deg, var(--red-500), var(--red-600));
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
       font-weight: 900;
       color: #fff;
-      box-shadow: 0 0 40px var(--pink-glow-strong);
+      box-shadow: 0 0 40px var(--red-glow-strong);
     }
     .header-name {
       font-weight: 800;
@@ -98,7 +94,7 @@
       letter-spacing: -0.2px;
     }
     .header-name .highlight {
-      background: linear-gradient(135deg, var(--pink-400), var(--blue-400));
+      background: linear-gradient(135deg, var(--red-400), var(--red-500));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -142,7 +138,7 @@
       width: 340px;
       height: 340px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(236, 72, 153, 0.04) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.04) 0%, transparent 70%);
       pointer-events: none;
     }
     .main-card::after {
@@ -153,7 +149,7 @@
       width: 280px;
       height: 280px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(180, 60, 60, 0.03) 0%, transparent 70%);
       pointer-events: none;
     }
     .card-badge {
@@ -161,12 +157,12 @@
       align-items: center;
       gap: 8px;
       padding: 6px 18px;
-      background: rgba(236, 72, 153, 0.10);
+      background: rgba(239, 68, 68, 0.10);
       border-radius: 40px;
-      border: 1px solid rgba(236, 72, 153, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.15);
       font-size: 11px;
       font-weight: 700;
-      color: var(--pink-400);
+      color: var(--red-400);
       margin-bottom: 16px;
       position: relative;
       z-index: 1;
@@ -184,7 +180,7 @@
       z-index: 1;
     }
     .card-title .highlight {
-      background: linear-gradient(135deg, var(--pink-400), var(--blue-400));
+      background: linear-gradient(135deg, var(--red-400), var(--red-500));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -195,46 +191,6 @@
       position: relative;
       z-index: 1;
       line-height: 1.6;
-    }
-    .mode-selector {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      position: relative;
-      z-index: 1;
-      background: var(--bg-input);
-      padding: 6px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-    }
-    .mode-btn {
-      flex: 1;
-      padding: 12px 8px;
-      border: none;
-      background: transparent;
-      color: var(--text-dim);
-      font-weight: 600;
-      font-size: 13px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .mode-btn i {
-      font-size: 14px;
-    }
-    .mode-btn.active {
-      background: var(--bg-card-hover);
-      color: var(--text-primary);
-      box-shadow: 0 0 30px var(--pink-glow);
-    }
-    .mode-btn:not(.active):hover {
-      color: var(--text-secondary);
-      background: rgba(255,255,255,0.02);
     }
     .form-group {
       display: flex;
@@ -254,7 +210,7 @@
       gap: 8px;
     }
     .form-label i {
-      color: var(--pink-400);
+      color: var(--red-400);
       font-size: 14px;
     }
     .input-wrapper {
@@ -270,7 +226,7 @@
       transition: all 0.3s ease;
     }
     .input-wrapper:focus-within i {
-      color: var(--pink-400);
+      color: var(--red-400);
     }
     .input-field {
       width: 100%;
@@ -291,8 +247,8 @@
       font-size: 14px;
     }
     .input-field:focus {
-      border-color: var(--pink-500);
-      box-shadow: 0 0 0 5px rgba(236, 72, 153, 0.08);
+      border-color: var(--red-500);
+      box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.08);
       background: var(--bg-card-hover);
     }
     .input-field:disabled {
@@ -302,7 +258,7 @@
     .btn-primary {
       width: 100%;
       padding: 18px;
-      background: linear-gradient(135deg, var(--pink-500), var(--blue-600));
+      background: linear-gradient(135deg, var(--red-500), var(--red-600));
       border: none;
       border-radius: var(--radius-sm);
       color: #fff;
@@ -315,13 +271,13 @@
       justify-content: center;
       gap: 10px;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 6px 30px var(--pink-glow-strong);
+      box-shadow: 0 6px 30px var(--red-glow-strong);
       position: relative;
       z-index: 1;
     }
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 12px 50px rgba(236, 72, 153, 0.35);
+      box-shadow: 0 12px 50px rgba(239, 68, 68, 0.35);
     }
     .btn-primary:active:not(:disabled) {
       transform: translateY(0);
@@ -353,7 +309,7 @@
       transition: all 0.3s ease;
     }
     .status-icon.idle { background: var(--text-dim); }
-    .status-icon.loading { background: var(--pink-400); animation: pulse-dot 0.6s ease-in-out infinite; }
+    .status-icon.loading { background: var(--red-400); animation: pulse-dot 0.6s ease-in-out infinite; }
     .status-icon.success { background: var(--success); box-shadow: 0 0 25px rgba(110, 231, 183, 0.3); }
     .status-icon.error { background: var(--error); box-shadow: 0 0 25px rgba(252, 165, 165, 0.3); }
     .status-content { flex: 1; }
@@ -401,7 +357,7 @@
       color: var(--text-secondary);
     }
     .code-label i {
-      color: var(--pink-400);
+      color: var(--red-400);
     }
     .btn-copy {
       padding: 6px 18px;
@@ -420,7 +376,7 @@
     }
     .btn-copy:hover:not(:disabled) {
       background: var(--bg-card-hover);
-      border-color: var(--pink-400);
+      border-color: var(--red-400);
       color: var(--text-primary);
     }
     .btn-copy:disabled {
@@ -438,8 +394,8 @@
       font-weight: 800;
       text-align: center;
       letter-spacing: 12px;
-      color: var(--pink-400);
-      text-shadow: 0 0 50px rgba(236, 72, 153, 0.25);
+      color: var(--red-400);
+      text-shadow: 0 0 50px rgba(239, 68, 68, 0.25);
       min-height: 72px;
       display: flex;
       align-items: center;
@@ -453,53 +409,6 @@
       font-size: 14px;
       letter-spacing: 0;
       text-shadow: none;
-    }
-    .qr-container {
-      margin-top: 18px;
-      display: none;
-      justify-content: center;
-      position: relative;
-      z-index: 1;
-    }
-    .qr-container.active {
-      display: flex;
-    }
-    .qr-box {
-      background: var(--bg-input);
-      padding: 24px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-glow);
-      text-align: center;
-      width: 100%;
-      max-width: 280px;
-    }
-    .qr-box img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      background: #fff;
-      padding: 8px;
-      display: none;
-    }
-    .qr-box img.active {
-      display: block;
-    }
-    .qr-box .qr-placeholder {
-      padding: 30px 0;
-      color: var(--text-dim);
-      font-size: 14px;
-    }
-    .qr-box .qr-placeholder i {
-      font-size: 40px;
-      display: block;
-      margin-bottom: 10px;
-      opacity: 0.3;
-    }
-    .qr-box .qr-hint {
-      margin-top: 12px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 500;
     }
     .faq-card {
       background: var(--bg-card);
@@ -518,7 +427,7 @@
       gap: 10px;
     }
     .faq-title i {
-      color: var(--pink-400);
+      color: var(--red-400);
       font-size: 17px;
     }
     .faq-item {
@@ -540,7 +449,7 @@
       user-select: none;
     }
     .faq-question i {
-      color: var(--pink-400);
+      color: var(--red-400);
       font-size: 14px;
       width: 20px;
       text-align: center;
@@ -572,13 +481,13 @@
       color: var(--text-primary);
     }
     .faq-answer a {
-      color: var(--pink-400);
+      color: var(--red-400);
       text-decoration: none;
       border-bottom: 1px solid transparent;
       transition: border-color 0.2s ease;
     }
     .faq-answer a:hover {
-      border-color: var(--pink-400);
+      border-color: var(--red-400);
     }
     .footer {
       text-align: center;
@@ -589,7 +498,7 @@
       letter-spacing: 0.4px;
     }
     .footer span {
-      background: linear-gradient(135deg, var(--pink-400), var(--blue-400));
+      background: linear-gradient(135deg, var(--red-400), var(--red-500));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -602,7 +511,6 @@
       .header-logo { width: 40px; height: 40px; font-size: 14px; }
       .code-display { font-size: 26px; letter-spacing: 8px; padding: 16px; min-height: 60px; }
       .faq-card { padding: 20px 16px; border-radius: var(--radius-sm); }
-      .mode-btn { font-size: 12px; padding: 10px 6px; }
     }
     @media (max-width: 380px) {
       .card-title { font-size: 22px; }
@@ -637,19 +545,10 @@
         Conecta tu <span class="highlight">Sub-Bot</span>
       </h1>
       <p class="card-subtitle">
-        The Legends &amp; Stellar · Elige el modo y genera tu enlace.
+        The Legends &amp; Stellar · Genera tu código de 8 dígitos.
       </p>
 
-      <div class="mode-selector" id="modeSelector">
-        <button class="mode-btn active" data-mode="code" id="modeCode">
-          <i class="fa-solid fa-hashtag"></i> Código 8 dígitos
-        </button>
-        <button class="mode-btn" data-mode="qr" id="modeQr">
-          <i class="fa-solid fa-qrcode"></i> QR
-        </button>
-      </div>
-
-      <div class="form-group" id="phoneGroup">
+      <div class="form-group">
         <label class="form-label" for="phoneInput">
           <i class="fa-solid fa-phone"></i>
           Número de WhatsApp
@@ -667,7 +566,7 @@
         </div>
         <button class="btn-primary" id="generateBtn">
           <i class="fa-solid fa-link"></i>
-          <span>Generar enlace</span>
+          <span>Generar código</span>
         </button>
       </div>
 
@@ -676,11 +575,11 @@
         <div class="status-content">
           <div class="status-label">Estado</div>
           <div class="status-message" id="statusMessage">Esperando número...</div>
-          <div class="status-hint" id="statusHint">Ingresa tu número y elige el modo</div>
+          <div class="status-hint" id="statusHint">Ingresa tu número para generar el código</div>
         </div>
       </div>
 
-      <div class="code-section" id="codeSection">
+      <div class="code-section">
         <div class="code-header">
           <div class="code-label">
             <i class="fa-solid fa-terminal"></i>
@@ -692,17 +591,6 @@
           </button>
         </div>
         <div class="code-display empty" id="codeDisplay">--</div>
-      </div>
-
-      <div class="qr-container" id="qrContainer">
-        <div class="qr-box">
-          <img id="qrImage" src="" alt="QR" />
-          <div class="qr-placeholder" id="qrPlaceholder">
-            <i class="fa-solid fa-qrcode"></i>
-            Escanea para conectar
-          </div>
-          <div class="qr-hint" id="qrHint">El QR aparecerá aquí</div>
-        </div>
       </div>
     </main>
 
@@ -748,7 +636,7 @@
           <i class="fa-solid fa-chevron-down"></i>
         </div>
         <div class="faq-answer">
-          Absolutamente. Solo se usa para generar el enlace de vinculación, no almacenamos datos personales. Seguridad ante todo.
+          Absolutamente. Solo se usa para generar el código de vinculación, no almacenamos datos personales. Seguridad ante todo.
         </div>
       </div>
     </section>
@@ -768,15 +656,7 @@
       const codeDisplay = document.getElementById('codeDisplay');
       const codeLabel = document.getElementById('codeLabel');
       const copyBtn = document.getElementById('copyBtn');
-      const qrContainer = document.getElementById('qrContainer');
-      const qrImage = document.getElementById('qrImage');
-      const qrPlaceholder = document.getElementById('qrPlaceholder');
-      const qrHint = document.getElementById('qrHint');
-      const modeCode = document.getElementById('modeCode');
-      const modeQr = document.getElementById('modeQr');
-      const codeSection = document.getElementById('codeSection');
 
-      let currentMode = 'code';
       let isGenerating = false;
 
       function toggleFaq(el) {
@@ -806,20 +686,6 @@
         }
       }
 
-      function setQR(qrData) {
-        if (qrData && qrData.startsWith('data:image')) {
-          qrImage.src = qrData;
-          qrImage.className = 'active';
-          qrPlaceholder.style.display = 'none';
-          qrHint.textContent = 'Escanea este QR con WhatsApp';
-        } else {
-          qrImage.className = '';
-          qrImage.src = '';
-          qrPlaceholder.style.display = 'block';
-          qrHint.textContent = 'El QR aparecerá aquí';
-        }
-      }
-
       function normalizePhoneForPairing(raw) {
         let s = String(raw).replace(/\D/g, '');
         if (!s) return '';
@@ -841,43 +707,16 @@
         this.value = raw;
         const normalized = normalizePhoneForPairing(raw);
         if (raw.length > 0 && normalized) {
-          setStatus('idle', 'Número válido', 'Presiona "Generar enlace"');
+          setStatus('idle', 'Número válido', 'Presiona "Generar código"');
         } else if (raw.length > 0) {
           setStatus('error', 'Número incompleto', 'Verifica el formato');
         } else {
           setStatus('idle', 'Esperando número...', 'Ingresa tu número');
         }
         setCode('');
-        setQR(null);
       });
 
-      function switchMode(mode) {
-        currentMode = mode;
-        if (mode === 'code') {
-          modeCode.classList.add('active');
-          modeQr.classList.remove('active');
-          codeSection.style.display = 'block';
-          qrContainer.classList.remove('active');
-          setQR(null);
-          setCode('');
-          setStatus('idle', 'Modo código', 'Ingresa tu número para generar el código');
-          document.querySelector('.card-subtitle').textContent = 'The Legends & Stellar · Genera tu código de 8 dígitos.';
-        } else {
-          modeQr.classList.add('active');
-          modeCode.classList.remove('active');
-          codeSection.style.display = 'none';
-          qrContainer.classList.add('active');
-          setQR(null);
-          setCode('');
-          setStatus('idle', 'Modo QR', 'Ingresa tu número para obtener el QR');
-          document.querySelector('.card-subtitle').textContent = 'The Legends & Stellar · Escanea el QR para vincular.';
-        }
-      }
-
-      modeCode.addEventListener('click', () => switchMode('code'));
-      modeQr.addEventListener('click', () => switchMode('qr'));
-
-      async function requestPairing(phoneNumber) {
+      async function requestPairingCode(phoneNumber) {
         if (isGenerating) return;
         const raw = phoneNumber.trim();
         if (!raw) {
@@ -888,17 +727,16 @@
         if (!formatted || formatted.length < 10) {
           setStatus('error', 'Número inválido', 'Asegúrate de ingresar un número válido con código de país');
           setCode('');
-          setQR(null);
           return;
         }
 
         isGenerating = true;
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Generando...</span>';
-        setStatus('loading', 'Generando enlace...', 'Espera un momento');
+        setStatus('loading', 'Generando código...', 'Espera un momento');
 
         try {
-          const payload = { phone: formatted, type: currentMode };
+          const payload = { phone: formatted, type: 'code' };
           const response = await fetch('/pairing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -909,37 +747,28 @@
           if (data.connected) {
             setStatus('success', 'Bot ya está conectado', 'Número: ' + data.number);
             setCode('✓ Conectado');
-            setQR(null);
-          } else if (data.ok && data.code && currentMode === 'code') {
+          } else if (data.ok && data.code) {
             setStatus('success', 'Código generado', 'Usa este código en WhatsApp');
             setCode(data.code);
-            setQR(null);
-          } else if (data.ok && data.qr && currentMode === 'qr') {
-            setStatus('success', 'QR generado', 'Escanea con WhatsApp');
-            setCode('');
-            setQR(data.qr);
           } else if (data.error) {
             setStatus('error', data.error || 'Error al generar', 'Intenta nuevamente');
             setCode('');
-            setQR(null);
           } else {
             setStatus('error', data.message || 'Error desconocido', 'Revisa tu conexión');
             setCode('');
-            setQR(null);
           }
         } catch (error) {
           setStatus('error', 'Error de conexión', error.message || 'Revisa tu internet');
           setCode('');
-          setQR(null);
         } finally {
           isGenerating = false;
           generateBtn.disabled = false;
-          generateBtn.innerHTML = '<i class="fa-solid fa-link"></i><span>Generar enlace</span>';
+          generateBtn.innerHTML = '<i class="fa-solid fa-link"></i><span>Generar código</span>';
         }
       }
 
       generateBtn.addEventListener('click', () => {
-        requestPairing(phoneInput.value);
+        requestPairingCode(phoneInput.value);
       });
 
       phoneInput.addEventListener('keydown', (e) => {
@@ -963,7 +792,7 @@
         }
       });
 
-      setStatus('idle', 'Esperando número...', 'Ingresa tu número y elige el modo');
+      setStatus('idle', 'Esperando número...', 'Ingresa tu número para generar el código');
       setCode('');
     })();
   </script>
