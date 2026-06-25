@@ -479,6 +479,21 @@
       border-radius: 8px;
       background: #fff;
       padding: 8px;
+      display: none;
+    }
+    .qr-box img.active {
+      display: block;
+    }
+    .qr-box .qr-placeholder {
+      padding: 30px 0;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+    .qr-box .qr-placeholder i {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 10px;
+      opacity: 0.3;
     }
     .qr-box .qr-hint {
       margin-top: 12px;
@@ -681,12 +696,10 @@
 
       <div class="qr-container" id="qrContainer">
         <div class="qr-box">
-          <div id="qrImageWrapper">
-            <img id="qrImage" src="" alt="QR" style="display:none;" />
-            <div id="qrPlaceholder" style="padding:30px 0; color:var(--text-dim); font-size:14px;">
-              <i class="fa-solid fa-qrcode" style="font-size:40px; display:block; margin-bottom:10px; opacity:0.3;"></i>
-              Escanea para conectar
-            </div>
+          <img id="qrImage" src="" alt="QR" />
+          <div class="qr-placeholder" id="qrPlaceholder">
+            <i class="fa-solid fa-qrcode"></i>
+            Escanea para conectar
           </div>
           <div class="qr-hint" id="qrHint">El QR aparecerá aquí</div>
         </div>
@@ -761,7 +774,6 @@
       const qrHint = document.getElementById('qrHint');
       const modeCode = document.getElementById('modeCode');
       const modeQr = document.getElementById('modeQr');
-      const phoneGroup = document.getElementById('phoneGroup');
       const codeSection = document.getElementById('codeSection');
 
       let currentMode = 'code';
@@ -794,14 +806,15 @@
         }
       }
 
-      function setQR(qrData = null) {
-        if (qrData) {
+      function setQR(qrData) {
+        if (qrData && qrData.startsWith('data:image')) {
           qrImage.src = qrData;
-          qrImage.style.display = 'block';
+          qrImage.className = 'active';
           qrPlaceholder.style.display = 'none';
           qrHint.textContent = 'Escanea este QR con WhatsApp';
         } else {
-          qrImage.style.display = 'none';
+          qrImage.className = '';
+          qrImage.src = '';
           qrPlaceholder.style.display = 'block';
           qrHint.textContent = 'El QR aparecerá aquí';
         }
@@ -815,18 +828,6 @@
         if (s.startsWith('52') && !s.startsWith('521') && s.length >= 12) s = '521' + s.slice(2);
         if (s.startsWith('54') && !s.startsWith('549') && s.length >= 11) s = '549' + s.slice(2);
         return s;
-      }
-
-      function formatPhoneDisplay(value) {
-        let cleaned = value.replace(/\D/g, '');
-        if (!cleaned) return value;
-        if (cleaned.startsWith('52') && cleaned.length > 2 && !cleaned.startsWith('521')) {
-          cleaned = '521' + cleaned.slice(2);
-        }
-        if (cleaned.startsWith('54') && cleaned.length > 2 && !cleaned.startsWith('549')) {
-          cleaned = '549' + cleaned.slice(2);
-        }
-        return cleaned;
       }
 
       phoneInput.addEventListener('input', function() {
@@ -855,7 +856,6 @@
         if (mode === 'code') {
           modeCode.classList.add('active');
           modeQr.classList.remove('active');
-          phoneGroup.style.display = 'flex';
           codeSection.style.display = 'block';
           qrContainer.classList.remove('active');
           setQR(null);
@@ -865,7 +865,6 @@
         } else {
           modeQr.classList.add('active');
           modeCode.classList.remove('active');
-          phoneGroup.style.display = 'flex';
           codeSection.style.display = 'none';
           qrContainer.classList.add('active');
           setQR(null);
