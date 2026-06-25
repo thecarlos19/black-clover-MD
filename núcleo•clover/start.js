@@ -1,6 +1,6 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1'
 import './config.js'
-import web from '../lib/web.js'
+// import web from '../lib/web.js'
 import cluster from 'cluster'
 const { setupMaster, fork } = cluster
 import { watchFile, unwatchFile } from 'fs'
@@ -168,7 +168,7 @@ const connectionOptions = {
 }
 
 global.conn = makeWASocket(connectionOptions)
-web(conn)
+// web(conn)
 if (!fs.existsSync(`./${global.sessions}/creds.json`)) {
     if (opcion === '2' || methodCode) {
         opcion = '2'
