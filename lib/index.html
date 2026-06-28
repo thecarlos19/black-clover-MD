@@ -776,6 +776,12 @@
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    .floating-player.minimized {
+      pointer-events: none;
+    }
+    .floating-player.minimized .mini-circle {
+      pointer-events: all;
+    }
     .floating-player.minimized .player-expanded {
       opacity: 0;
       transform: scale(0.8) translateY(20px);
@@ -1322,7 +1328,7 @@
       .music-player .now-playing { flex-wrap: wrap; gap: 10px; }
       .music-player { width: 98vw; max-width: 98vw; padding: 12px; }
     }
-   </style>
+  </style>
 </head>
 <body>
   <div class="container">
@@ -1427,8 +1433,8 @@
         <i class="fa-solid fa-circle-question"></i>
         Preguntas frecuentes
       </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
           <i class="fa-solid fa-rocket"></i>
           <span>¿Mejorarán la web?</span>
           <i class="fa-solid fa-chevron-down"></i>
@@ -1437,8 +1443,8 @@
           Sí, The Legends trabaja constantemente en mejorar la experiencia, rendimiento y diseño. La web evoluciona con la comunidad.
         </div>
       </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
           <i class="fa-solid fa-headset"></i>
           <span>¿Si falla, dónde reporto?</span>
           <i class="fa-solid fa-chevron-down"></i>
@@ -1447,8 +1453,8 @@
           Reporta cualquier problema al <strong>creador</strong> en el grupo oficial de <strong>The Legends</strong> o al <a href="https://wa.me/5217971006556">soporte técnico</a>.
         </div>
       </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
           <i class="fa-solid fa-code"></i>
           <span>¿No salió el código?</span>
           <i class="fa-solid fa-chevron-down"></i>
@@ -1457,8 +1463,8 @@
           Verifica el número con código de país. Si persiste, espera unos segundos y reintenta. Si sigue fallando, contacta al <strong>creador</strong>.
         </div>
       </div>
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleFaq(this)">
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
           <i class="fa-solid fa-shield"></i>
           <span>¿Es seguro mi número?</span>
           <i class="fa-solid fa-chevron-down"></i>
@@ -1559,8 +1565,7 @@
 
   <script>
     function toggleFaq(el) {
-      const item = el.closest('.faq-item');
-      if (item) item.classList.toggle('open');
+      el.classList.toggle('open');
     }
     window.toggleFaq = toggleFaq;
 
@@ -1750,17 +1755,20 @@
     setInterval(fetchHealth, 30000);
     setStatus('idle', 'Esperando número...', 'Ingresa tu número para generar el código');
     setCode('');
-
+    
     const musicData = [
-      { title: "Haruka Mirai", artist: "Kankaku Piero", album: "Black Clover OP 1", year: "2017", genre: "J-Rock", duration: "3:32", audio: "https://tmpfiles.org/dl/w3wUWbIlp4lx/file.mpeg" },
-      { title: "PAiNT it BLACK", artist: "BiSH", album: "Black Clover OP 2", year: "2018", genre: "J-Rock", duration: "3:53", audio: "https://tmpfiles.org/dl/wjwWWlFCwNBk/file.mpeg" },
-      { title: "Black Catcher", artist: "Vickeblanka", album: "Black Clover OP 10", year: "2020", genre: "J-Rock", duration: "3:12", audio: "https://tmpfiles.org/dl/wNwwW3FwfK6z/file.mpeg" },
-      { title: "Stories", artist: "Snow Man", album: "Black Clover OP 11", year: "2020", genre: "J-Pop", duration: "3:46", audio: "https://tmpfiles.org/dl/wbwJW5Fgg3mE/file.mpeg" },
-      { title: "Everlasting Shine", artist: "TXT", album: "Black Clover OP 12", year: "2020", genre: "J-Pop", duration: "3:13", audio: "https://tmpfiles.org/dl/wbwfWZFoKHld/file.mpeg" },
-      { title: "Grandeur", artist: "Snow Man", album: "Black Clover OP 13", year: "2021", genre: "J-Pop", duration: "3:45", audio: "https://tmpfiles.org/dl/wlw4W6FcnsC4/file.mpeg" },
-      { title: "DOMA", artist: "El Domo", album: "Single", year: "2023", genre: "Phonk", duration: "2:11", audio: "https://tmpfiles.org/dl/w8w0WKFcVoVF/file.mpeg" },
-      { title: "BRAZILIAN DANÇA PHONK", artist: "6YNTHMANE x RXDXVIL", album: "Single", year: "2023", genre: "Brazilian Phonk", duration: "2:05", audio: "https://tmpfiles.org/dl/wKwNWmFtH7sX/file.mpeg" },
-      { title: "PHONKY TOWN", artist: "PlayaPhonk", album: "Single", year: "2022", genre: "Phonk", duration: "2:18", audio: "https://tmpfiles.org/dl/wiwlWHFWTcdY/file.mpeg" }
+    { title: "SCAR", artist: "Novulent", album: "Single", year: "2023", genre: "Phonk", duration: "1:57", audio: "https://tmpfiles.org/dl/wxw3WqOgbWYa/file.mpeg" },
+{ title: "unknown feelings", artist: "Novulent", album: "Single", year: "2023", genre: "Phonk", duration: "1:57", audio: "https://tmpfiles.org/dl/wjw2WsOn7UfH/file.mpeg" },
+{ title: "savior", artist: "Novulent", album: "Single", year: "2023", genre: "Phonk", duration: "1:57", audio: "https://tmpfiles.org/dl/wBwfWMO3aZge/file.mpeg" },
+{ title: "Ayer Me Llamó Mi Ex", artist: "KHEA x Prince Royce x Natti Natasha", album: "Single", year: "2022", genre: "Reggaeton", duration: "3:19", audio: "https://tmpfiles.org/dl/wDwwWrOG30sf/file.mpeg" },
+{ title: "GANE", artist: "Victor Mendívil", album: "Single", year: "2025", genre: "Corridos Tumbados", duration: "2:41", audio: "https://tmpfiles.org/dl/wFwuWOOh9ODN/file.mpeg" },
+{ title: "MIA", artist: "Victor Mendívil", album: "Single", year: "2023", genre: "Corridos Tumbados", duration: "2:33", audio: "https://tmpfiles.org/dl/wrw1W2OTQVrR/file.mpeg" },
+{ title: "Every Breath You Take", artist: "The Police", album: "Synchronicity", year: "1983", genre: "Rock", duration: "4:13", audio: "https://tmpfiles.org/dl/w7wlWdOgRXYN/file.mpeg" },
+{ title: "Sparks", artist: "Coldplay", album: "Parachutes", year: "2000", genre: "Alternative", duration: "3:47", audio: "https://tmpfiles.org/dl/wGwNWAOeSSBx/file.mpeg" },
+{ title: "Yellow", artist: "Coldplay", album: "Parachutes", year: "2000", genre: "Alternative", duration: "4:29", audio: "https://tmpfiles.org/dl/wfweWBOeBxX2/file.mpeg" },
+{ title: "Mientes", artist: "Camila", album: "Dejarte de Amar", year: "2010", genre: "Pop Latino", duration: "3:23", audio: "https://tmpfiles.org/dl/wZwSWvOlBaZ0/file.mpeg" },
+{ title: "No Surprises", artist: "Radiohead", album: "OK Computer", year: "1997", genre: "Alternative Rock", duration: "3:49", audio: "https://tmpfiles.org/dl/wOwvW9OWFeIc/file.mpeg" },
+{ title: "Tiroteo Remix Slowed", artist: "Marc Seguí x Rauw Alejandro x Pol Granch", album: "Single", year: "2021", genre: "Pop Slowed", duration: "4:10", audio: "https://tmpfiles.org/dl/wlw9WXOfk267/file.mpeg" }
     ];
 
     let playlist = [...musicData];
